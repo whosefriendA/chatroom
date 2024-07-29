@@ -11,7 +11,7 @@
 #include<string>
 #include<csignal>
 #include<fcntl.h>
-#define FID 10000001//始祖UID
+#define FID 1001//始祖UID
 #define SERVERPORT 8080//默认端口号
 #define RECV -1
 #define SIGNUP 1
@@ -28,7 +28,7 @@
 #define RECVFILEGROUP 12
 #define SENDFILE 13
 #define RECVFILE 14
-
+string online_users;
 sockaddr_in server_addr;
 socklen_t server_addr_len=sizeof(server_addr);
 int server_fd;
@@ -62,6 +62,7 @@ class Redis{
 class User{
     public:
     User(string name,string pass,string question,string answer);
+    string UID,Name,Pass,Question,Answer;
     json friend_list;
     json group_list;
     string user_inquire(string info);
@@ -77,7 +78,6 @@ class User{
     void group_shield(string group_id);
     void group_recover(string group_id);
     private:
-    string UID,Name,Pass,Question,Answer;
     mutex user_mutex;
     
 };

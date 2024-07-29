@@ -7,7 +7,6 @@
 #include<mutex>
 #include<condition_variable>
 #include<functional>
-string online_users;
 redisReply* reply1=(redisReply*)redisCommand(redis.con,"SADD %s %s",online_users.c_str(),"temp_member");
 redisReply* reply2=(redisReply*)redisCommand(redis.con,"SREM %s %s",online_users.c_str(),"temp_member");
 //任务类
@@ -142,6 +141,7 @@ int main(int argc,char*argv[]){
             }
             else {
                 int nfd=recvevent[i].data.fd;
+                
                 TaskSocket  asocket(nfd);
                 char *buf;
                 //读出数据头
@@ -183,6 +183,7 @@ int main(int argc,char*argv[]){
                         int flag = fcntl(nfd, F_GETFL);
                         flag |= O_NONBLOCK;
                         fcntl(nfd, F_SETFL, flag);
+                        taskhandler(asocket,comad_string);
                         // 文件传输操作完成后，重新加入 epoll 
                         struct epoll_event addEvent;
                         addEvent.events = EPOLLIN | EPOLLET;
