@@ -1,14 +1,15 @@
-#include"client.hpp"
+#include"./client.hpp"
 #include"sign.cpp"
 int Main_Menu(){
     while(1){
     int a;
-    int ret;
+    int ret=0;
     cout<<"-------欢迎来到聊天室-------"<<endl;
     cout<<"---------[1]注册---------"<<endl;
     cout<<"---------[2]登录---------"<<endl;
     cout<<"-------[3]找回密码-------"<<endl;
     cout<<"---------[4]退出---------"<<endl;
+    cin>>a;
     if(a==1)
     sign_up();
     else if(a==2)

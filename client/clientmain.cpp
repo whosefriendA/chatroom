@@ -1,4 +1,4 @@
-#include"client.hpp"
+#include"./client.hpp"
 #include"menu.cpp"
 #include"../TaskSocket.hpp"
 int main(int argc,char*argv[]){
@@ -11,12 +11,14 @@ int main(int argc,char*argv[]){
     server_addr2.sin_port=SERVERPORT;
     server_addr2.sin_addr.s_addr=INADDR_ANY;
      int opt;
-    while(opt=getopt(argc,argv,"i:p:")!=-1){
+    while((opt=getopt(argc,argv,"i:p:"))!=-1){
         switch(opt){
-        case 'i:':
+        case 'i':
         server_addr2.sin_addr.s_addr=inet_addr(optarg);
-        case 'p:':
+        break;
+        case 'p':
         server_addr2.sin_port=std::stoi(optarg);
+        break;
         }
     }
     int client_fd=socket(AF_INET,SOCK_STREAM,0);

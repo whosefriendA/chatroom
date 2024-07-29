@@ -6,6 +6,7 @@
 #include<unistd.h>
 #include<termios.h>
 #include<arpa/inet.h>
+#include<unistd.h>
 #include<nlohmann/json.hpp>
 #include<hiredis/hiredis.h>
 #define SERVERPORT 8080 //默认端口号
@@ -28,4 +29,4 @@ using namespace std;
 using json=nlohmann::json;
 extern int client_fd;
 extern TaskSocket asocket;
-sockaddr_in server_addr2;
+extern sockaddr_in server_addr2;
