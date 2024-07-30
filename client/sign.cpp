@@ -43,7 +43,7 @@ void sign_up(){
 
     string uid=asocket.Recvmsg();//收到生成的uid
     if(uid=="close"){
-        cout<<"对端已关闭"<<endl;
+        cout<<"已关闭"<<endl;
         exit(0);
     }
     cout<<"您注册的uid为:"<<uid<<endl;
@@ -72,7 +72,7 @@ string get_uid()
 
     while(flag==0)
     {
-        cout<<"您输入的uid有非数字,请重新输入:"<<endl;
+        cout<<"输入的uid有非数字,请重新输入:"<<endl;
         cin.ignore();
         getline(cin,uid);
 
@@ -90,6 +90,41 @@ string get_uid()
     return uid;
     
 }
+void* receivemod(void* arg) {
+    // 解引用参数
+    struct ThreadParams {
+        std::string uid;
+        int recv_fd;
+    };
+    ThreadParams* params = static_cast<ThreadParams*>(arg);
+    TaskSocket recvsocket(params->recv_fd);
+   if(connect(params->recv_fd,(sockaddr *)&server_addr2,sizeof(server_addr2))){
+        perror("connect error");
+        exit(0);
+    }
+    json data;
+    data["UID"]=params->uid;
+    data["flag"]=-1;
+    string command=data.dump();
+    int ret = recvsocket.Sendmsg(command);
+    if (ret == -1 || ret == 0) {
+        std::cout << "服务器已关闭" << std::endl;
+        delete params;
+        exit(0);
+    }
+
+    while (true) {
+        std::string recv = recvsocket.Recvmsg(); 
+        if (recv == "close") {
+            std::cout << "服务器已关闭" << std::endl;
+            delete params;
+            exit(0);
+        }
+        std::cout << recv << std::endl;
+    }
+
+    return nullptr;
+}
 int log_in(){
     string uid,pass;
     uid=get_uid();
@@ -98,7 +133,7 @@ int log_in(){
     cout<<"请输入您的密码:"<<endl;
     getline(cin,pass);
         json data;
-    data["pass"]=pass;
+    data["option"[0]]=pass;
     data["flag"]=SIGNUP;
     string command=data.dump();
     
@@ -134,8 +169,8 @@ int log_in(){
     ThreadParams* params = new ThreadParams{uid, asocket.getresvfd()};
 
     // 创建线程
-    pthread_create(&tid, NULL, &recvfunc, static_cast<void*>(params));
-
+    pthread_create(&tid, NULL, &receivemod, static_cast<void*>(params));
+    
     // 分离线程
     pthread_detach(tid);
         return 1;

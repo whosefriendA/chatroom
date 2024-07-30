@@ -18,7 +18,7 @@ public:
 };
     TaskSocket(int fd):tfd(fd){}
     TaskSocket(string msg){
-    if(msg=="recv")
+    if(msg=="receive")
     {
         tfd=socket(AF_INET,SOCK_STREAM,0);
         recv_fd=socket(AF_INET,SOCK_STREAM,0);    
@@ -31,7 +31,7 @@ public:
     int getresvfd(){return recv_fd;}
 
 
-int TaskSocket::Sendmsg(string msg){
+int Sendmsg(string msg){
     char *data=new char[msg.size()+4];
     int biglen=htonl(msg.size());
     
@@ -46,7 +46,7 @@ int TaskSocket::Sendmsg(string msg){
 }
 
 
-int TaskSocket::Writemsg(const char *msg,int size){
+int Writemsg(const char *msg,int size){
     const char *buf=msg;
     int cnt=size;
     while(cnt>0){
@@ -69,7 +69,7 @@ int TaskSocket::Writemsg(const char *msg,int size){
 }
 
 
-string TaskSocket::Recvmsg(){
+string Recvmsg(){
     //数据头
     int len=0;
     int ret=Readmsg((char *)&len,4);
@@ -98,7 +98,7 @@ string TaskSocket::Recvmsg(){
 }
 
 
-int TaskSocket::Readmsg(char *buf,int size){
+int Readmsg(char *buf,int size){
     char *pt=buf;
     int cnt=size;
 
