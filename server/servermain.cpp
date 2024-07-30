@@ -1,12 +1,5 @@
 #include"server.hpp"
-#include<hiredis/hiredis.h>
-#include<iostream>
-#include<queue>
-#include<vector>
-#include<thread>
-#include<mutex>
-#include<condition_variable>
-#include<functional>
+#include"../Redis.hpp"
 redisReply* reply1=(redisReply*)redisCommand(redis.con,"SADD %s %s",online_users.c_str(),"temp_member");
 redisReply* reply2=(redisReply*)redisCommand(redis.con,"SREM %s %s",online_users.c_str(),"temp_member");
 //任务类

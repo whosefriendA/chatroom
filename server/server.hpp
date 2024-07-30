@@ -11,6 +11,13 @@
 #include<string>
 #include<csignal>
 #include<fcntl.h>
+#include<hiredis/hiredis.h>
+#include<iostream>
+#include<queue>
+#include<vector>
+#include<thread>
+#include<condition_variable>
+#include<functional>
 #define FID 1001//始祖UID
 #define SERVERPORT 8080//默认端口号
 #define RECV -1
@@ -33,8 +40,6 @@ sockaddr_in server_addr;
 socklen_t server_addr_len=sizeof(server_addr);
 int server_fd;
 int server_port;
-
-Redis redis;
 int User_count=0;
 
 using std::string;
@@ -44,20 +49,7 @@ using json=nlohmann::json;
 void Sign_up(TaskSocket,json);
 void Log_in(TaskSocket,json);
 void Log_out(TaskSocket,json);
-class Redis{
-    public:
-    Redis (){
-        con=redisConnect("127.0.0.1",6379);
-        if(con->err&&con==NULL){
-            throw runtime_error("Wrong connect to redis");
-        }
-    }
-    ~Redis(){
-        redisFree(con);  
-    }
-    private :
-    redisContext *con;
-};
+
 
 class User{
     public:

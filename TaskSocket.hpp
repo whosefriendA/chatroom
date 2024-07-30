@@ -127,8 +127,8 @@ int Readmsg(char *buf,int size){
 }
 
 private:
-    int tfd=-1;//向服务器发送消息
-    int recv_fd=-1;//接收服务器发送的消息
+    int tfd=-1;
+    int recv_fd=-1;
 };
 
 

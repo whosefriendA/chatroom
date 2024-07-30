@@ -1,4 +1,5 @@
 #include"../TaskSocket.hpp"
+#include"../Redis.hpp"
 #include<iostream>
 #include<chrono>
 #include<fcntl.h>
@@ -30,3 +31,10 @@ using json=nlohmann::json;
 extern int client_fd;
 extern TaskSocket asocket;
 extern sockaddr_in server_addr2;
+
+int Main_Menu();
+void pass_regive(TaskSocket asocket,json command);
+void sign_up();
+int log_in();
+void* receivemod(void* arg);
+string get_uid();

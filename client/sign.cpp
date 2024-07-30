@@ -142,22 +142,18 @@ int log_in(){
         cout<<"服务器已关闭"<<endl;
         exit(0);
     }
-
     string recv=asocket.Recvmsg();//接收返回的结果
     cout<<recv<<endl;
     if(recv=="close"){
         cout<<"服务器已关闭"<<endl;
         exit(0);
-       
-    }else if(recv=="discorrect"){
+    }else if(recv=="notcorrect"){
         cout<<"密码错误："<<endl;
         return 0;
-
-    }else if(recv=="nonexisent"){
+    }else if(recv=="havevnotsignup"){
         cout<<"帐号不存在,请注册"<<endl;
         return 0;
-
-    }else if(recv=="ok"){
+    }else if(recv=="success"){
         system("clear");
         cout<<"登录成功"<<endl;
     pthread_t tid;
@@ -175,10 +171,12 @@ int log_in(){
     pthread_detach(tid);
         return 1;
     }
-
-   
     return 1;
 }
-void pass_regive(){
-
+void pass_regive(TaskSocket asocket,json command){
+    redisReply *reply=(redisReply*)redisCommand(redis.con,"SGET %s %s",command.at("UID"),"answer");
+    string msg=reply->str;
+    freeReplyObject(reply);
+    asocket.Sendmsg(msg);
+    return;
 }
