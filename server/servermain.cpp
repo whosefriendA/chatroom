@@ -1,7 +1,11 @@
 #include"server.hpp"
-#include"../Redis.hpp"
-redisReply* reply1=(redisReply*)redisCommand(redis.con,"SADD %s %s",online_users.c_str(),"temp_member");
-redisReply* reply2=(redisReply*)redisCommand(redis.con,"SREM %s %s",online_users.c_str(),"temp_member");
+Redis redis;
+string online_users;
+sockaddr_in server_addr;
+socklen_t server_addr_len=sizeof(server_addr);
+int server_fd=-1;
+int server_port=SERVERPORT;
+int User_count=0;
 //任务类
 class Task{
     public:
@@ -77,34 +81,45 @@ private:
 int cfd;
 int main(int argc,char*argv[]){
     signal(SIGPIPE,SIG_IGN);
-    //创建服务器套接字
-    if(server_fd=socket(AF_INET,SOCK_STREAM,0)==-1){
+    // redisReply* reply1=(redisReply*)redisCommand(redis.con,"SADD %s %s",online_users.c_str(),"temp_member");
+    // redisReply* reply2=(redisReply*)redisCommand(redis.con,"SREM %s %s",online_users.c_str(),"temp_member");
+    // //创建服务器套接字
+    if((server_fd=socket(AF_INET,SOCK_STREAM,0))==-1){
         perror("sever_socket error");
     };
     //端口复用
-    int sopt;
+    int sopt=1;
     setsockopt(server_fd,SOL_SOCKET,SO_REUSEADDR,&sopt,sizeof(sopt));
     //设置默认服务器地址
     server_addr.sin_family=AF_INET;
     server_addr.sin_addr.s_addr=INADDR_ANY;
-    server_addr.sin_port=SERVERPORT;
+    server_addr.sin_port=htons(SERVERPORT);
     //命令行参数设置服务器地址
-    int opt;
-    while(opt=getopt(argc,argv,"i:p:")!=-1){
-        switch(opt){
-        case 'i:':
-        server_addr.sin_addr.s_addr=inet_addr(optarg);
-        case 'p:':
-        server_addr.sin_port=std::stoi(optarg);
-        }
-    }
+    // int opt;
+    // while((opt=getopt(argc,argv,"i:p:"))!=-1){
+    //     switch(opt){
+    //     case 'i':
+    //     server_addr.sin_addr.s_addr=inet_addr(optarg);
+    //     break;
+    //     case 'p':
+    //     server_addr.sin_port=std::stoi(optarg);
+    //     break;
+    //     }
+    // }
     //绑定
-    if(bind(server_fd,(sockaddr*)&server_addr,sizeof(server_addr))==-1){
+    if(bind(server_fd,(struct sockaddr*)&server_addr,sizeof(server_addr))==-1){
         perror("server_socket bind error");
+        close(server_fd);
         exit(0);
     }
+    char host[1024];
+// char service[20];
+// if (getnameinfo((struct sockaddr*)&server_addr, sizeof(server_addr), host, sizeof(host), service, sizeof(service), NI_NUMERICHOST) == 0) {
+//     std::cout << "Server IP address: " << host << std::endl;
+// }测试ip地址
     if(listen(server_fd,150)==-1){
         perror("server_socket error");
+        close(server_fd);
         exit(0);
     }
     struct epoll_event event,recvevent[1024];
@@ -137,20 +152,11 @@ int main(int argc,char*argv[]){
                 
                 TaskSocket  asocket(nfd);
                 char *buf;
-                //读出数据头
-                int len=0;
-                Read(cfd,(char *)&len,4);
-                len=ntohl(len);
-                //读数据体
-                char *newbuf=(char *)malloc(len+1);
-                int ret=Read(cfd,buf,len);
-                newbuf[len]='\0';
-                buf=newbuf;
-
+                int ret=recvMsg(nfd,&buf);
                 if(ret<=0){
                     cerr<<"error receiving data ."<<endl;
-                    freeReplyObject(reply1);
-                    freeReplyObject(reply2);
+                    // freeReplyObject(reply1);
+                    // freeReplyObject(reply2);
                     redisReply *reply1=(redisReply*)redisCommand(redis.con,"HGET %s %s","fd_uid表",to_string(nfd));
                     string UID=reply1->str;
                     void *reply2=redisCommand(redis.con,"SADD %s %s",online_users.c_str(),UID);
@@ -158,15 +164,16 @@ int main(int argc,char*argv[]){
                     freeReplyObject(reply2);
                     void* reply=redisCommand(redis.con,"HSET %s %s %s","UID","通知socket","-1");
                     freeReplyObject(reply);
-                    void* reply=redisCommand(redis.con,"HSET %s %S %S","fd_uid表",to_string(recvevent[i].data.fd),"-1");
+                    reply=redisCommand(redis.con,"HSET %s %s %s","fd_uid表",to_string(recvevent[i].data.fd),"-1");
                     freeReplyObject(reply);
                 }
                 buf[ret]='/0';
                 string comad_string=buf;
                 json data=json::parse(comad_string);
                     if(data.at("flag")==RECV){
-                    redis.hsetValue(data.at("UID"), "通知套接字", to_string(nfd));
-                }else if(data.at("flag")==SENDFILE||data.at("flag")==RECVFILE||data.at("flag")==SENDFILEGROUP||data.at("flag")==RECVFILEGROUP){
+                    redisReply* reply=(redisReply*)redisCommand(redis.con,"HGET %s %s %s",data.at("UID"), "通知套接字", to_string(nfd));
+                    freeReplyObject(reply);
+                }else if(data.at("flag")==SENDFILE||data.at("flag")==RECVFILE||data.at("flag")==SENDFILE_GROUP||data.at("flag")==RECVFILE_GROUP){
                     event.events = EPOLLIN|EPOLLET; // 不监听任何事件
                     event.data.fd = nfd;
                     epoll_ctl(epfd, EPOLL_CTL_DEL, nfd, &event);
@@ -190,4 +197,112 @@ int main(int argc,char*argv[]){
         }
     }
 }
+}
+ssize_t Read (int fd,void *vptr,size_t n)
+{
+    size_t nleft;
+    ssize_t nread;
+    char *ptr;
+
+    ptr=(char *)vptr;
+    nleft=n;
+
+    while(nleft>0)
+    {
+        if((nread=read(fd,ptr,nleft))<0)
+        {
+            if(errno==EINTR||EWOULDBLOCK)
+            {
+                nread=0;
+            }else{
+                return -1;
+            }
+        }else if(nread==0)
+        {
+            break;
+        }
+
+        nleft-=nread;
+        ptr+=nread;
+    }
+
+    return n-nleft;
+}
+
+void taskhandler(TaskSocket asocket, const std::string& comad_string)
+{
+    json command =json::parse(comad_string);
+    switch((int)command.at("flag")){
+        case SIGNUP:
+            Sign_up(asocket,command);
+            break;
+        case LOGIN:
+            Log_in(asocket, command);
+            break;
+        case QUESTION_GET:
+            question_get(asocket,command);
+            break;
+        case PASSWORD_FIND:
+            pass_find(asocket,command);
+            break;
+        case PASSWORD_GET:
+            pass_get(asocket,command);\
+            break;
+    }
+
+    return;
+}
+int recvMsg(int cfd,char** msg)//接受带数据头的数据包
+{
+    //接收数据头
+    int len=0;
+    Readn(cfd,(char *)&len,4);
+    len=ntohl(len);
+   // printf("数据块大小为%d\n",len);
+
+    char *buf=(char *)malloc(len+1);//留出存储'\0'的位置
+    int ret=Readn(cfd,buf,len);
+    /*if(ret!=len)
+    {
+        printf("数据接收失败\n");
+    }else if(ret==0){
+        printf("对方断开连接\n");
+        close(cfd);
+    }*/
+
+    buf[len]='\0';
+    *msg=buf;
+
+    return ret;//返回接收的字节数
+}
+
+ssize_t Readn(int fd,void *vptr,size_t n)
+{
+    size_t nleft;//usigned int剩余未读取的字节数
+    ssize_t nread;//int实际读到的字节数
+    char *ptr;
+
+    ptr=(char *)vptr;
+    nleft=n;//n是未读取的字节数
+
+    while(nleft>0)
+    {
+        if((nread=read(fd,ptr,nleft))<0)
+        {
+            if(errno==EINTR||EWOULDBLOCK)
+            {
+                nread=0;
+            }else{
+                return -1;
+            }
+        }else if(nread==0)
+        {
+            break;
+        }
+
+        nleft-=nread;
+        ptr+=nread;
+    }
+
+    return n-nleft;
 }

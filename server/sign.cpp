@@ -17,23 +17,44 @@ void Log_in(TaskSocket asocket,json command){
         freeReplyObject(reply);
     }else{
     freeReplyObject(reply);
-    redisReply* reply=(redisReply*)redisCommand(redis.con,"SGET %s %s",command.at("UID"),"pass");
+    reply=(redisReply*)redisCommand(redis.con,"SGET %s %s",command.at("UID"),"pass");
     string pwd=reply->str;
     freeReplyObject(reply);
     if(pwd!=command.at("option")[0]){
         asocket.Sendmsg("notcorrect");
     }else{
-    void * reply=redisCommand(redis.con,"SADD %s %s",online_users.c_str(),command.at("UID"));
-    freeReplyObject(reply);
+    void * reply2=redisCommand(redis.con,"SADD %s %s",online_users.c_str(),command.at("UID"));
+    freeReplyObject(reply2);
     //密码正确改变状态
-    void * reply=redisCommand(redis.con,"HSET %s %s %s","fd_uid表",to_string(asocket.getfd()),command.at("UID"));
-    freeReplyObject(reply);
-    void * reply=redisCommand(redis.con,"HSET %s %s %s",command.at("UID"),"聊天对象","0");
-    freeReplyObject(reply);
-    void * reply=redisCommand(redis.con,"HSET %s %s %s",command.at("UID"),"通知socket","-1");
-    freeReplyObject(reply);
+    reply2=redisCommand(redis.con,"HSET %s %s %s","fd_uid表",to_string(asocket.getfd()),command.at("UID"));
+    freeReplyObject(reply2);
+    reply2=redisCommand(redis.con,"HSET %s %s %s",command.at("UID"),"聊天对象","0");
+    freeReplyObject(reply2);
+    reply2=redisCommand(redis.con,"HSET %s %s %s",command.at("UID"),"通知socket","-1");
+    freeReplyObject(reply2);
     asocket.Sendmsg("success");
     cout<<"用户"<<command.at("UID")<<"登陆成功"<<endl;
-        }
     }
+  }
 };
+void question_get(TaskSocket asocket,json command){
+    redisReply *reply=(redisReply*)redisCommand(redis.con,"SGET %s %s",command.at("UID"),"question");
+    string msg=reply->str;
+    freeReplyObject(reply);
+    asocket.Sendmsg(msg);
+    return;
+}
+void pass_find(TaskSocket asocket,json command){
+    redisReply *reply=(redisReply*)redisCommand(redis.con,"SGET %s %s",command.at("UID"),"answer");
+    string msg=reply->str;
+    freeReplyObject(reply);
+    asocket.Sendmsg(msg);
+    return;
+}
+void pass_get(TaskSocket asocket,json command){
+    redisReply *reply=(redisReply*)redisCommand(redis.con,"SGET %s %s",command.at("UID"),"");
+    string msg=reply->str;
+    freeReplyObject(reply);
+    asocket.Sendmsg(msg);
+    return;
+}

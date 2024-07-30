@@ -1,4 +1,4 @@
-#include "./server.hpp"
+#include "server.hpp"
 User::User(string name,string pass,string question,string answer){
     this->UID=FID+User_count;
     this->Name=name;
@@ -15,7 +15,8 @@ void User::user_mem(){
     people["friend_list"]=friend_list;
     people["group_list"]=group_list;
     string info=people.dump();
-    redis.Sadd(UID,info);
+    redisReply* reply=(redisReply*)redisCommand(redis.con,"SADD %s %s","UID",info);
+    freeReplyObject(reply);
 }
 //好友相关
 void User::friend_add(string friend_id){}

@@ -3,8 +3,6 @@ void sign_up(){
     string name,pass,pass2;
     string question,answer;
 
-    cout<<"请输入昵称"<<endl;
-    getline(cin,name);
     while(1){
 
         cout<<"请输入密码:"<<endl;
@@ -16,13 +14,14 @@ void sign_up(){
         }
 
         cout<<"请确认密码:"<<endl;
-        getline(cin,pass);
+        getline(cin,pass2);
         if(pass!=pass2){
             system("clear");
             cout<<"密码不一致"<<endl;
         }else break;
     }
-
+    cout<<"请输入昵称:"<<endl;
+    getline(cin,name);
     cout<<"设置您的密保问题"<<endl;
     getline(cin,question);
     cout<<"设置您的答案"<<endl;
@@ -34,7 +33,7 @@ void sign_up(){
     data["answer"]=answer;
     data["flag"]=SIGNUP;
     string command=data.dump();
-    int ret=asocket.Sendmsg(command);//命令类转换为json格式，再转换为字符串格式，最后由套接字发送
+    int ret=asocket.Sendmsg(command);
     if(ret==0||ret==-1)
     {
         cout<<"服务器已关闭"<<endl;
@@ -91,7 +90,6 @@ string get_uid()
     
 }
 void* receivemod(void* arg) {
-    // 解引用参数
     struct ThreadParams {
         std::string uid;
         int recv_fd;
@@ -173,10 +171,58 @@ int log_in(){
     }
     return 1;
 }
-void pass_regive(TaskSocket asocket,json command){
-    redisReply *reply=(redisReply*)redisCommand(redis.con,"SGET %s %s",command.at("UID"),"answer");
-    string msg=reply->str;
-    freeReplyObject(reply);
-    asocket.Sendmsg(msg);
-    return;
+
+void pass_find(TaskSocket asocket)
+{
+    string uid,pass,answer;
+    uid=get_uid();
+    json data;
+    data["UID"]=uid;
+    data["flag"]=QUESTION_GET;
+    string command=data.dump();
+    int ret=asocket.Sendmsg(command);
+    if(ret==0||ret==-1)
+    {
+        cout<<"服务器已关闭"<<endl;
+        exit(0);
+    }
+    string recv=asocket.Recvmsg();
+    if(recv=="close"){
+        cout<<"服务器已关闭"<<endl;
+        exit(0);
+    }
+    cout<<recv<<endl;
+    getline(cin,answer);
+    data["UID"]=uid;
+    data["flag"]=PASSWORD_FIND;
+    command=data.dump();
+    ret=asocket.Sendmsg(command);
+    if(ret==0||ret==-1){
+        cout<<"服务器已关闭"<<endl;
+        exit(0);
+    }
+
+    recv=asocket.Recvmsg();//接收返回的结果
+    if(recv=="close"){
+        cout<<"服务器已关闭"<<endl;
+        exit(0);
+       
+    }else if(recv!=answer){
+        cout<<"答案不正确,无法找回"<<endl;
+        return ;
+    }else if(recv==answer)
+    {
+    data["UID"]=uid;
+    data["flag"]=PASSWORD_GET;
+    command=data.dump();
+    ret=asocket.Sendmsg(command);
+    if(ret==0||ret==-1){
+        cout<<"服务器已关闭"<<endl;
+        exit(0);
+    }
+
+    recv=asocket.Recvmsg();
+    cout<<"您的密码是："<<recv<<"请牢记您的密码"<<endl;
+    return ;
+    }
 }
