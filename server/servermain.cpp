@@ -5,6 +5,7 @@ sockaddr_in server_addr;
 socklen_t server_addr_len=sizeof(server_addr);
 int server_port=SERVERPORT;
 int User_count=0;
+int User_uid=1001;
 using namespace std;
 
 struct Task {
@@ -141,7 +142,8 @@ int main(int argc,char*argv[]){
         exit(0);
     }
     ThreadPool pool(10);
-    vector<string> members=redis.Sget("用户uid列表");
+    cout<<"下面是uid列表"<<endl;
+    vector<string> members=redis.Sgetall("用户uid集合");
     for(const string&member :members){
         cout<<member<<endl;
     }

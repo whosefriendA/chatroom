@@ -22,7 +22,7 @@
 #include<functional>
 #include<netdb.h>
 #include<atomic>
-#define FID 1001//始祖UID
+#define FID 1//始祖UID
 #define SERVERPORT 8080//默认端口号
 #define RECV -1
 #define SIGNUP 1
@@ -49,7 +49,7 @@ extern socklen_t server_addr_len;
 extern int server_fd;
 extern int server_port;
 extern int User_count;
-
+extern int User_uid;
 using std::string;
 using std::mutex;
 using json=nlohmann::json;
@@ -59,11 +59,12 @@ void Log_in(TaskSocket,json);
 void pass_find(TaskSocket,json);
 void question_get(TaskSocket,json);
 void pass_get(TaskSocket,json);
+void User_remove(TaskSocket, json);
 int recvMsg(int cfd,char** msg);
 ssize_t Readn(int fd,void *vptr,size_t n);
 class User{
     public:
-    User(string name,string pass,string question,string answer);
+    User(string name,string pass,string question,string answer,string UID);
     string UID,Name,Pass,Question,Answer;
     json friend_list;
     json group_list;
