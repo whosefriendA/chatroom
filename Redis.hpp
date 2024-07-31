@@ -2,7 +2,6 @@
 #include<hiredis/hiredis.h>
 #include<errno.h>
 #include<stdexcept>
-extern Redis redis;
 class Redis{
     public:
     Redis (){
@@ -14,6 +13,5 @@ class Redis{
     ~Redis(){
         redisFree(con);  
     }
-    private :
     redisContext *con;
 };
