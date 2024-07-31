@@ -31,45 +31,42 @@ public:
     int getresvfd(){return recv_fd;}
 
 
-int Sendmsg(string msg){
-    char *data=new char[msg.size()+4];
-    int biglen=htonl(msg.size());
+    int Sendmsg(string msg){
+        char *data=new char[msg.size()+4];
+        int biglen=htonl(msg.size());
     
-    memcpy(data,&biglen,4);//数据头
-    memcpy(data+4,msg.data(),msg.size());//数据体
+        memcpy(data,&biglen,4);//数据头
+        memcpy(data+4,msg.data(),msg.size());//数据体
 
-    int ret=Writemsg(data,msg.size()+4);//发送数据
+        int ret=Writemsg(data,msg.size()+4);//发送数据
 
-    delete[]data;//释放内存
+        delete[]data;//释放内存
 
-    return ret;
-}
+        return ret;
+    }
 
 
-int Writemsg(const char *msg,int size){
-    const char *buf=msg;
-    int cnt=size;
-    while(cnt>0){
-        int len=send(tfd,buf,cnt,0);//记录发送的字节数
-        if(len==-1)
-        {
-            close(tfd);
-            perror("writen error");
-            exit(0);
+    int Writemsg(const char *msg,int size){
+        const char *buf=msg;
+        int cnt=size;
+        while(cnt>0){
+            int len=send(tfd,buf,cnt,0);//记录发送的字节数
+            if(len==-1){
+                close(tfd);
+                perror("writen error");
+                exit(0);
+            }else if(len==0){
+                continue;
+            }
 
-        }else if(len==0)
-        {
-            continue;
-        }
-
-        buf+=len;
-        cnt-=len;//计算剩余量
+            buf+=len;
+            cnt-=len;//计算剩余量
     }
     return size;//返回成功发送的字节数
 }
 
 
-string Recvmsg(){
+    string Recvmsg(){
     //数据头
     int len=0;
     int ret=Readmsg((char *)&len,4);
@@ -95,10 +92,10 @@ string Recvmsg(){
     delete[]buf;
 
     return msg;
-}
+    }
 
 
-int Readmsg(char *buf,int size){
+    int Readmsg(char *buf,int size){
     char *pt=buf;
     int cnt=size;
 
@@ -124,10 +121,10 @@ int Readmsg(char *buf,int size){
 
     return size-cnt;
 
-}
+    }
     int tfd=-1;
     int recv_fd=-1;
-};
+    };
 
 
 #endif
