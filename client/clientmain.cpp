@@ -27,6 +27,6 @@ int main(int argc,char*argv[]){
     }
     int ret=Main_Menu();
     if(ret==1){
-        user_menu();
+        User_menu();
     }
 }

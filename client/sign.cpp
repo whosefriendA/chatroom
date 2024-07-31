@@ -33,6 +33,7 @@ void sign_up(){
     data["answer"]=answer;
     data["flag"]=SIGNUP;
     string command=data.dump();
+    cout<<command<<endl;
     int ret=asocket.Sendmsg(command);
     if(ret==0||ret==-1)
     {
@@ -127,12 +128,11 @@ int log_in(){
     string uid,pass;
     uid=get_uid();
 
-    //
     cout<<"请输入您的密码:"<<endl;
     getline(cin,pass);
         json data;
-    data["option"[0]]=pass;
-    data["flag"]=SIGNUP;
+    data["option"]=pass;
+    data["flag"]=LOGIN;
     string command=data.dump();
     
     int ret=asocket.Sendmsg(command);
@@ -172,7 +172,7 @@ int log_in(){
     return 1;
 }
 
-void pass_find(TaskSocket asocket)
+void pass_find()
 {
     string uid,pass,answer;
     uid=get_uid();

@@ -35,10 +35,11 @@ extern int client_fd;
 extern TaskSocket asocket;
 extern sockaddr_in server_addr2;
 
-void pass_find(TaskSocket);
+void pass_find();
 void sign_up();
 int log_in();
 void* receivemod(void* arg);
 string get_uid();
 int Main_Menu();
-void user_menu();
+void User_menu();
+void User_remove();
