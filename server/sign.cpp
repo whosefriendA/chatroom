@@ -8,6 +8,8 @@ void Sign_up(TaskSocket asocket,json command){
     User_count++;
     asocket.Sendmsg(u.UID);
     u.user_mem();
+    redisReply*reply=(redisReply*)redisCommand(redis.con,"HSET %s %s ","fd_uid表",u.UID);
+    freeReplyObject(reply);
     return ;
 }
 void Log_in(TaskSocket asocket,json command){

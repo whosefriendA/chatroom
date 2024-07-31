@@ -14,4 +14,56 @@ class Redis{
         redisFree(con);  
     }
     redisContext *con;
+
+    int Sadd(const string& key, const string& value) {
+        redisReply* reply = (redisReply*)redisCommand(this->con, "SADD %s %s", key.c_str(), value.c_str());
+        if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER && reply->integer == 1) {
+            freeReplyObject(reply);
+            return true;
+        }
+        if (reply) {
+            freeReplyObject(reply);
+        }
+        return false;
+    }
+
+    int Hset(const string& key, const string& field, const string& value) {
+        redisReply* reply = (redisReply*)redisCommand(this->con, "HSET %s %s %s", key.c_str(), field.c_str(), value.c_str());
+        if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER && reply->integer == 1) {
+            freeReplyObject(reply);
+            return true;
+        }
+        if (reply) {
+            freeReplyObject(reply);
+        }
+        return false;
+    }
+
+    string Hget(const string& key, const string& field) {
+        string value;
+        redisReply* reply = (redisReply*)redisCommand(this->con, "HGET %s %s", key.c_str(), field.c_str());
+        if (reply != nullptr && reply->type == REDIS_REPLY_STRING) {
+            value = reply->str;
+            freeReplyObject(reply);
+            return value;
+        }
+        if (reply) {
+            freeReplyObject(reply);
+        }
+        return "";
+    }
+
+     int Sismember(const string& key, const string& member) {
+        redisReply* reply = (redisReply*)redisCommand(this->con, "SISMEMBER %s %s", key.c_str(), member.c_str());
+        if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
+            bool exists = (reply->integer == 1);
+            freeReplyObject(reply);
+            return exists;
+        }
+        if (reply) {
+            freeReplyObject(reply);
+        }
+        return false;
+    }
+
 };

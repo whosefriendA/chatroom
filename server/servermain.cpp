@@ -81,18 +81,11 @@ private:
 int cfd;
 int main(int argc,char*argv[]){
     signal(SIGPIPE,SIG_IGN);
-    // redisReply* reply1=(redisReply*)redisCommand(redis.con,"SADD %s %s",online_users.c_str(),"temp_member");
-    // redisReply* reply2=(redisReply*)redisCommand(redis.con,"SREM %s %s",online_users.c_str(),"temp_member");
-    // //创建服务器套接字
-    if((server_fd=socket(AF_INET,SOCK_STREAM,0))==-1){
-        perror("sever_socket error");
-    };
-    //端口复用
-    int sopt=1;
-    setsockopt(server_fd,SOL_SOCKET,SO_REUSEADDR,&sopt,sizeof(sopt));
+    int lfd=0,cfd=0,epfd=0; 
+    char *buf;\
     //设置默认服务器地址
     server_addr.sin_family=AF_INET;
-    server_addr.sin_addr.s_addr=INADDR_ANY;
+    server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
     server_addr.sin_port=htons(SERVERPORT);
     //命令行参数设置服务器地址
     // int opt;
@@ -106,8 +99,16 @@ int main(int argc,char*argv[]){
     //     break;
     //     }
     // }
+    //创建服务器套接字
+    if((lfd=socket(AF_INET,SOCK_STREAM,0))==-1){
+        perror("sever_socket error");
+    };
+    //端口复用
+    int sopt=1;
+    setsockopt(lfd,SOL_SOCKET,SO_REUSEADDR,&sopt,sizeof(sopt));
+
     //绑定
-    if(bind(server_fd,(struct sockaddr*)&server_addr,sizeof(server_addr))==-1){
+    if(bind(lfd,(struct sockaddr*)&server_addr,sizeof(server_addr))==-1){
         perror("server_socket bind error");
         close(server_fd);
         exit(0);
@@ -117,7 +118,7 @@ int main(int argc,char*argv[]){
 // if (getnameinfo((struct sockaddr*)&server_addr, sizeof(server_addr), host, sizeof(host), service, sizeof(service), NI_NUMERICHOST) == 0) {
 //     std::cout << "Server IP address: " << host << std::endl;
 // }测试ip地址
-    if(listen(server_fd,150)==-1){
+    if(listen(lfd,150)==-1){
         perror("server_socket error");
         close(server_fd);
         exit(0);
@@ -127,20 +128,24 @@ int main(int argc,char*argv[]){
 
     int epfd=epoll_create1(0);
     event.events=EPOLLIN|EPOLLET;
-    event.data.fd=server_fd;
-    if(int ret=epoll_ctl(epfd,EPOLL_CTL_ADD,server_fd,&event)==-1){
+    event.data.fd=lfd;
+    int ret=epoll_ctl(epfd,EPOLL_CTL_ADD,server_fd,&event);
+    if(ret==-1){
         perror("epoll ctrl error");
         exit(0);
     }
     TaskScheduler scheduler(10); 
     while(true){
-        int count =epoll_wait(epfd,recvevent,1024,-1);
+        int count =epoll_wait(epfd,recvevent,size,-1);
         for(int i=0;i<count;i++){
-            if(recvevent[i].data.fd==server_fd){
-                cfd=accept(server_fd,(struct sockaddr *)&server_addr,&server_addr_len);
+            int nfd=recvevent[i].data.fd;
+            if(nfd==lfd){
+                cfd=accept(nfd,NULL,NULL);
+                
                 int flag=fcntl(cfd,F_GETFL);
                 flag|=O_NONBLOCK;
                 fcntl(cfd,F_SETFL,flag);
+                
                 event.data.fd=cfd;
                 if(epoll_ctl(epfd,EPOLL_CTL_ADD,cfd,&event)==-1){
                    perror("new event error");
@@ -148,31 +153,24 @@ int main(int argc,char*argv[]){
                 }
             }
             else {
-                int nfd=recvevent[i].data.fd;
-                
                 TaskSocket  asocket(nfd);
                 char *buf;
                 int ret=recvMsg(nfd,&buf);
-                if(ret<=0){
+             if(ret<=0){
                     cerr<<"error receiving data ."<<endl;
-                    // freeReplyObject(reply1);
-                    // freeReplyObject(reply2);
-                    redisReply *reply1=(redisReply*)redisCommand(redis.con,"HGET %s %s","fd_uid表",to_string(nfd));
-                    string UID=reply1->str;
-                    void *reply2=redisCommand(redis.con,"SADD %s %s",online_users.c_str(),UID);
-                    freeReplyObject(reply1);
-                    freeReplyObject(reply2);
-                    void* reply=redisCommand(redis.con,"HSET %s %s %s","UID","通知socket","-1");
-                    freeReplyObject(reply);
-                    reply=redisCommand(redis.con,"HSET %s %s %s","fd_uid表",to_string(recvevent[i].data.fd),"-1");
-                    freeReplyObject(reply);
+                    string uid =redis.Hget("fd-uid表",to_string(nfd)); // 获取客户端的用户ID
+                    // 添加到在线用户
+                    redis.Sadd("onlie_users",uid);
+                    redis.Hset(uid,"通知套接字","-1");
+                    redis.Hset("fd-uid表",to_string(nfd),"-1");
+                    close(nfd);
+                    continue;
                 }
                 buf[ret]='/0';
                 string comad_string=buf;
                 json data=json::parse(comad_string);
                     if(data.at("flag")==RECV){
-                    redisReply* reply=(redisReply*)redisCommand(redis.con,"HGET %s %s %s",data.at("UID"), "通知套接字", to_string(nfd));
-                    freeReplyObject(reply);
+                redis.Hset(data.at("UID"), "通知套接字", to_string(nfd));
                 }else if(data.at("flag")==SENDFILE||data.at("flag")==RECVFILE||data.at("flag")==SENDFILE_GROUP||data.at("flag")==RECVFILE_GROUP){
                     event.events = EPOLLIN|EPOLLET; // 不监听任何事件
                     event.data.fd = nfd;
@@ -190,10 +188,21 @@ int main(int argc,char*argv[]){
                         addEvent.data.fd = nfd;
                         epoll_ctl(epfd, EPOLL_CTL_ADD, nfd, &addEvent);
                     });
-
-                    // 等待线程执行完毕
+                    //分离文件传输线程
                     fileThread.detach();
-            }
+                    }
+                     else{
+                    // 创建任务并添加到线程池
+                    TaskSocket socket(nfd);
+                    std::string command_string = "example_command";
+                    // 使用 lambda 表达式创建带参数的 taskhandler
+                    auto bound_taskhandler = [socket, command_string]() {
+                    taskhandler(socket, command_string);
+                  };
+                    // 创建任务并添加到调度器
+                    Task task(bound_taskhandler);
+                    scheduler.addTask(task);
+                }
         }
     }
 }
