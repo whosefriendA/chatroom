@@ -26,7 +26,21 @@ class Redis{
         }
         return false;
     }
-
+    vector<string> Sget(const std::string& key) {
+    vector<string> members;
+    redisReply* reply = (redisReply*)redisCommand(this->con, "SMEMBERS %s", key.c_str());
+    if (reply != nullptr && reply->type == REDIS_REPLY_ARRAY) {
+        for (size_t i = 0; i < reply->elements; ++i) {
+            members.push_back(reply->element[i]->str);
+        }
+        freeReplyObject(reply);
+    } else {
+        if (reply) {
+            freeReplyObject(reply);
+        }
+    }
+    return members;
+    }
     int Hset(const string& key, const string& field, const string& value) {
         redisReply* reply = (redisReply*)redisCommand(this->con, "HSET %s %s %s", key.c_str(), field.c_str(), value.c_str());
         if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER && reply->integer == 1) {

@@ -1,15 +1,21 @@
 #include"server.hpp"
 void Sign_up(TaskSocket asocket,json command){
+
     string a=command.at("name");
     string b=command.at("pass");
     string c=command.at("question");
     string d=command.at("answer");
     User u(a,b,c,d);
+    cout<<u.UID<<u.Name<<u.Pass<<u.Question<<u.Answer<<endl;
     User_count++;
-    asocket.Sendmsg(u.UID);
+    cout<<User_count<<endl;
     u.user_mem();
-    redisReply*reply=(redisReply*)redisCommand(redis.con,"HSET %s %s ","fd_uid表",u.UID);
-    freeReplyObject(reply);
+    redis.Sadd("用户uid集合",u.UID);
+    redis.Hset(u.UID, "聊天对象", "无");
+    redis.Hset(u.UID + "的未读消息", "通知消息", "0");
+    redis.Hset(u.UID + "的未读消息", "好友申请", "0");
+    redis.Hset(u.UID + "的未读消息", "群聊消息", "0");
+    asocket.Sendmsg(u.UID);
     return ;
 }
 void Log_in(TaskSocket asocket,json command){

@@ -1,12 +1,11 @@
 #include"./client.hpp"
-TaskSocket asocket;
 sockaddr_in server_addr2;
+TaskSocket asocket;
 int main(int argc,char*argv[]){
     struct termios term;
     tcgetattr(0,&term);
     term.c_cc[VEOF]=0;
     tcsetattr(0,TCSANOW,&term);
-    
     server_addr2.sin_family=AF_INET;
     server_addr2.sin_port=htons(SERVERPORT);
     server_addr2.sin_addr.s_addr=htonl(INADDR_ANY);
@@ -21,12 +20,7 @@ int main(int argc,char*argv[]){
     //     break;
     //     }
     // }
-    int client_fd=socket(AF_INET,SOCK_STREAM,0);
-    if(client_fd==-1){
-        perror("client socket error");
-        exit(0);
-    }
-    TaskSocket asocket(client_fd);
+    int client_fd=asocket.tfd;
     if(connect(client_fd,(struct sockaddr *)&server_addr2,sizeof(server_addr2))==-1){
         perror("connect error");
         exit(0);

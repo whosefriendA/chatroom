@@ -74,7 +74,7 @@ string Recvmsg(){
     int len=0;
     int ret=Readmsg((char *)&len,4);
     if(ret==0){
-        return "close1";
+        return "close";
     }
     len=ntohl(len);
 
@@ -125,8 +125,6 @@ int Readmsg(char *buf,int size){
     return size-cnt;
 
 }
-
-private:
     int tfd=-1;
     int recv_fd=-1;
 };

@@ -10,6 +10,7 @@
 #include<unistd.h>
 #include<mutex>
 #include<string>
+#include<string.h>
 #include<csignal>
 #include<fcntl.h>
 #include<hiredis/hiredis.h>
@@ -20,6 +21,7 @@
 #include<condition_variable>
 #include<functional>
 #include<netdb.h>
+#include<atomic>
 #define FID 1001//始祖UID
 #define SERVERPORT 8080//默认端口号
 #define RECV -1

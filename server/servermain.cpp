@@ -3,86 +3,88 @@ Redis redis;
 string online_users;
 sockaddr_in server_addr;
 socklen_t server_addr_len=sizeof(server_addr);
-int server_fd=-1;
 int server_port=SERVERPORT;
 int User_count=0;
-//任务类
-class Task{
-    public:
-    Task(std::function<void()>func):func_(func){}
-    void operator()() {func_();}
-    private:
-    std::function<void()>func_;
-};
-//线程池类
-class ThreadPool{
-    public:
-    ThreadPool(int threadnum):stop_(false){
-    if(threadnum<1)
-    for(int i=0;i<threadnum;i++){
-        workers_.emplace_back([this] {
-                while (true) {
-                    std::function<void()> task;
-                    {
-                        std::unique_lock<std::mutex> lock(queue_mutex_);
-                        condition_.wait(lock, [this] { return stop_ || !tasks_.empty(); });
-                        if (stop_ && tasks_.empty())
-                            return;
-                        task = std::move(tasks_.front());
-                        tasks_.pop();
-                    }
-                    task();
-                }
-            });
+using namespace std;
+
+struct Task {
+    using callback = std::function<void()>;
+
+    Task() = default;
+    Task(callback f) : function(std::move(f)) {}
+
+    void execute() {
+        if (function) {
+            function();
         }
     }
-
-    template<class F>
-    void enqueue(F&& task) {
-        {
-            std::unique_lock<std::mutex> lock(queue_mutex_);
-            tasks_.emplace(std::forward<F>(task));
-        }
-        condition_.notify_one();
-    }
-
-    ~ThreadPool() {
-        {
-            std::unique_lock<std::mutex> lock(queue_mutex_);
-            stop_ = true;
-        }
-        condition_.notify_all();
-        for (std::thread &worker : workers_)
-            worker.join();
-    }
-
-    private:
-    std::queue<std::function<void()>> tasks_;
-    std::vector<std::thread> workers_;
-    std::condition_variable condition_;
-    std::mutex queue_mutex_;
-    bool stop_;
+    callback function;
 };
 
-//任务调度类
-class TaskScheduler {
+class ThreadPool {
 public:
-    TaskScheduler(size_t numThreads) : threadPool_(numThreads) {}
-    template<class F>
-        void addTask(F&& task) {
-            threadPool_.enqueue(Task(std::forward<F>(task)));
-        }
+    ThreadPool(size_t numThreads);
+    ~ThreadPool();
+
+    void addTask(const Task& task);
 
 private:
-    ThreadPool threadPool_;
+    void worker();
+
+    vector<thread> workers;
+    queue<Task> tasks;
+    mutex tasksMutex;
+    condition_variable condition;
+    atomic<bool> stop;
 };
 
+ThreadPool::ThreadPool(size_t numThreads) : stop(false) {
+    for (size_t i = 0; i < numThreads; ++i) {
+        workers.emplace_back(&ThreadPool::worker, this);
+    }
+}
+
+ThreadPool::~ThreadPool() {
+    stop = true;
+    condition.notify_all();
+    for (thread& worker : workers) {
+        if (worker.joinable()) {
+            worker.join();
+        }
+    }
+}
+
+void ThreadPool::addTask(const Task& task) {
+    {
+        unique_lock<mutex> lock(tasksMutex);
+        tasks.push(task);
+    }
+    condition.notify_one();
+}
+
+void ThreadPool::worker() {
+    while (true) {
+        Task task;
+        {
+            unique_lock<mutex> lock(tasksMutex);
+            condition.wait(lock, [this] {
+                return stop || !tasks.empty();
+            });
+            if (stop && tasks.empty()) {
+                return;
+            }
+            task = tasks.front();
+            tasks.pop();
+        }
+        task.execute();
+    }
+}
 
 int cfd;
 int main(int argc,char*argv[]){
     signal(SIGPIPE,SIG_IGN);
-    int lfd=0,cfd=0,epfd=0; 
-    char *buf;\
+    int lfd=0,cfd=0;
+    char *buf;
     //设置默认服务器地址
     server_addr.sin_family=AF_INET;
     server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
@@ -110,42 +112,53 @@ int main(int argc,char*argv[]){
     //绑定
     if(bind(lfd,(struct sockaddr*)&server_addr,sizeof(server_addr))==-1){
         perror("server_socket bind error");
-        close(server_fd);
+        close(lfd);
         exit(0);
     }
     char host[1024];
-// char service[20];
-// if (getnameinfo((struct sockaddr*)&server_addr, sizeof(server_addr), host, sizeof(host), service, sizeof(service), NI_NUMERICHOST) == 0) {
-//     std::cout << "Server IP address: " << host << std::endl;
-// }测试ip地址
+    // char service[20];
+    // if (getnameinfo((struct sockaddr*)&server_addr, sizeof(server_addr), host, sizeof(host), service, sizeof(service), NI_NUMERICHOST) == 0) {
+    //     std::cout << "Server IP address: " << host << std::endl;
+    // }测试ip地址
     if(listen(lfd,150)==-1){
         perror("server_socket error");
-        close(server_fd);
+        close(lfd);
         exit(0);
     }
     struct epoll_event event,recvevent[1024];
     int size=sizeof(recvevent)/sizeof(struct epoll_event);
 
     int epfd=epoll_create1(0);
+    if(epfd==-1){
+        perror("epoll create error");
+        exit(0);
+    }
     event.events=EPOLLIN|EPOLLET;
     event.data.fd=lfd;
-    int ret=epoll_ctl(epfd,EPOLL_CTL_ADD,server_fd,&event);
+    int ret=epoll_ctl(epfd,EPOLL_CTL_ADD,lfd,&event);
     if(ret==-1){
         perror("epoll ctrl error");
         exit(0);
     }
-    TaskScheduler scheduler(10); 
+    ThreadPool pool(10);
+    vector<string> members=redis.Sget("用户uid列表");
+    for(const string&member :members){
+        cout<<member<<endl;
+    }
     while(true){
         int count =epoll_wait(epfd,recvevent,size,-1);
         for(int i=0;i<count;i++){
+            //cout<<count<<endl;
             int nfd=recvevent[i].data.fd;
             if(nfd==lfd){
+                //cout<<"nfd=lfd"<<endl;
                 cfd=accept(nfd,NULL,NULL);
                 
                 int flag=fcntl(cfd,F_GETFL);
                 flag|=O_NONBLOCK;
                 fcntl(cfd,F_SETFL,flag);
-                
+
+                event.events = EPOLLIN | EPOLLET; 
                 event.data.fd=cfd;
                 if(epoll_ctl(epfd,EPOLL_CTL_ADD,cfd,&event)==-1){
                    perror("new event error");
@@ -153,10 +166,11 @@ int main(int argc,char*argv[]){
                 }
             }
             else {
-                TaskSocket  asocket(nfd);
+                TaskSocket asocket(nfd);
                 char *buf;
                 int ret=recvMsg(nfd,&buf);
-             if(ret<=0){
+                //cout<<ret<<endl;
+                if(ret<=0){
                     cerr<<"error receiving data ."<<endl;
                     string uid =redis.Hget("fd-uid表",to_string(nfd)); // 获取客户端的用户ID
                     // 添加到在线用户
@@ -166,10 +180,10 @@ int main(int argc,char*argv[]){
                     close(nfd);
                     continue;
                 }
-                buf[ret]='/0';
+                cout<<buf<<endl;
                 string comad_string=buf;
                 json data=json::parse(comad_string);
-                    if(data.at("flag")==RECV){
+                if(data.at("flag")==RECV){
                 redis.Hset(data.at("UID"), "通知套接字", to_string(nfd));
                 }else if(data.at("flag")==SENDFILE||data.at("flag")==RECVFILE||data.at("flag")==SENDFILE_GROUP||data.at("flag")==RECVFILE_GROUP){
                     event.events = EPOLLIN|EPOLLET; // 不监听任何事件
@@ -191,20 +205,16 @@ int main(int argc,char*argv[]){
                     //分离文件传输线程
                     fileThread.detach();
                     }
-                     else{
-                    // 创建任务并添加到线程池
+                    else{
+                        cout<<"will create task to thread"<<endl;
                     TaskSocket socket(nfd);
-                    std::string command_string = "example_command";
-                    // 使用 lambda 表达式创建带参数的 taskhandler
-                    auto bound_taskhandler = [socket, command_string]() {
-                    taskhandler(socket, command_string);
-                  };
-                    // 创建任务并添加到调度器
-                    Task task(bound_taskhandler);
-                    scheduler.addTask(task);
-                }
+                    // 使用 lambda 表达式创建带参数的 taskhandler并添加到调度器
+                    Task task([socket, comad_string](){ 
+                    taskhandler(socket, comad_string);});
+                    pool.addTask(task);
         }
     }
+}
 }
 }
 ssize_t Read (int fd,void *vptr,size_t n)
@@ -243,6 +253,7 @@ void taskhandler(TaskSocket asocket, const std::string& comad_string)
     json command =json::parse(comad_string);
     switch((int)command.at("flag")){
         case SIGNUP:
+            cout<<"sign up start"<<endl;
             Sign_up(asocket,command);
             break;
         case LOGIN:
@@ -267,32 +278,32 @@ int recvMsg(int cfd,char** msg)//接受带数据头的数据包
     int len=0;
     Readn(cfd,(char *)&len,4);
     len=ntohl(len);
-   // printf("数据块大小为%d\n",len);
+    printf("数据块大小为%d\n",len);
 
     char *buf=(char *)malloc(len+1);//留出存储'\0'的位置
     int ret=Readn(cfd,buf,len);
-    /*if(ret!=len)
+    if(ret!=len)
     {
         printf("数据接收失败\n");
     }else if(ret==0){
         printf("对方断开连接\n");
         close(cfd);
-    }*/
+    }
 
     buf[len]='\0';
     *msg=buf;
 
-    return ret;//返回接收的字节数
+    return ret;
 }
 
 ssize_t Readn(int fd,void *vptr,size_t n)
 {
-    size_t nleft;//usigned int剩余未读取的字节数
-    ssize_t nread;//int实际读到的字节数
+    size_t nleft;
+    ssize_t nread;
     char *ptr;
 
     ptr=(char *)vptr;
-    nleft=n;//n是未读取的字节数
+    nleft=n;
 
     while(nleft>0)
     {
