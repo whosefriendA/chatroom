@@ -40,7 +40,7 @@ void User_menu(){
     else if(stoi(a)==2)
 ;
     else if(stoi(a)==3)
-    User_remove();
+;
     else if(stoi(a)==4)
     exit(0);
     else{
@@ -51,11 +51,31 @@ void User_menu(){
 
 }
 void Friend_menu(){
+    string a;
+    while(1){
     cout<<"------------好友界面------------"<<endl;
     cout<<"--------[1]查看好友列表--------"<<endl;
     cout<<"---------[2]添加好友----------"<<endl;
     cout<<"---------[3]删除好友----------"<<endl;
     cout<<"---------[4]好友申请----------"<<endl;
     cout<<"--------[5]屏蔽好友消息--------"<<endl;
-    cout<<"--------[6]";
+    cout<<"-----------[6]退出-----------"<<endl;
+    getline(cin,a);
+    if(stoi(a)==1)
+    friend_list_get();
+    else if(stoi(a)==2)
+    freind_add();
+    else if(stoi(a)==3)
+    friend_del();
+    else if(stoi(a)==4)
+    friend_apply();
+    else if(stoi(a)==5)
+;
+    else if(stoi(a)==6)
+    exit(0);
+    else{
+    cout<<"请输入正确的选项";
+    continue;
+    }
+    }
 }

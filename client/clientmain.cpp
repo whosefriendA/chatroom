@@ -2,10 +2,6 @@
 sockaddr_in server_addr2;
 TaskSocket asocket;
 int main(int argc,char*argv[]){
-    struct termios term;
-    tcgetattr(0,&term);
-    term.c_cc[VEOF]=0;
-    tcsetattr(0,TCSANOW,&term);
     server_addr2.sin_family=AF_INET;
     server_addr2.sin_port=htons(SERVERPORT);
     server_addr2.sin_addr.s_addr=htonl(INADDR_ANY);
@@ -25,6 +21,13 @@ int main(int argc,char*argv[]){
         perror("connect error");
         exit(0);
     }
+    struct termios term;
+    tcgetattr(0, &term); // 获取终端属性
+    term.c_cc[VEOF] = 0; // 禁用 EOF 键
+    tcsetattr(0,TCSANOW, &term); // 设置新的终端属性
+    signal(SIGINT,SIG_IGN);//忽略ctrl+c信号
+    signal(SIGQUIT,SIG_IGN);//忽略ctrl+\信号
+    signal(SIGTSTP, SIG_IGN);//忽略ctrl+z信号
     int ret=Main_menu();
     if(ret==1){
         User_menu();

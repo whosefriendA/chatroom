@@ -1,5 +1,6 @@
 #include"../TaskSocket.hpp"
 #include"../Redis.hpp"
+#include<signal.h>
 #include<iostream>
 #include<chrono>
 #include<fcntl.h>
@@ -7,6 +8,7 @@
 #include<unistd.h>
 #include<termios.h>
 #include<arpa/inet.h>
+#include<netinet/in.h>
 #include<unistd.h>
 #include<nlohmann/json.hpp>
 #include<hiredis/hiredis.h>
@@ -31,16 +33,18 @@
 #define PASSWORD_GET 17
 using namespace std;
 using json=nlohmann::json;
-extern int client_fd;
 extern TaskSocket asocket;
 extern sockaddr_in server_addr2;
 
-void pass_find();
-void sign_up();
-int log_in();
-void User_remove();
-void* notify_receive(void* arg);
-string get_uid();
 int Main_menu();
 void User_menu();
 void Friend_menu();
+void pass_find();
+void sign_up();
+int log_in();
+void* notify_receive(void* arg);
+string get_uid();
+void friend_list_get();
+void freind_add();
+void friend_del();
+void friend_apply();

@@ -19,7 +19,7 @@ void User::user_mem(){
 }
 //好友相关
 void User::friend_add(string friend_id){
-
+     
 }
 void User::friend_delete(string friend_id){
 

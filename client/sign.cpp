@@ -35,8 +35,7 @@ void sign_up(){
     string command=data.dump();
     cout<<command<<endl;
     int ret=asocket.Sendmsg(command);
-    if(ret==0||ret==-1)
-    {
+    if(ret==0||ret==-1){
         cout<<"服务器已关闭"<<endl;
         exit(0);
     }
@@ -130,7 +129,8 @@ int log_in(){
 
     cout<<"请输入您的密码:"<<endl;
     getline(cin,pass);
-        json data;
+    json data;
+    data["UID"]=uid;
     data["option"]=pass;
     data["flag"]=LOGIN;
     string command=data.dump();
