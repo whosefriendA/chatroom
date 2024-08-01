@@ -35,10 +35,7 @@ void sign_up(){
     string command=data.dump();
     cout<<command<<endl;
     int ret=asocket.Sendmsg(command);
-    if(ret==0||ret==-1){
-        cout<<"服务器已关闭"<<endl;
-        exit(0);
-    }
+    err.server_close(ret);
 
     string uid=asocket.Recvmsg();//收到生成的uid
     if(uid=="close"){
@@ -136,16 +133,11 @@ int log_in(){
     string command=data.dump();
     
     int ret=asocket.Sendmsg(command);
-    if(ret==0||ret==-1){
-        cout<<"服务器已关闭"<<endl;
-        exit(0);
-    }
+    err.server_close(ret);
     string recv=asocket.Recvmsg();//接收返回的结果
     cout<<recv<<endl;
-    if(recv=="close"){
-        cout<<"服务器已关闭"<<endl;
-        exit(0);
-    }else if(recv=="notcorrect"){
+    err.server_close(recv);
+    if(recv=="notcorrect"){
         cout<<"密码错误："<<endl;
         return 0;
     }else if(recv=="havevnotsignup"){
@@ -179,33 +171,20 @@ void pass_find()
     data["flag"]=QUESTION_GET;
     string command=data.dump();
     int ret=asocket.Sendmsg(command);
-    if(ret==0||ret==-1)
-    {
-        cout<<"服务器已关闭"<<endl;
-        exit(0);
-    }
+    err.server_close(ret);
     string recv=asocket.Recvmsg();
-    if(recv=="close"){
-        cout<<"服务器已关闭"<<endl;
-        exit(0);
-    }
+    err.server_close(recv);
     cout<<recv<<endl;
     getline(cin,answer);
     data["UID"]=uid;
     data["flag"]=PASSWORD_FIND;
     command=data.dump();
     ret=asocket.Sendmsg(command);
-    if(ret==0||ret==-1){
-        cout<<"服务器已关闭"<<endl;
-        exit(0);
-    }
+    err.server_close(ret);
 
     recv=asocket.Recvmsg();//接收返回的结果
-    if(recv=="close"){
-        cout<<"服务器已关闭"<<endl;
-        exit(0);
-       
-    }else if(recv!=answer){
+    err.server_close(recv);
+    if(recv!=answer){
         cout<<"答案不正确,无法找回"<<endl;
         return ;
     }else if(recv==answer)
@@ -214,10 +193,7 @@ void pass_find()
     data["flag"]=PASSWORD_GET;
     command=data.dump();
     ret=asocket.Sendmsg(command);
-    if(ret==0||ret==-1){
-        cout<<"服务器已关闭"<<endl;
-        exit(0);
-    }
+    err.server_close(ret);
 
     recv=asocket.Recvmsg();
     cout<<"您的密码是："<<recv<<"请牢记您的密码"<<endl;

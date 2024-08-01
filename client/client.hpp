@@ -1,5 +1,6 @@
 #include"../TaskSocket.hpp"
 #include"../Redis.hpp"
+#include"../Error.hpp"
 #include<signal.h>
 #include<iostream>
 #include<chrono>
@@ -17,7 +18,7 @@
 #define SIGNUP 1
 #define LOGIN 2
 #define LOGOUT 3
-#define FRIENDLIST 4
+#define FRIEND_LIST 4
 #define ADD_FRIEND 5
 #define DELETE_FRIEND 6
 #define AGREE_ADDFRIEND 7
@@ -35,7 +36,7 @@ using namespace std;
 using json=nlohmann::json;
 extern TaskSocket asocket;
 extern sockaddr_in server_addr2;
-
+extern Error err;
 int Main_menu();
 void User_menu();
 void Friend_menu();

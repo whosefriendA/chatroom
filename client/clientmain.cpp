@@ -1,6 +1,7 @@
 #include"./client.hpp"
 sockaddr_in server_addr2;
 TaskSocket asocket;
+Error err;
 int main(int argc,char*argv[]){
     server_addr2.sin_family=AF_INET;
     server_addr2.sin_port=htons(SERVERPORT);
@@ -16,8 +17,7 @@ int main(int argc,char*argv[]){
     //     break;
     //     }
     // }
-    int client_fd=asocket.tfd;
-    if(connect(client_fd,(struct sockaddr *)&server_addr2,sizeof(server_addr2))==-1){
+    if(connect(asocket.getfd(),(struct sockaddr *)&server_addr2,sizeof(server_addr2))==-1){
         perror("connect error");
         exit(0);
     }
