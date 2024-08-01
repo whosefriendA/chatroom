@@ -1,5 +1,5 @@
 #include"./client.hpp"
-int Main_Menu(){
+int Main_menu(){
     while(1){
     string a;
     int ret=0;
@@ -28,16 +28,15 @@ int Main_Menu(){
 }
 void User_menu(){
     string a;
-    int ret=0;
     while(1){
-    cout<<"-------欢迎来到聊天室-------"<<endl;
+    cout<<"---------个人空间---------"<<endl;
     cout<<"---------[1]好友---------"<<endl;
     cout<<"---------[2]群聊---------"<<endl;
-    cout<<"--------[3]注销-------"<<endl;
-    cout<<"---------[4]推出---------"<<endl;
+    cout<<"---------[3]注销---------"<<endl;
+    cout<<"---------[4]退出---------"<<endl;
     getline(cin,a);
     if(stoi(a)==1)
-;
+    Friend_menu();  
     else if(stoi(a)==2)
 ;
     else if(stoi(a)==3)
@@ -50,4 +49,13 @@ void User_menu(){
     }
     }
 
+}
+void Friend_menu(){
+    cout<<"------------好友界面------------"<<endl;
+    cout<<"--------[1]查看好友列表--------"<<endl;
+    cout<<"---------[2]添加好友----------"<<endl;
+    cout<<"---------[3]删除好友----------"<<endl;
+    cout<<"---------[4]好友申请----------"<<endl;
+    cout<<"--------[5]屏蔽好友消息--------"<<endl;
+    cout<<"--------[6]";
 }

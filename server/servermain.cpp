@@ -197,7 +197,7 @@ int main(int argc,char*argv[]){
                         int flag = fcntl(nfd, F_GETFL);
                         flag |= O_NONBLOCK;
                         fcntl(nfd, F_SETFL, flag);
-                        taskhandler(asocket,comad_string);
+                        transferfunc(asocket,comad_string);
                         // 文件传输操作完成后，重新加入 epoll 
                         struct epoll_event addEvent;
                         addEvent.events = EPOLLIN | EPOLLET;
@@ -212,7 +212,7 @@ int main(int argc,char*argv[]){
                     TaskSocket socket(nfd);
                     // 使用 lambda 表达式创建带参数的 taskhandler并添加到调度器
                     Task task([socket, comad_string](){ 
-                    taskhandler(socket, comad_string);});
+                    transferfunc(socket, comad_string);});
                     pool.addTask(task);
         }
     }
@@ -250,7 +250,7 @@ ssize_t Read (int fd,void *vptr,size_t n)
     return n-nleft;
 }
 
-void taskhandler(TaskSocket asocket, const std::string& comad_string)
+void transferfunc(TaskSocket asocket, const std::string& comad_string)
 {
     json command =json::parse(comad_string);
     switch((int)command.at("flag")){
@@ -278,12 +278,12 @@ int recvMsg(int cfd,char** msg)//接受带数据头的数据包
 {
     //接收数据头
     int len=0;
-    Readn(cfd,(char *)&len,4);
+    Read(cfd,(char *)&len,4);
     len=ntohl(len);
     printf("数据块大小为%d\n",len);
 
     char *buf=(char *)malloc(len+1);//留出存储'\0'的位置
-    int ret=Readn(cfd,buf,len);
+    int ret=Read(cfd,buf,len);
     if(ret!=len)
     {
         printf("数据接收失败\n");
@@ -298,33 +298,3 @@ int recvMsg(int cfd,char** msg)//接受带数据头的数据包
     return ret;
 }
 
-ssize_t Readn(int fd,void *vptr,size_t n)
-{
-    size_t nleft;
-    ssize_t nread;
-    char *ptr;
-
-    ptr=(char *)vptr;
-    nleft=n;
-
-    while(nleft>0)
-    {
-        if((nread=read(fd,ptr,nleft))<0)
-        {
-            if(errno==EINTR||EWOULDBLOCK)
-            {
-                nread=0;
-            }else{
-                return -1;
-            }
-        }else if(nread==0)
-        {
-            break;
-        }
-
-        nleft-=nread;
-        ptr+=nread;
-    }
-
-    return n-nleft;
-}

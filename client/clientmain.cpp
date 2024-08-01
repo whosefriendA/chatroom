@@ -25,7 +25,7 @@ int main(int argc,char*argv[]){
         perror("connect error");
         exit(0);
     }
-    int ret=Main_Menu();
+    int ret=Main_menu();
     if(ret==1){
         User_menu();
     }

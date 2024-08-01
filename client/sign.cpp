@@ -90,7 +90,7 @@ string get_uid()
     return uid;
     
 }
-void* receivemod(void* arg) {
+void* notify_receive(void* arg) {
     struct ThreadParams {
         std::string uid;
         int recv_fd;
@@ -162,10 +162,8 @@ int log_in(){
     };
     ThreadParams* params = new ThreadParams{uid, asocket.getresvfd()};
 
-    // 创建线程
-    pthread_create(&tid, NULL, &receivemod, static_cast<void*>(params));
-    
-    // 分离线程
+    // 处理通知的线程
+    pthread_create(&tid, NULL, &notify_receive, static_cast<void*>(params));
     pthread_detach(tid);
         return 1;
     }
