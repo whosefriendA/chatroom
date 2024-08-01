@@ -100,7 +100,7 @@ class Redis{
     }
     return false; 
     }
-    bool keyremove(const string& key) {
+    int keyremove(const string& key) {
         redisReply* reply = (redisReply*)redisCommand(this->con, "DEL %s", key.c_str());
         if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
             bool success = (reply->integer > 0); 
