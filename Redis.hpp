@@ -1,6 +1,7 @@
 #include<iostream>
 #include<hiredis/hiredis.h>
 #include<errno.h>
+#include<string>
 #include<stdexcept>
 class Redis{
     public:
