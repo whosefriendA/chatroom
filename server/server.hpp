@@ -28,7 +28,7 @@
 #define SIGNUP 1
 #define LOGIN 2
 #define LOGOUT 3
-#define FRIENDLIST 4
+#define FRIEND_LIST 4
 #define ADD_FRIEND 5
 #define DELETE_FRIEND 6
 #define AGREE_ADDFRIEND 7
@@ -60,8 +60,13 @@ void pass_find(TaskSocket,json);
 void question_get(TaskSocket,json);
 void pass_get(TaskSocket,json);
 void User_remove(TaskSocket, json);
-int recvMsg(int cfd,char** msg);
-ssize_t Readn(int fd,void *vptr,size_t n);
+int recvMsg(int,char**);
+void friend_list_get(TaskSocket,json);
+void freind_add(TaskSocket,json);
+void friend_del(TaskSocket,json);
+void friend_apply_agree(TaskSocket,json);
+void friend_apply_refuse(TaskSocket,json);
+ssize_t Read (int,void *,size_t);
 class User{
     public:
     User(string name,string pass,string question,string answer,string UID);

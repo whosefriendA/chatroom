@@ -26,6 +26,7 @@ void Log_in(TaskSocket asocket,json command){
     if(!a){//帐号不存在
         asocket.Sendmsg("havenotsignup");
     }else{
+        //string pwd=redis.Hget("users",command.at("UID"));
     string pwd=redis.Sget(command.at("UID"),"pass");
     if(pwd!=command.at("option")[0]){
         asocket.Sendmsg("notcorrect");

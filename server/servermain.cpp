@@ -250,7 +250,7 @@ ssize_t Read (int fd,void *vptr,size_t n)
     return n-nleft;
 }
 
-void transferfunc(TaskSocket asocket, const std::string& comad_string)
+void transferfunc(TaskSocket asocket, const string& comad_string)
 {
     json command =json::parse(comad_string);
     switch((int)command.at("flag")){
@@ -268,8 +268,24 @@ void transferfunc(TaskSocket asocket, const std::string& comad_string)
             pass_find(asocket,command);
             break;
         case PASSWORD_GET:
-            pass_get(asocket,command);\
+            pass_get(asocket,command);
             break;
+        case FRIEND_LIST:
+            friend_list_get(asocket, command);
+            break;
+        case ADD_FRIEND:
+            freind_add(asocket, command);
+            break;
+        case DELETE_FRIEND:
+            friend_del(asocket, command);
+            break;
+        case AGREE_ADDFRIEND:
+            friend_apply_agree(asocket, command);
+            break;
+        case REFUSE_ADDFRIEND:
+            friend_apply_refuse(asocket, command);
+            break;
+
     }
 
     return;
