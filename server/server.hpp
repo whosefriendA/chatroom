@@ -85,6 +85,6 @@ class User{
     
 };
 ssize_t Read (int fd,void *vptr,size_t n);
-void taskhandler(TaskSocket asocket, const std::string& comad_string);
+void transferfunc(TaskSocket asocket, const std::string& comad_string);
 
 #endif

@@ -22,6 +22,7 @@ void Sign_up(TaskSocket asocket,json command){
 }
 void Log_in(TaskSocket asocket,json command){
     int a=redis.Sismember("用户uid集合",command.at("UID"));
+    cout<<a<<endl;
     if(!a){//帐号不存在
         asocket.Sendmsg("havenotsignup");
     }else{
