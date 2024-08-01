@@ -285,6 +285,14 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
         case REFUSE_ADDFRIEND:
             friend_apply_refuse(asocket, command);
             break;
+        case BLOCK_FRIEND:
+            break;
+        case RESTORE_FRIEND:
+            break;
+        case SENDFILE:
+            break;
+        case RECVFILE:
+            break;
 
     }
 
