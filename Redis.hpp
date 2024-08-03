@@ -158,6 +158,23 @@ class Redis{
         }
         return 0;
     }
+    bool HValueremove(const string& key,const string& field) {
+    redisReply* reply = (redisReply*)redisCommand(this->con, "HDEL %s %s", key.c_str(), field.c_str());
+    if (reply != nullptr&&reply->type==REDIS_REPLY_INTEGER) {
+        bool success = (reply->integer > 0);
+        return success;
+    }
+    return false;
+    }
+    bool Rpushvalue(const string& key, const string& value) {
+    redisReply* reply = (redisReply*)redisCommand(this->con, "RPUSH %s %s", key.c_str(), value.c_str());
+    if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
+        bool success = (reply->integer >= 0);
+        freeReplyObject(reply);
+        return success;
+    }
+    return false;
+}
 
     private:
     redisContext *con;

@@ -57,11 +57,57 @@ void friend_add(TaskSocket asocket, json command){
     asocket.Sendmsg("success");
 }
 void friend_del(TaskSocket asocket, json command){
-    
+    if (!redis.hexists(command.at("UID") + "的好友列表", command.at("option"))){
+        asocket.Sendmsg("none"); // 不存在该好友
+        return;
+    }
+    else if (redis.HValueremove(command.at("UID") + "的好友列表", command.at("option"))){
+        redis.HValueremove(command.at("option") + "的好友列表", command.at("UID"));
+        asocket.Sendmsg("success"); // 成功删除
+        return;
+    }
 }
 void friend_apply_agree(TaskSocket asocket, json command){
+    {
+    string uid=command.at("UID");
+    string option=command.at("option");
+    // 查看通知消息里有没有他的申请
+    if (!redis.hexists(uid + "收到的好友申请", option))
+    {
+        asocket.Sendmsg("nofind");
+        return;
+    }
+    // 没有上述情况正常同意
+    if (redis.HValueremove(uid + "收到的好友申请", option))
+    {
+        string nownum = redis.Hget(uid + "的未读消息", "好友申请");
+        redis.Hset(uid + "的未读消息", "好友申请", (to_string(stoi(nownum) - 1)));
+        // 完善同意者信息
+        // string nickname=redis.gethash(command.m_option[0],"昵称");
+        // cout<<nickname<<endl;
+        redis.Hset(uid + "的好友列表", option, "hello");
+        redis.Rpushvalue(uid + "和" + option + "的聊天记录", "-------------------");
+        // 完善申请者信息
+        // command.m_nickname不可以正确输出
+        redis.Hset(option + "的好友列表", uid, "hello");
+        redis.Rpushvalue(option + "和" + uid + "的聊天记录", "-------------------");
+        redis.Rpushvalue(option+ "的通知消息", uid + "通过了您的好友申请");
+        // 申请者未读消息中的通知消息数量+1
+        string num1 = redis.Hget(option + "的未读消息", "通知消息");
+        redis.Hset(option+ "的未读消息", "通知消息", to_string(stoi(num1) + 1));
+        // 给好友发送实时通知
+        if (redis.Sismember(online_users,option))
+        {
+            string friend_fd = redis.Hget(option, "通知套接字");
+            TaskSocket friendsocket(stoi(friend_fd));
+            friendsocket.Sendmsg(RED + uid + "通过了您的好友申请" + RESET);
+        }
+        asocket.Sendmsg("success");
+        return;
+    }
+}
 
 }
 void friend_apply_refuse(TaskSocket asocket,json command){
-
+    
 }
