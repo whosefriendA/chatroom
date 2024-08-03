@@ -48,6 +48,7 @@
 #define YELLOW "\033[33m"
 #define RESET "\033[0m"
 extern Redis redis;
+extern Method method;
 extern string online_users;
 extern sockaddr_in server_addr;
 extern socklen_t server_addr_len;
@@ -65,13 +66,11 @@ void pass_find(TaskSocket,json);
 void question_get(TaskSocket,json);
 void pass_get(TaskSocket,json);
 void User_remove(TaskSocket, json);
-int recvMsg(int,char**);
 void friend_list_get(TaskSocket,json);
 void freind_add(TaskSocket,json);
 void friend_del(TaskSocket,json);
 void friend_apply_agree(TaskSocket,json);
 void friend_apply_refuse(TaskSocket,json);
-ssize_t Read (int,void *,size_t);
 class User{
     public:
     User(string name,string pass,string question,string answer,string UID);
@@ -93,7 +92,6 @@ class User{
     private:
     mutex user_mutex;
 };
-ssize_t Read (int fd,void *vptr,size_t n);
 void transferfunc(TaskSocket asocket, const std::string& comad_string);
 
 #endif
