@@ -99,7 +99,6 @@ void friend_apply_agree(TaskSocket asocket, json command){
         return;
     }
 }
-
 }
 void friend_apply_refuse(TaskSocket asocket,json command){
     

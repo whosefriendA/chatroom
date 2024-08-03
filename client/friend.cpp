@@ -64,14 +64,12 @@ void friend_del(){
 
     string recv = asocket.Recvmsg();
     err.server_close(recv);
-    if (recv == "success")
-    {
+    if (recv == "success"){
         system("clear");
         cout << "您已成功删除该好友" << endl;
         return ;
     }
-    else if (recv == "none")
-    {
+    else if (recv == "none"){
         //system("clear");
         cout << "未找到该好友" << endl;
         return ;
