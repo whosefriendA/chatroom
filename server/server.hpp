@@ -3,6 +3,7 @@
 #include"../TaskSocket.hpp"
 #include"../Redis.hpp"
 #include"../Threadmanage.hpp"
+#include"../Method.hpp"
 #include<hiredis/hiredis.h>
 #include<nlohmann/json.hpp>
 #include<arpa/inet.h>
