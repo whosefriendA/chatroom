@@ -2,6 +2,7 @@
 #define _SEVER_H_
 #include"../TaskSocket.hpp"
 #include"../Redis.hpp"
+#include"../Threadmanage.hpp"
 #include<hiredis/hiredis.h>
 #include<nlohmann/json.hpp>
 #include<arpa/inet.h>
@@ -42,6 +43,9 @@
 #define QUESTION_GET 15
 #define PASSWORD_FIND 16
 #define PASSWORD_GET 17
+#define RED "\033[31m"
+#define YELLOW "\033[33m"
+#define RESET "\033[0m"
 extern Redis redis;
 extern string online_users;
 extern sockaddr_in server_addr;
@@ -87,7 +91,6 @@ class User{
     void group_recover(string group_id);
     private:
     mutex user_mutex;
-    
 };
 ssize_t Read (int fd,void *vptr,size_t n);
 void transferfunc(TaskSocket asocket, const std::string& comad_string);
