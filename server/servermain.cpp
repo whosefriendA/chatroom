@@ -148,39 +148,38 @@ int main(int argc,char*argv[]){
 }
 }
 void transferfunc(TaskSocket asocket, const string& comad_string)
-{
-    json command =json::parse(comad_string);
-    switch((int)command.at("flag")){
+{   Message msg;
+    msg.Json_to_s(comad_string);
+    switch((int)msg.flag){
         case SIGNUP:
-            cout<<"sign up start"<<endl;
-            Sign_up(asocket,command);
+            Sign_up(asocket,msg);
             break;
         case LOGIN:
-            Log_in(asocket, command);
+            Log_in(asocket, msg);
             break;
         case QUESTION_GET:
-            question_get(asocket,command);
+            question_get(asocket,msg);
             break;
         case PASSWORD_FIND:
-            pass_find(asocket,command);
+            pass_find(asocket,msg);
             break;
         case PASSWORD_GET:
-            pass_get(asocket,command);
+            pass_get(asocket,msg);
             break;
         case FRIEND_LIST:
-            friend_list_get(asocket, command);
+            friend_list_get(asocket, msg);
             break;
         case ADD_FRIEND:
-            freind_add(asocket, command);
+            freind_add(asocket, msg);
             break;
         case DELETE_FRIEND:
-            friend_del(asocket, command);
+            friend_del(asocket, msg);
             break;
         case AGREE_ADDFRIEND:
-            friend_apply_agree(asocket, command);
+            friend_apply_agree(asocket, msg);
             break;
         case REFUSE_ADDFRIEND:
-            friend_apply_refuse(asocket, command);
+            friend_apply_refuse(asocket, msg);
             break;
         case BLOCK_FRIEND:
             break;

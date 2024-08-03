@@ -123,7 +123,7 @@ void* notify_receive(void* arg) {
 int log_in(){
     string uid,pass;
     uid=get_uid();
-
+    curuid=stoi(uid);
     cout<<"请输入您的密码:"<<endl;
     getline(cin,pass);
     json data;

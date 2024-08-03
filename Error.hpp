@@ -2,8 +2,8 @@
 using namespace std;
 class Error{
     public:
-    Error(){};
-    ~Error(){};
+    Error()=default;
+    ~Error()=default;
     void server_close(int ret){
         if(ret==0||ret==-1){
         cout<<"服务器已关闭"<<endl;

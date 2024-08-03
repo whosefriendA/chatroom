@@ -4,6 +4,7 @@
 #include"../Redis.hpp"
 #include"../Threadmanage.hpp"
 #include"../Method.hpp"
+#include"../Message.hpp"
 #include<hiredis/hiredis.h>
 #include<nlohmann/json.hpp>
 #include<arpa/inet.h>
@@ -60,17 +61,17 @@ using std::string;
 using std::mutex;
 using json=nlohmann::json;
 
-void Sign_up(TaskSocket,json);
-void Log_in(TaskSocket,json);
-void pass_find(TaskSocket,json);
-void question_get(TaskSocket,json);
-void pass_get(TaskSocket,json);
-void User_remove(TaskSocket, json);
-void friend_list_get(TaskSocket,json);
-void freind_add(TaskSocket,json);
-void friend_del(TaskSocket,json);
-void friend_apply_agree(TaskSocket,json);
-void friend_apply_refuse(TaskSocket,json);
+void Sign_up(TaskSocket,Message);
+void Log_in(TaskSocket,Message);
+void pass_find(TaskSocket,Message);
+void question_get(TaskSocket,Message);
+void pass_get(TaskSocket,Message);
+void User_remove(TaskSocket, Message);
+void friend_list_get(TaskSocket,Message);
+void freind_add(TaskSocket,Message);
+void friend_del(TaskSocket,Message);
+void friend_apply_agree(TaskSocket,Message);
+void friend_apply_refuse(TaskSocket,Message);
 class User{
     public:
     User(string name,string pass,string question,string answer,string UID);

@@ -1,6 +1,7 @@
 #include"../TaskSocket.hpp"
 #include"../Redis.hpp"
 #include"../Error.hpp"
+#include"../Message.hpp"
 #include<signal.h>
 #include<iostream>
 #include<chrono>
@@ -37,6 +38,7 @@ using json=nlohmann::json;
 extern TaskSocket asocket;
 extern sockaddr_in server_addr2;
 extern Error err;
+extern string curuid;
 int Main_menu();
 void User_menu();
 void Friend_menu();

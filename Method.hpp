@@ -1,8 +1,8 @@
 #include<iostream>
 class Method {
     public:
-    Method(){};
-    ~Method(){};
+    Method()=default;
+    ~Method()=default;
     int recvMsg(int cfd,char** msg)//接受带数据头的数据包
 {
     //接收数据头
