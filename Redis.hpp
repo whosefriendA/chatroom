@@ -38,9 +38,24 @@ class Redis{
         }
         return "";
     }
-    vector<string> Sgetall(const std::string& key) {
+    vector<string> Sgetall(const string& key) {
     vector<string> members;
     redisReply* reply = (redisReply*)redisCommand(this->con, "SMEMBERS %s", key.c_str());
+    if (reply != nullptr && reply->type == REDIS_REPLY_ARRAY) {
+        for (size_t i = 0; i < reply->elements; ++i) {
+            members.push_back(reply->element[i]->str);
+        }
+        freeReplyObject(reply);
+    } else {
+        if (reply) {
+            freeReplyObject(reply);
+        }
+    }
+    return members;
+    }
+    vector<string> Sgetall(const string& key,const string& filed) {
+    vector<string> members;
+    redisReply* reply = (redisReply*)redisCommand(this->con, "SMEMBERS %s %s", key.c_str(),filed.c_str());
     if (reply != nullptr && reply->type == REDIS_REPLY_ARRAY) {
         for (size_t i = 0; i < reply->elements; ++i) {
             members.push_back(reply->element[i]->str);
@@ -78,7 +93,15 @@ class Redis{
         }
         return "";
     }
-
+    bool hexists(const string& key, const string& field){
+        redisReply* reply = (redisReply*)redisCommand(this->con, "HGET %s %s", key.c_str(), field.c_str());
+        if (reply != nullptr && reply->type == REDIS_REPLY_STRING) {
+            freeReplyObject(reply);
+            return true;
+        }
+        freeReplyObject(reply);
+        return false;
+    }
     int Sismember(const string& key, const string& member) {
         redisReply* reply = (redisReply*)redisCommand(this->con, "SISMEMBER %s %s", key.c_str(), member.c_str());
         if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
@@ -108,6 +131,34 @@ class Redis{
         }
         return false;
     }
+    int exists(const string& key) {
+    redisReply* reply = (redisReply*)redisCommand(this->con, "EXISTS %s", key.c_str());
+    if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
+        bool exists = (reply->integer == 1);
+        freeReplyObject(reply);
+        return exists;
+    }
+    
+    if (reply) {
+        freeReplyObject(reply);
+    }
+    return false;
+}
+    int Sgetcount(const string& userID, const string& listType) {
+        string listKey = userID + listType;
+
+        redisReply* reply = (redisReply*)redisCommand(this->con, "HLEN %s", listKey.c_str());
+        if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
+            int listCount = static_cast<int>(reply->integer);
+            freeReplyObject(reply);
+            return listCount;
+        }
+        if (reply) {
+            freeReplyObject(reply);
+        }
+        return 0;
+    }
+
     private:
     redisContext *con;
 };
