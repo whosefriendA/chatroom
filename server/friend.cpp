@@ -57,8 +57,11 @@ void friend_add(TaskSocket asocket, json command){
     asocket.Sendmsg("success");
 }
 void friend_del(TaskSocket asocket, json command){
+    
+}
+void friend_apply_agree(TaskSocket asocket, json command){
 
 }
-void friend_apply(TaskSocket asocket, json command){
+void friend_apply_refuse(TaskSocket asocket,json command){
 
 }
