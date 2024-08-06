@@ -9,10 +9,10 @@ using json=nlohmann::json;
 class Message{
 public:
     Message()=default;
+    Message(string uid,string question,string recuid,int flag,vector<string> option)
+    : uid(uid),question(question),recuid(recuid), flag(flag), option(option){}
     ~Message()=default;
-    Message(string uid,string question,string recvuid,int flag,vector<string> option)
-    : uid(uid),question(question),recvuid(recvuid), flag(flag), option(option){}
-    string uid,name,pass,recvuid,question,answer;
+    string uid,name,pass,recuid,question,answer;
     int flag;
     vector<string> option;
     void Json_to_s(string jsr){
@@ -23,7 +23,7 @@ public:
             js.at("pass").get_to(name);
             js.at("question").get_to(question);
             js.at("answer").get_to(answer);
-            js.at("recvuid").get_to(recvuid);
+            js.at("recuid").get_to(recuid);
             js.at("flag").get_to(flag);
             js.at("option").get_to(option);
         } catch (const exception& e) {
@@ -37,7 +37,7 @@ public:
             {"pass",pass},
             {"question",question},
             {"answer",answer},
-            {"recvuid",recvuid},
+            {"recuid",recuid},
             {"flag",flag},
             {"option",option},
         };

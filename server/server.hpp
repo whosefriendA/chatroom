@@ -72,6 +72,8 @@ void freind_add(TaskSocket,Message);
 void friend_del(TaskSocket,Message);
 void friend_apply_agree(TaskSocket,Message);
 void friend_apply_refuse(TaskSocket,Message);
+void friend_block(TaskSocket,Message);
+void friend_restore(TaskSocket,Message);
 class User{
     public:
     User(string name,string pass,string question,string answer,string UID);

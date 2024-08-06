@@ -1,8 +1,10 @@
+#ifndef _REDIS_
+#define _REDIS_
 #include<iostream>
 #include<hiredis/hiredis.h>
-#include<errno.h>
+#include<vector>
 #include<string>
-#include<stdexcept>
+using namespace std;
 class Redis{
     public:
     Redis (){
@@ -53,20 +55,17 @@ class Redis{
     }
     return members;
     }
-    vector<string> Sgetall(const string& key,const string& filed) {
-    vector<string> members;
-    redisReply* reply = (redisReply*)redisCommand(this->con, "SMEMBERS %s %s", key.c_str(),filed.c_str());
+    vector<std::string> Hgetall(const string& key,const string& type) {
+    string listkey=key+type;
+    vector<string> friendlist;
+    redisReply* reply = (redisReply*)redisCommand(this->con, "HKEYS %s", listkey.c_str());
     if (reply != nullptr && reply->type == REDIS_REPLY_ARRAY) {
         for (size_t i = 0; i < reply->elements; ++i) {
-            members.push_back(reply->element[i]->str);
+            friendlist.push_back(reply->element[i]->str);
         }
         freeReplyObject(reply);
-    } else {
-        if (reply) {
-            freeReplyObject(reply);
-        }
     }
-    return members;
+    return friendlist;
     }
     int Hset(const string& key, const string& field, const string& value) {
         redisReply* reply = (redisReply*)redisCommand(this->con, "HSET %s %s %s", key.c_str(), field.c_str(), value.c_str());
@@ -179,3 +178,5 @@ class Redis{
     private:
     redisContext *con;
 };
+
+#endif;

@@ -1,6 +1,10 @@
 #include<thread>
 #include<condition_variable>
 #include<functional>
+#include<queue>
+#include<mutex>
+#include<atomic>
+using namespace std;
 struct Task {
     using callback = std::function<void()>;
 
