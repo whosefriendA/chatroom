@@ -32,8 +32,9 @@ void User_menu(){
     cout<<"---------个人空间---------"<<endl;
     cout<<"---------[1]好友---------"<<endl;
     cout<<"---------[2]群聊---------"<<endl;
-    cout<<"---------[3]注销---------"<<endl;
-    cout<<"---------[4]退出---------"<<endl;
+    cout<<"--------[3]未读消息-------"<<endl;
+    cout<<"---------[4]注销---------"<<endl;
+    cout<<"---------[5]退出---------"<<endl;
     getline(cin,a);
     if(stoi(a)==1)
     Friend_menu();  
@@ -42,6 +43,8 @@ void User_menu(){
     else if(stoi(a)==3)
 ;
     else if(stoi(a)==4)
+;
+    else if(stoi(a)==5)
     exit(0);
     else{
     cout<<"请输入正确的选项";
@@ -70,9 +73,9 @@ void Friend_menu(){
     else if(stoi(a)==4)
     Friend_apply();
     else if(stoi(a)==5)
-;
+    Friend_block();
     else if(stoi(a)==6)
-;
+    friend_chat();
     else if(stoi(a)==7)
     exit(0);
     else{
@@ -84,9 +87,10 @@ void Friend_menu(){
 void Friend_apply(){
     string a;
     while(1){
+    cout<<"------------好友申请----------"<<endl;
     cout<<"--------[1]同意好友申请--------"<<endl;
     cout<<"--------[2]拒绝好友申请--------"<<endl;
-    cout<<"----------[3]返回------------"<<endl;
+    cout<<"-----------[3]返回-----------"<<endl;
     getline(cin,a);
     if(stoi(a)==1)
     friend_apply_agree();

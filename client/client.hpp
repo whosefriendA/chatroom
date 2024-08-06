@@ -6,6 +6,7 @@
 #include<iostream>
 #include<chrono>
 #include<fcntl.h>
+#include<sys/sendfile.h>
 #include<sys/stat.h>
 #include<unistd.h>
 #include<termios.h>
@@ -14,6 +15,9 @@
 #include<unistd.h>
 #include<nlohmann/json.hpp>
 #include<hiredis/hiredis.h>
+#define RED "\033[31m"
+#define YELLOW "\033[33m"
+#define RESET "\033[0m"
 #define SERVERPORT 8080 //默认端口号
 #define RECV -1
 #define SIGNUP 1
@@ -33,6 +37,9 @@
 #define QUESTION_GET 15
 #define PASSWORD_FIND 16
 #define PASSWORD_GET 17
+#define CHAT_WITH_FRIEND 18
+#define EXITCHAT 20
+#define SENDMSG 21
 using namespace std;
 using json=nlohmann::json;
 extern TaskSocket asocket;
@@ -56,3 +63,4 @@ void friend_apply_refuse();
 void Friend_block();
 void friend_block();
 void friend_restore();
+void friend_chat();

@@ -27,10 +27,10 @@ void sign_up(){
     cout<<"设置答案"<<endl;
     getline(cin,answer);
     Message msg(name,question,SIGNUP,pass,{answer});
-    int ret=asocket.Sendmsg(msg.S_to_json());
+    int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string uid=asocket.Recvmsg();//收到生成的uid
+    string uid=asocket.Receive();//收到生成的uid
     if(uid=="close"){
         cout<<"已关闭"<<endl;
         exit(0);
@@ -81,14 +81,14 @@ void* notify_receive(void* arg) {
         exit(0);
     }
     Message msg(params->uid,-1);
-    int ret = recvsocket.Sendmsg(msg.S_to_json());
+    int ret = recvsocket.Send(msg.S_to_json());
     if (ret == -1 || ret == 0) {
         std::cout << "服务器已关闭" << std::endl;
         delete params;
         exit(0);
     }
     while (true) {
-        std::string recv = recvsocket.Recvmsg(); 
+        std::string recv = recvsocket.Receive(); 
         if (recv == "close") {
             std::cout << "服务器已关闭" << std::endl;
             delete params;
@@ -105,9 +105,9 @@ int log_in(){
     cout<<"请输入您的密码:"<<endl;
     getline(cin,pass);
     Message msg(uid,LOGIN,{pass});
-    int ret=asocket.Sendmsg(msg.S_to_json());
+    int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
-    string recv=asocket.Recvmsg();//接收返回的结果
+    string recv=asocket.Receive();//接收返回的结果
     cout<<recv<<endl;
     err.server_close(recv);
     if(recv=="notcorrect"){
@@ -140,28 +140,28 @@ void pass_find()
     string uid,pass,answer;
     uid=get_uid();
     Message msg(uid,QUESTION_GET);
-    int ret=asocket.Sendmsg(msg.S_to_json());
+    int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
-    string recv=asocket.Recvmsg();
+    string recv=asocket.Receive();
     err.server_close(recv);
     cout<<recv<<endl;
     getline(cin,answer);
-    Message msg(uid,PASSWORD_FIND);
-    ret=asocket.Sendmsg(msg.S_to_json());
+    Message msg1(uid,PASSWORD_FIND);
+    ret=asocket.Send(msg1.S_to_json());
     err.server_close(ret);
 
-    recv=asocket.Recvmsg();//接收返回的结果
+    recv=asocket.Receive();//接收返回的结果
     err.server_close(recv);
     if(recv!=answer){
         cout<<"答案不正确,无法找回"<<endl;
         return ;
     }else if(recv==answer)
     {
-    Message msg(uid,PASSWORD_GET);
-    ret=asocket.Sendmsg(msg.S_to_json());
+    Message msg2(uid,PASSWORD_GET);
+    ret=asocket.Send(msg2.S_to_json());
     err.server_close(ret);
 
-    recv=asocket.Recvmsg();
+    recv=asocket.Receive();
     cout<<"您的密码是："<<recv<<"请牢记您的密码"<<endl;
     return ;
     }
