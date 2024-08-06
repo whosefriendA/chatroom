@@ -9,12 +9,13 @@ using json=nlohmann::json;
 class Message{
 public:
     Message()=default;
+    Message(string uid,int flag):uid(uid),flag(flag){};
+    Message(string uid,int flag,vector<string>option):uid(uid),flag(flag),option(option){};
+    Message(string uid,string recuid,int flag):uid(uid),recuid(recuid),flag(flag){};
+    Message(string uid,string recuid,int flag,vector<string>option):uid(uid),recuid(recuid),flag(flag),option(option){};
+    Message(string name,string question,int flag,string pass,vector<string>option):name(name),question(question),flag(flag),pass(pass),option(option){};
     Message(string uid,string question,string recuid,int flag,string name,string pass,vector<string> option)
     : uid(uid),question(question),recuid(recuid), flag(flag), name(name),pass(pass),option(option){}
-    Message(string uid,int flag):uid(uid),flag(flag){};
-    Message(string uid,string recuid,int flag,vector<string>option):uid(uid),recuid(recuid),flag(flag),option(option){};
-    Message(string uid,int flag,vector<string>option):uid(uid),flag(flag),option(option){};
-    Message(string name,string question,int flag,string pass,vector<string>option):name(name),question(question),flag(flag),pass(pass),option(option){};
     ~Message()=default;
     string uid,name,pass,recuid,question;
     int flag;

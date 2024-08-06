@@ -174,9 +174,17 @@ class Redis{
     }
     return false;
 }
-
+string LValueget(const string& key, int index) {
+    redisReply* reply = (redisReply*)redisCommand(this->con, "LINDEX %s %d", key.c_str(), index);
+    if (reply != nullptr && reply->type == REDIS_REPLY_STRING) {
+        string value = reply->str;
+        freeReplyObject(reply);
+        return value;
+    }
+    return "";
+}
     private:
     redisContext *con;
 };
 
-#endif;
+#endif

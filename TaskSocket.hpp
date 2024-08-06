@@ -25,7 +25,7 @@ public:
 
     ~TaskSocket(){};
 
-int Sendmsg(string msg) {
+int Send(string msg) {
     int msg_size = msg.size();
     int biglen = htonl(msg_size);
     char *data = new char[msg_size + 4];
@@ -54,7 +54,7 @@ int Sendmsg(string msg) {
     return msg_size + 4; // 返回成功发送的字节数
 }
 
-string Recvmsg() {
+string Receive() {
     // 数据头
     int len = 0;
     char *buf = new char[4];

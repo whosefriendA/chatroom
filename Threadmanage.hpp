@@ -21,28 +21,13 @@ struct Task {
 
 class ThreadPool {
 public:
-    ThreadPool(size_t numThreads);
-    ~ThreadPool();
-
-    void addTask(const Task& task);
-
-private:
-    void worker();
-
-    vector<thread> workers;
-    queue<Task> tasks;
-    mutex tasksMutex;
-    condition_variable condition;
-    atomic<bool> stop;
-};
-
-ThreadPool::ThreadPool(size_t numThreads) : stop(false) {
+ThreadPool(size_t numThreads) : stop(false) {
     for (size_t i = 0; i < numThreads; ++i) {
         workers.emplace_back(&ThreadPool::worker, this);
     }
 }
 
-ThreadPool::~ThreadPool() {
+~ThreadPool() {
     stop = true;
     condition.notify_all();
     for (thread& worker : workers) {
@@ -52,7 +37,7 @@ ThreadPool::~ThreadPool() {
     }
 }
 
-void ThreadPool::addTask(const Task& task) {
+void addTask(const Task& task) {
     {
         unique_lock<mutex> lock(tasksMutex);
         tasks.push(task);
@@ -60,7 +45,7 @@ void ThreadPool::addTask(const Task& task) {
     condition.notify_one();
 }
 
-void ThreadPool::worker() {
+void worker() {
     while (true) {
         Task task;
         {
@@ -77,3 +62,10 @@ void ThreadPool::worker() {
         task.execute();
     }
 }
+private:
+    vector<thread> workers;
+    queue<Task> tasks;
+    mutex tasksMutex;
+    condition_variable condition;
+    atomic<bool> stop;
+};
