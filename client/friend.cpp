@@ -219,7 +219,7 @@ void friend_chat()
             getline(cin,newmsg);
             if(newmsg==":exit"){
                 //退出聊天
-                Message msg_exit(curuid,recvuid,EXITCHAT);
+                Message msg_exit(curuid,recvuid,EXIT_CHAT);
                 int ret=asocket.Send(msg_exit.S_to_json());
                 err.server_close(ret);
 
@@ -229,7 +229,7 @@ void friend_chat()
                     cout<<"成功退出聊天"<<endl;
                     return;
                 }else{
-                    cout<<"错误"<<endl;
+                    cout<<"出现错误"<<endl;
                     return;
                 }
                 break;
@@ -238,7 +238,7 @@ void friend_chat()
             if(newmsg==":S"){
             //获得文件的路径 打开文件 存储文件信息 提取文件名
                 string filepath;//文件路径
-                cout<<"请输入要发送文件的绝对路径:"<<endl;
+                cout<<"请输入要发送文件的位置:"<<endl;
                 getline(cin,filepath);
                 int filefd=open(filepath.c_str(),O_RDONLY);
                 if(filefd==-1){
@@ -264,7 +264,7 @@ void friend_chat()
                             cout<<ret_send<<endl;
                             if (ret_send == -1){
                                 if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                                    // 继续尝试发送
+                                    // 出现错误继续尝试发送
                                     continue;
                                 } else {
                                     cerr << "Error sending file data: " << strerror(errno) << endl;
@@ -277,7 +277,6 @@ void friend_chat()
                             }
                         }
                     }
-
                     close(filefd);
                 }
 
@@ -289,7 +288,7 @@ void friend_chat()
                 continue;
             }
             //接收文件
-            if(newmsg==":&")
+            if(newmsg==":R")
             {
                 string filepath;
 
@@ -323,16 +322,13 @@ void friend_chat()
                     lseek(filefd,0,SEEK_SET);
                     while(size>totalRecvByte){
                         cout<<"size:"<<size<<endl;
-                        //memset(buf,'\0',sizeof(buf));
-                        ssize_t byteRead=read(asocket.getfd(),buf,sizeof(buf));//会返回-1
+                        ssize_t byteRead=read(asocket.getfd(),buf,sizeof(buf));
                          if (byteRead == -1) {
-                            if(errno == EAGAIN || errno == EWOULDBLOCK)//对于非阻塞socket返回-1不代表网络真的出错了，应该继续尝试
-                            {
+                            if(errno == EAGAIN || errno == EWOULDBLOCK){
                                 continue;
                             }else{
                                 cerr << "Error reading file: " << strerror(errno) << endl;
                             }
-                            
                         }
                         if (byteRead == 0) {
                             cerr << "Connection closed by client" << endl;

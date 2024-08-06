@@ -38,7 +38,7 @@
 #define PASSWORD_FIND 16
 #define PASSWORD_GET 17
 #define CHAT_WITH_FRIEND 18
-#define EXITCHAT 20
+#define EXIT_CHAT 20
 #define SENDMSG 21
 using namespace std;
 using json=nlohmann::json;
