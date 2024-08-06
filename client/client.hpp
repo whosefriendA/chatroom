@@ -15,31 +15,30 @@
 #include<unistd.h>
 #include<nlohmann/json.hpp>
 #include<hiredis/hiredis.h>
-#define RED "\033[31m"
-#define YELLOW "\033[33m"
-#define RESET "\033[0m"
-#define SERVERPORT 8080 //默认端口号
+#define SERVERPORT 8080//默认端口号
 #define RECV -1
 #define SIGNUP 1
 #define LOGIN 2
 #define LOGOUT 3
-#define FRIEND_LIST 4
-#define ADD_FRIEND 5
-#define DELETE_FRIEND 6
-#define AGREE_ADDFRIEND 7
-#define REFUSE_ADDFRIEND 8
-#define BLOCK_FRIEND 9
-#define RESTORE_FRIEND 10
-#define SENDFILE_GROUP 11
-#define RECVFILE_GROUP 12
+#define BLOCK_FRIEND 4
+#define RESTORE_FRIEND 5
+#define SENDFILE_GROUP 6
+#define RECVFILE_GROUP 7
+#define FRIEND_LIST 8
+#define ADD_FRIEND 9
+#define DELETE_FRIEND 10
+#define AGREE_ADDFRIEND 11
+#define REFUSE_ADDFRIEND 12
 #define SENDFILE 13
 #define RECVFILE 14
 #define QUESTION_GET 15
 #define PASSWORD_FIND 16
 #define PASSWORD_GET 17
 #define CHAT_WITH_FRIEND 18
-#define EXIT_CHAT 20
-#define SENDMSG 21
+#define EXITCHAT 20
+#define RED "\033[31m"
+#define YELLOW "\033[33m"
+#define RESET "\033[0m"
 using namespace std;
 using json=nlohmann::json;
 extern TaskSocket asocket;
