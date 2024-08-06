@@ -1,7 +1,7 @@
 #include"server.hpp"
 void Sign_up(TaskSocket asocket,Message msg){
     string uid=to_string(User_uid);
-    User u(msg.name,msg.pass,msg.question,msg.answer,uid);
+    User u(msg.name,msg.pass,msg.question,msg.option[0],uid);
     cout<<u.UID<<u.Name<<u.Pass<<u.Question<<u.Answer<<endl;
     User_uid++;
     User_count++;

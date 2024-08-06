@@ -9,10 +9,14 @@ using json=nlohmann::json;
 class Message{
 public:
     Message()=default;
-    Message(string uid,string question,string recuid,int flag,vector<string> option)
-    : uid(uid),question(question),recuid(recuid), flag(flag), option(option){}
+    Message(string uid,string question,string recuid,int flag,string name,string pass,vector<string> option)
+    : uid(uid),question(question),recuid(recuid), flag(flag), name(name),pass(pass),option(option){}
+    Message(string uid,int flag):uid(uid),flag(flag){};
+    Message(string uid,string recuid,int flag,vector<string>option):uid(uid),recuid(recuid),flag(flag),option(option){};
+    Message(string uid,int flag,vector<string>option):uid(uid),flag(flag),option(option){};
+    Message(string name,string question,int flag,string pass,vector<string>option):name(name),question(question),flag(flag),pass(pass),option(option){};
     ~Message()=default;
-    string uid,name,pass,recuid,question,answer;
+    string uid,name,pass,recuid,question;
     int flag;
     vector<string> option;
     void Json_to_s(string jsr){
@@ -22,7 +26,6 @@ public:
             js.at("name").get_to(name);
             js.at("pass").get_to(name);
             js.at("question").get_to(question);
-            js.at("answer").get_to(answer);
             js.at("recuid").get_to(recuid);
             js.at("flag").get_to(flag);
             js.at("option").get_to(option);
@@ -36,7 +39,6 @@ public:
             {"name",name},
             {"pass",pass},
             {"question",question},
-            {"answer",answer},
             {"recuid",recuid},
             {"flag",flag},
             {"option",option},
