@@ -32,12 +32,10 @@ void friend_add(TaskSocket asocket, Message msg){
             return;
         }
     }
-    // 对方发给你发了好友申请，不能向对方发
     if (redis.hexists(msg.uid + "收到的好友申请", msg.recuid)){
         asocket.Send("apply");
         return;
     }
-    // 已向对方发申请未被处理，不能再次发送
     if (redis.hexists(msg.uid  + "收到的好友申请", msg.uid)){
         asocket.Send("handle");
         return;
@@ -68,7 +66,6 @@ void friend_del(TaskSocket asocket, Message msg){
 }
 void friend_apply_agree(TaskSocket asocket, Message msg){
     {
-    // 查看通知消息里有没有他的申请
     if (!redis.hexists(msg.uid + "收到的好友申请", msg.para[0])){
         asocket.Send("notfind");
         return;
@@ -76,17 +73,17 @@ void friend_apply_agree(TaskSocket asocket, Message msg){
     if (redis.HValueremove(msg.uid + "收到的好友申请", msg.para[0])){
         string nownum = redis.Hget(msg.uid + "的未读消息", "好友申请");
         redis.Hset(msg.uid + "的未读消息", "好友申请", (to_string(stoi(nownum) - 1)));
-        // 同意者信息
+
         redis.Hset(msg.uid + "的好友列表", msg.para[0], "hello");
         redis.Rpushvalue(msg.uid + "和" + msg.para[0] + "的聊天记录", "------");
-        // 申请者信息
+
         redis.Hset(msg.para[0] + "的好友列表", msg.uid, "hello");
         redis.Rpushvalue(msg.para[0] + "和" + msg.uid + "的聊天记录", "------");
         redis.Rpushvalue(msg.para[0]+ "的通知消息", msg.uid + "通过了您的好友申请");
-        // 申请者未读消息中的通知消息数量+1
+
         string num1 = redis.Hget(msg.para[0] + "的未读消息", "通知类消息");
         redis.Hset(msg.para[0]+ "的未读消息", "通知类消息", to_string(stoi(num1) + 1));
-        // 给好友发送实时通知
+
         if (redis.Sismember(online_users,msg.para[0])){
             string friend_fd = redis.Hget(msg.para[0], "通知socket");
             TaskSocket friendsocket(stoi(friend_fd));
@@ -98,7 +95,6 @@ void friend_apply_agree(TaskSocket asocket, Message msg){
 }
 }
 void friend_apply_refuse(TaskSocket asocket,Message msg){
-        // 查看通知消息
     if (!redis.hexists(msg.uid + "收到的好友申请", msg.para[0])){
         asocket.Send("notfind");
         return;
@@ -107,12 +103,10 @@ void friend_apply_refuse(TaskSocket asocket,Message msg){
         string nownum = redis.Hget(msg.uid + "的未读消息", "好友申请");
         redis.Hset(msg.uid + "的未读消息", "好友申请", (to_string(stoi(nownum) - 1)));
 
-        // 申请者未读消息中的通知消息+1
         string num1 = redis.Hget(msg.para[0] + "的未读消息", "通知类消息");
         redis.Hset(msg.para[0] + "的未读消息", "通知类消息", to_string(stoi(num1) + 1));
         redis.Rpushvalue(msg.para[0] + "的通知消息", msg.uid + "拒绝了你");
 
-        // 给好友发送实时通知
         if (redis.Sismember(online_users,msg.para[0])){
             string friend_fd = redis.Hget(msg.para[0], "通知套接字");
             TaskSocket friendsocket(stoi(friend_fd));
