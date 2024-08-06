@@ -18,18 +18,18 @@ void User::user_mem(){
     redis.Sadd("UID",info);
 }
 //好友相关
-void User::friend_add(string friend_id){
+// void User::friend_add(string friend_id){
      
-}
-void User::friend_delete(string friend_id){
+// }
+// void User::friend_delete(string friend_id){
 
-}
-void User::friend_shield(string friend_id){
+// }
+// void User::friend_shield(string friend_id){
 
-}
-void User::friend_recover(string friend_id){
+// }
+// void User::friend_recover(string friend_id){
     
-}
+// }
 //群相关
 void User::group_add(string group_id){}
 void User::group_delete(string group_id){}

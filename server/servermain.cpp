@@ -170,7 +170,7 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
             friend_list_get(asocket, msg);
             break;
         case ADD_FRIEND:
-            freind_add(asocket, msg);
+            friend_add(asocket, msg);
             break;
         case DELETE_FRIEND:
             friend_del(asocket, msg);
@@ -189,7 +189,6 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
             break;
         case RECVFILE:
             break;
-
     }
 
     return;

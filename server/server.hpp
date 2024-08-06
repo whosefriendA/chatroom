@@ -45,6 +45,8 @@
 #define QUESTION_GET 15
 #define PASSWORD_FIND 16
 #define PASSWORD_GET 17
+#define CHAT_WITH_FRIEND 18
+#define EXITCHAT 20
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
 #define RESET "\033[0m"
@@ -68,12 +70,13 @@ void question_get(TaskSocket,Message);
 void pass_get(TaskSocket,Message);
 void User_remove(TaskSocket, Message);
 void friend_list_get(TaskSocket,Message);
-void freind_add(TaskSocket,Message);
+void friend_add(TaskSocket,Message);
 void friend_del(TaskSocket,Message);
 void friend_apply_agree(TaskSocket,Message);
 void friend_apply_refuse(TaskSocket,Message);
 void friend_block(TaskSocket,Message);
 void friend_restore(TaskSocket,Message);
+void Unreadnotice(TaskSocket, Message);
 class User{
     public:
     User(string name,string pass,string question,string answer,string UID);
@@ -83,10 +86,10 @@ class User{
     string user_inquire(string info);
     void user_mem();
     //好友相关
-    void friend_add(string friend_id);
-    void friend_delete(string friend_id);
-    void friend_shield(string friend_id);
-    void friend_recover(string friend_id);
+    // void friend_add(string friend_id);
+    // void friend_delete(string friend_id);
+    // void friend_shield(string friend_id);
+    // void friend_recover(string friend_id);
     //群相关
     void group_add(string group_id);
     void group_delete(string group_id);
