@@ -119,20 +119,19 @@ int main(int argc,char*argv[]){
                     event.events = EPOLLIN|EPOLLET;
                     event.data.fd = nfd;
                     epoll_ctl(epfd, EPOLL_CTL_DEL, nfd, &event);
-                    //为文件传输创新线程
+                    //文件传输
                     std::thread fileThread([asocket,comad_string ,nfd, epfd]() {
-                        // 设置非阻塞
                         int flag = fcntl(nfd, F_GETFL);
                         flag |= O_NONBLOCK;
                         fcntl(nfd, F_SETFL, flag);
                         transferfunc(asocket,comad_string);
-                        // 文件传输操作完成后，重新加入 epoll 
+                        // 加入 epoll 
                         struct epoll_event addEvent;
                         addEvent.events = EPOLLIN | EPOLLET;
                         addEvent.data.fd = nfd;
                         epoll_ctl(epfd, EPOLL_CTL_ADD, nfd, &addEvent);
                     });
-                    //分离文件传输线程
+                    //分离
                     fileThread.detach();
                     }
                     else{
@@ -188,7 +187,6 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
         friend_restore(asocket,msg);
             break;
         case SENDFILE:
-        
             break;
         case RECVFILE:
             break;
