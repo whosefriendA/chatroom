@@ -36,7 +36,7 @@ int Send(string msg) {
     const char *buf = data;
     int cnt = msg_size + 4;
     while (cnt > 0) {
-        int len = send(tfd, buf, cnt, 0); // 记录发送的字节数
+        int len = send(tfd, buf, cnt, 0);
         if (len == -1) {
             close(tfd);
             perror("write error");
@@ -46,18 +46,16 @@ int Send(string msg) {
             continue;
         }
         buf += len;
-        cnt -= len; // 计算剩余量
+        cnt -= len; 
     }
-
-    delete[] data; // 释放内存
-    return msg_size + 4; // 返回成功发送的字节数
+    delete[] data;
+    return msg_size + 4;
 }
 
 string Receive() {
     // 数据头
     int len = 0;
     char *buf = new char[4];
-    // 读取数据头
     int cnt = 4;
     char *pt = (char *)&len;
     while (cnt > 0) {
@@ -66,7 +64,7 @@ string Receive() {
             close(tfd);
             perror("read error");
             exit(0);
-        } else if (ret == 0) { // 表明连接结束
+        } else if (ret == 0) { 
             cout << "连接已结束" << endl;
             close(tfd);
             delete[] buf;
@@ -76,8 +74,7 @@ string Receive() {
         cnt -= ret;
     }
     len = ntohl(len);
-    // 读取数据体
-    delete[] buf; // 释放之前分配的内存
+    delete[] buf; 
     buf = new char[len + 1];
     cnt = len;
     pt = buf;
@@ -89,7 +86,7 @@ string Receive() {
             perror("read error");
             delete[] buf;
             exit(0);
-        } else if (ret == 0) { // 表明连接结束
+        } else if (ret == 0) { 
             cout << "连接已结束" << endl;
             close(tfd);
             delete[] buf;
