@@ -22,19 +22,12 @@ void sign_up(){
     }
     cout<<"请输入昵称:"<<endl;
     getline(cin,name);
-    cout<<"设置您的密保问题"<<endl;
+    cout<<"设置密保问题"<<endl;
     getline(cin,question);
-    cout<<"设置您的答案"<<endl;
+    cout<<"设置答案"<<endl;
     getline(cin,answer);
-    json data;
-    data["name"]=name;
-    data["pass"]=pass;
-    data["question"]=question;
-    data["answer"]=answer;
-    data["flag"]=SIGNUP;
-    string command=data.dump();
-    cout<<command<<endl;
-    int ret=asocket.Sendmsg(command);
+    Message msg(name,question,SIGNUP,pass,{answer});
+    int ret=asocket.Sendmsg(msg.S_to_json());
     err.server_close(ret);
 
     string uid=asocket.Recvmsg();//收到生成的uid
@@ -42,8 +35,7 @@ void sign_up(){
         cout<<"已关闭"<<endl;
         exit(0);
     }
-    cout<<"您注册的uid为:"<<uid<<endl;
-
+    cout<<"你注册的uid为:"<<uid<<endl;
     cout<<"请登录"<<endl;
 
     return ;
@@ -52,37 +44,28 @@ string get_uid()
 {
     string uid;
     int flag=1,c;
-    
-    cout<<"您的uid为:"<<endl;
+
+    cout<<"你的uid为:"<<endl;
     cin.ignore();
     getline(cin,uid);//获取输入的uid
-
-    for(int c:uid)
-    {
-        if(!isdigit(c))
-        {
+    for(int c:uid){
+        if(!isdigit(c)){
             flag=0;
             break;
         }
     }
-
-    while(flag==0)
-    {
-        cout<<"输入的uid有非数字,请重新输入:"<<endl;
+    while(flag==0){
+        cout<<"输入的uid有非法字符,请重新输入:"<<endl;
         cin.ignore();
         getline(cin,uid);
-
         flag=1;
-        for(int c:uid)
-        {
-            if(!isdigit(c))
-            {
+        for(int c:uid){
+            if(!isdigit(c)){
                 flag=0;
                 break;
             }
         }
     }
-
     return uid;
     
 }
@@ -97,17 +80,13 @@ void* notify_receive(void* arg) {
         perror("connect error");
         exit(0);
     }
-    json data;
-    data["UID"]=params->uid;
-    data["flag"]=-1;
-    string command=data.dump();
-    int ret = recvsocket.Sendmsg(command);
+    Message msg(params->uid,-1);
+    int ret = recvsocket.Sendmsg(msg.S_to_json());
     if (ret == -1 || ret == 0) {
         std::cout << "服务器已关闭" << std::endl;
         delete params;
         exit(0);
     }
-
     while (true) {
         std::string recv = recvsocket.Recvmsg(); 
         if (recv == "close") {
@@ -117,7 +96,6 @@ void* notify_receive(void* arg) {
         }
         std::cout << recv << std::endl;
     }
-
     return nullptr;
 }
 int log_in(){
@@ -126,13 +104,8 @@ int log_in(){
     curuid=stoi(uid);
     cout<<"请输入您的密码:"<<endl;
     getline(cin,pass);
-    json data;
-    data["UID"]=uid;
-    data["option"]=pass;
-    data["flag"]=LOGIN;
-    string command=data.dump();
-    
-    int ret=asocket.Sendmsg(command);
+    Message msg(uid,LOGIN,{pass});
+    int ret=asocket.Sendmsg(msg.S_to_json());
     err.server_close(ret);
     string recv=asocket.Recvmsg();//接收返回的结果
     cout<<recv<<endl;
@@ -166,20 +139,15 @@ void pass_find()
 {
     string uid,pass,answer;
     uid=get_uid();
-    json data;
-    data["UID"]=uid;
-    data["flag"]=QUESTION_GET;
-    string command=data.dump();
-    int ret=asocket.Sendmsg(command);
+    Message msg(uid,QUESTION_GET);
+    int ret=asocket.Sendmsg(msg.S_to_json());
     err.server_close(ret);
     string recv=asocket.Recvmsg();
     err.server_close(recv);
     cout<<recv<<endl;
     getline(cin,answer);
-    data["UID"]=uid;
-    data["flag"]=PASSWORD_FIND;
-    command=data.dump();
-    ret=asocket.Sendmsg(command);
+    Message msg(uid,PASSWORD_FIND);
+    ret=asocket.Sendmsg(msg.S_to_json());
     err.server_close(ret);
 
     recv=asocket.Recvmsg();//接收返回的结果
@@ -189,10 +157,8 @@ void pass_find()
         return ;
     }else if(recv==answer)
     {
-    data["UID"]=uid;
-    data["flag"]=PASSWORD_GET;
-    command=data.dump();
-    ret=asocket.Sendmsg(command);
+    Message msg(uid,PASSWORD_GET);
+    ret=asocket.Sendmsg(msg.S_to_json());
     err.server_close(ret);
 
     recv=asocket.Recvmsg();

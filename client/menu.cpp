@@ -47,7 +47,7 @@ void User_menu(){
     cout<<"请输入正确的选项";
     continue;
     }
-    }
+  }
 }
 void Friend_menu(){
     string a;
@@ -68,7 +68,7 @@ void Friend_menu(){
     else if(stoi(a)==3)
     friend_del();
     else if(stoi(a)==4)
-    friend_apply();
+    Friend_apply();
     else if(stoi(a)==5)
 ;
     else if(stoi(a)==6)
@@ -79,5 +79,43 @@ void Friend_menu(){
     cout<<"请输入正确的选项";
     continue;
     }
+  }
+}
+void Friend_apply(){
+    string a;
+    while(1){
+    cout<<"--------[1]同意好友申请--------"<<endl;
+    cout<<"--------[2]拒绝好友申请--------"<<endl;
+    cout<<"----------[3]返回------------"<<endl;
+    getline(cin,a);
+    if(stoi(a)==1)
+    friend_apply_agree();
+    else if(stoi(a)==2)
+    friend_apply_refuse();
+    else if(stoi(a)==3)
+    return;
+    else{
+    cout<<"请输入正确的选项";
+    continue;
     }
+  }
+}
+void Friend_block(){
+    string a;
+    while(1){
+    cout<<"--------[1]屏蔽好友消息--------"<<endl;
+    cout<<"--------[2]恢复好友消息--------"<<endl;
+    cout<<"-----------[3]返回-----------"<<endl;
+    getline(cin,a);
+    if(stoi(a)==1)
+    friend_block();
+    else if(stoi(a)==2)
+    friend_restore();
+    else if(stoi(a)==3)
+    return;
+    else{
+    cout<<"请输入正确的选项";
+    continue;
+    }
+  }
 }
