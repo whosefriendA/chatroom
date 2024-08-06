@@ -16,8 +16,7 @@ public:
 };
     TaskSocket(int fd):tfd(fd){}
     TaskSocket(string msg){
-    if(msg=="receive")
-    {
+    if(msg=="receive"){
         tfd=socket(AF_INET,SOCK_STREAM,0);
         recv_fd=socket(AF_INET,SOCK_STREAM,0);    
     }
@@ -40,7 +39,7 @@ int Send(string msg) {
         int len = send(tfd, buf, cnt, 0); // 记录发送的字节数
         if (len == -1) {
             close(tfd);
-            perror("writen error");
+            perror("write error");
             delete[] data;
             exit(0);
         } else if (len == 0) {

@@ -205,7 +205,7 @@ void friend_chat()
         while(1){
             historymsg=asocket.Receive();
             err.server_close(historymsg);
-            if(historymsg=="历史聊天记录展示完毕"){
+            if(historymsg=="The end"){
                 cout<<RED<<"输入:exit退出聊天,输入:S发送文件,输入:R接收文件"<<RESET<<endl;
                 break;
             }else{

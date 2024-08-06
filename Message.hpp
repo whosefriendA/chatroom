@@ -10,16 +10,16 @@ class Message{
 public:
     Message()=default;
     Message(string uid,int flag):uid(uid),flag(flag){};
-    Message(string uid,int flag,vector<string>option):uid(uid),flag(flag),option(option){};
+    Message(string uid,int flag,vector<string>option):uid(uid),flag(flag),para(option){};
     Message(string uid,string recuid,int flag):uid(uid),recuid(recuid),flag(flag){};
-    Message(string uid,string recuid,int flag,vector<string>option):uid(uid),recuid(recuid),flag(flag),option(option){};
-    Message(string name,string question,int flag,string pass,vector<string>option):name(name),question(question),flag(flag),pass(pass),option(option){};
+    Message(string uid,string recuid,int flag,vector<string>option):uid(uid),recuid(recuid),flag(flag),para(option){};
+    Message(string name,string question,int flag,string pass,vector<string>option):name(name),question(question),flag(flag),pass(pass),para(option){};
     Message(string uid,string question,string recuid,int flag,string name,string pass,vector<string> option)
-    : uid(uid),question(question),recuid(recuid), flag(flag), name(name),pass(pass),option(option){}
+    : uid(uid),question(question),recuid(recuid), flag(flag), name(name),pass(pass),para(option){}
     ~Message()=default;
     string uid,name,pass,recuid,question;
     int flag;
-    vector<string> option;
+    vector<string> para;
     void Json_to_s(string jsr){
         try {
             json js = json::parse(jsr);
@@ -29,7 +29,7 @@ public:
             js.at("question").get_to(question);
             js.at("recuid").get_to(recuid);
             js.at("flag").get_to(flag);
-            js.at("option").get_to(option);
+            js.at("option").get_to(para);
         } catch (const exception& e) {
             cerr << "JSON parsing error: " << e.what() << endl;
         }
@@ -42,7 +42,7 @@ public:
             {"question",question},
             {"recuid",recuid},
             {"flag",flag},
-            {"option",option},
+            {"option",para},
         };
         return js.dump();
     }

@@ -1,7 +1,7 @@
 #include"server.hpp"
 void Sign_up(TaskSocket asocket,Message msg){
     string uid=to_string(User_uid);
-    User u(msg.name,msg.pass,msg.question,msg.option[0],uid);
+    User u(msg.name,msg.pass,msg.question,msg.para[0],uid);
     cout<<u.UID<<u.Name<<u.Pass<<u.Question<<u.Answer<<endl;
     User_uid++;
     User_count++;
@@ -22,7 +22,7 @@ void Log_in(TaskSocket asocket,Message msg){
         asocket.Send("havenotsignup");
     }else{
     string pwd=redis.Sget(msg.uid,"pass");
-    if(pwd!=msg.option[0]){
+    if(pwd!=msg.para[0]){
         asocket.Send("notcorrect");
     }else{
         redis.Sadd(online_users,msg.uid);
@@ -60,7 +60,7 @@ void User_remove(TaskSocket asocket, Message msg)//部分实现
 void Unreadnotice(TaskSocket asocket, Message msg)
 {
     string response;
-    int num = stoi(redis.Hget(msg.uid + "的未读消息", "通知消息"));
+    int num = stoi(redis.Hget(msg.uid + "的未读消息", "通知类消息"));
     int num1 = stoi(redis.Hget(msg.uid + "的未读消息", "好友申请"));
     int num2 = num + num1;
     if (num2 == 0){
@@ -82,11 +82,8 @@ void Unreadnotice(TaskSocket asocket, Message msg)
             response += "好友申请" + to_string(i + 1) + ":" + friendRequest + "\n";
         }
     }
-    response += "请尽快处理\n";
-
     asocket.Send(YELLOW + response + RESET);
     // 删除通知消息
     redis.keyremove(msg.uid + "的通知消息");
-    // 清零未读消息的通知消息
-    redis.Hset(msg.uid + "的未读消息", "通知消息", "0");
+    redis.Hset(msg.uid + "的未读消息", "通知类消息", "0");
 }

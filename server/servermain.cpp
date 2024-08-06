@@ -116,7 +116,7 @@ int main(int argc,char*argv[]){
                 if(data.at("flag")==RECV){
                 redis.Hset(data.at("UID"), "通知套接字", to_string(nfd));
                 }else if(data.at("flag")==SENDFILE||data.at("flag")==RECVFILE||data.at("flag")==SENDFILE_GROUP||data.at("flag")==RECVFILE_GROUP){
-                    event.events = EPOLLIN|EPOLLET; // 不监听任何事件
+                    event.events = EPOLLIN|EPOLLET;
                     event.data.fd = nfd;
                     epoll_ctl(epfd, EPOLL_CTL_DEL, nfd, &event);
                     //为文件传输创新线程
@@ -182,10 +182,13 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
             friend_apply_refuse(asocket, msg);
             break;
         case BLOCK_FRIEND:
+            friend_block(asocket,msg);
             break;
         case RESTORE_FRIEND:
+        friend_restore(asocket,msg);
             break;
         case SENDFILE:
+        
             break;
         case RECVFILE:
             break;

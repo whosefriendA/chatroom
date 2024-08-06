@@ -183,6 +183,19 @@ string LValueget(const string& key, int index) {
     }
     return "";
 }
+vector<string> Lrangeall(const std::string& key) {
+        vector<string> result;
+        redisReply* reply = (redisReply*)redisCommand(this->con, "LRANGE %s 0 -1", key.c_str());
+        if (reply!=nullptr&&reply->type == REDIS_REPLY_ARRAY) {
+            for (size_t i = 0; i < reply->elements; ++i) {
+                if (reply->element[i]->type == REDIS_REPLY_STRING) {
+                    result.push_back(reply->element[i]->str);
+                }
+            }
+        }
+        freeReplyObject(reply);
+        return result;
+    }
     private:
     redisContext *con;
 };

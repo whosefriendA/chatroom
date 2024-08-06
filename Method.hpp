@@ -11,7 +11,7 @@ class Method {
     len=ntohl(len);
     printf("数据块大小为%d\n",len);
 
-    char *buf=(char *)malloc(len+1);//留出存储'\0'的位置
+    char *buf=(char *)malloc(len+1);
     int ret=Read(cfd,buf,len);
     if(ret!=len)
     {
