@@ -247,7 +247,6 @@ void friend_chat()
                 }else{
                     struct stat statbuf;
                     fstat(filefd,&statbuf);//将与给定文件描述符关联的文件状态信息填充到statbuf结构体中
-
                     size_t lastSlash=filepath.find_last_of("/\\");//找到最后一个斜杠或者反斜杠
                     string filename=filepath.substr(lastSlash+1);//获取到文件名
 
@@ -263,7 +262,7 @@ void friend_chat()
                         while (bytes_sent < statbuf.st_size) {
                             ssize_t ret_send = sendfile(asocket.getfd(), filefd, &bytes_sent, statbuf.st_size - bytes_sent);
                             cout<<ret_send<<endl;
-                            if (ret_send == -1) {
+                            if (ret_send == -1){
                                 if (errno == EAGAIN || errno == EWOULDBLOCK) {
                                     // 继续尝试发送
                                     continue;
@@ -372,8 +371,7 @@ void friend_chat()
             err.server_close(recv);
             if(recv=="failure"){
                 return;
-            }else if(recv=="success")
-            {
+            }else if(recv=="success"){
                 continue;
             }
         }
