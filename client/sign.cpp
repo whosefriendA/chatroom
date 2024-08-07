@@ -4,15 +4,12 @@ void sign_up(){
     string question,answer;
 
     while(1){
-
         cout<<"请输入密码:"<<endl;
         getline(cin,pass);
-
         while(pass.size()==0){
             cout<<"请重新输入有效的密码:"<<endl;
             getline(cin,pass);
         }
-
         cout<<"请确认密码:"<<endl;
         getline(cin,pass2);
         if(pass!=pass2){
@@ -46,7 +43,6 @@ string get_uid()
     int flag=1,c;
 
     cout<<"你的uid为:"<<endl;
-    cin.ignore();
     getline(cin,uid);//获取输入的uid
     for(int c:uid){
         if(!isdigit(c)){
@@ -56,7 +52,6 @@ string get_uid()
     }
     while(flag==0){
         cout<<"输入的uid有非法字符,请重新输入:"<<endl;
-        cin.ignore();
         getline(cin,uid);
         flag=1;
         for(int c:uid){
@@ -67,7 +62,6 @@ string get_uid()
         }
     }
     return uid;
-    
 }
 void* notify_receive(void* arg) {
     struct ThreadParams {
@@ -101,34 +95,34 @@ void* notify_receive(void* arg) {
 int log_in(){
     string uid,pass;
     uid=get_uid();
+    cout<<"uid="<<uid<<endl;
     curuid=stoi(uid);
     cout<<"请输入您的密码:"<<endl;
     getline(cin,pass);
+    cout<<pass<<endl;
     Message msg(uid,LOGIN,{pass});
     int ret=asocket.Send(msg.S_to_json());
-    err.server_close(ret);
+    //err.server_close(ret);
     string recv=asocket.Receive();//接收返回的结果
     cout<<recv<<endl;
     err.server_close(recv);
     if(recv=="notcorrect"){
         cout<<"密码错误："<<endl;
         return 0;
-    }else if(recv=="havevnotsignup"){
+    }else if(recv=="havenotsignup"){
         cout<<"帐号不存在,请注册"<<endl;
         return 0;
     }else if(recv=="success"){
         system("clear");
         cout<<"登录成功"<<endl;
     pthread_t tid;
-    // 传递参数
+    //额外创建线程处理通知
     struct ThreadParams {
         std::string uid;
         int recv_fd;
     };
-    ThreadParams* params = new ThreadParams{uid, asocket.getresvfd()};
-
-    // 处理通知的线程
-    pthread_create(&tid, NULL, &notify_receive, static_cast<void*>(params));
+    ThreadParams* param = new ThreadParams{uid, asocket.get_recvfd()};
+    pthread_create(&tid, NULL, &notify_receive, static_cast<void*>(param));
     pthread_detach(tid);
         return 1;
     }
