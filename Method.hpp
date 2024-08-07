@@ -126,12 +126,12 @@ class Method {
             cout<<"文件接收完毕"<<endl;
         }
     }
-    int Receivemsg(int cfd,char** msg){
+
+int Receivemsg(int cfd,char** msg){
     int len=0;
     Read(cfd,(char *)&len,4);
     len=ntohl(len);
-    printf("数据大小为%d\n",len);
-
+    // printf("数据大小为%d\n",len);
     char *buf=(char *)malloc(len+1);
     int ret=Read(cfd,buf,len);
     if(ret!=len){
@@ -149,11 +149,9 @@ ssize_t Read (int fd,void *aptr,size_t n)
     size_t leftn;
     ssize_t readn;
     char *ptr;
-
     ptr=(char *)aptr;
     leftn=n;
-    while(leftn>0)
-    {
+    while(leftn>0){
         if((readn=read(fd,ptr,leftn))<0){
             if(errno==EINTR||EWOULDBLOCK){
                 readn=0;
@@ -163,7 +161,7 @@ ssize_t Read (int fd,void *aptr,size_t n)
         }else if(readn==0){
             break;
         }
-        leftn-readn;
+        leftn-=readn;
         ptr+=readn;
     }
     return n-leftn;

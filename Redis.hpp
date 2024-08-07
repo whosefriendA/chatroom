@@ -27,6 +27,18 @@ class Redis{
         }
         return false;
     }
+    int Scard(const string&key){
+        int num;
+        redisReply *reply = (redisReply *)redisCommand(this->con, "SCARD %s", key.c_str());
+        if(reply!=nullptr&&reply->type==REDIS_REPLY_INTEGER&&reply->integer==-1){
+            freeReplyObject(reply);
+            return num;
+        }
+        if (reply) {
+            freeReplyObject(reply);
+        }
+        return false;
+    }
     string Sget(const string&key,const string&filed){
         string value;
         redisReply*reply=(redisReply*)redisCommand(this->con,"SGET %s %s",key.c_str(),filed.c_str());
