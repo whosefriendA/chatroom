@@ -172,7 +172,7 @@ void friend_sendmsg(TaskSocket asocket,Message msg){
         return;
     }
     string uid = msg.uid;
-    string msg1 = uid + ":" + msg.para[0];
+    string msg1 = uid  + msg.para[0];
     redis.Rpushvalue(msg.recuid  + "和" + msg.uid + "的聊天记录", msg1);
 
     if (redis.Sismember(online_users,msg.recuid) && (redis.Hget(msg.recuid , "聊天对象") == msg.uid)){

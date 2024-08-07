@@ -256,5 +256,4 @@ void friend_chat()
         }
     }
     return ;
-
 }
