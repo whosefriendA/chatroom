@@ -2,6 +2,7 @@
 sockaddr_in server_addr2;
 TaskSocket asocket;
 Error err;
+Method method;
 string curuid;
 int main(int argc,char*argv[]){
     server_addr2.sin_family=AF_INET;

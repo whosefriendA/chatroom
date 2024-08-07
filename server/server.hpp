@@ -46,6 +46,7 @@
 #define PASSWORD_FIND 16
 #define PASSWORD_GET 17
 #define CHAT_WITH_FRIEND 18
+#define SEND_MSG 19
 #define EXITCHAT 20
 #define RED "\033[31m"
 #define YELLOW "\033[33m"

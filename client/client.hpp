@@ -2,6 +2,7 @@
 #include"../Redis.hpp"
 #include"../Error.hpp"
 #include"../Message.hpp"
+#include"../Method.hpp"
 #include<signal.h>
 #include<iostream>
 #include<chrono>
@@ -35,7 +36,8 @@
 #define PASSWORD_FIND 16
 #define PASSWORD_GET 17
 #define CHAT_WITH_FRIEND 18
-#define EXITCHAT 20
+#define SEND_MSG 19
+#define EXIT_CHAT 20
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
 #define RESET "\033[0m"
@@ -43,6 +45,7 @@ using namespace std;
 using json=nlohmann::json;
 extern TaskSocket asocket;
 extern sockaddr_in server_addr2;
+extern Method method;
 extern Error err;
 extern string curuid;
 int Main_menu();

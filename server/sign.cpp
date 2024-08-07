@@ -18,7 +18,7 @@ void Sign_up(TaskSocket asocket,Message msg){
 void Log_in(TaskSocket asocket,Message msg){
     int a=redis.Sismember("用户uid集合",msg.uid);
     cout<<a<<endl;
-    if(!a){//帐号不存在
+    if(!a){
         asocket.Send("havenotsignup");
     }else{
     string pwd=redis.Sget(msg.uid,"pass");
