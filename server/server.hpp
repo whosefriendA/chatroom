@@ -50,6 +50,7 @@
 #define EXITCHAT 20
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
+#define GREEN "\033[32m"
 #define RESET "\033[0m"
 extern Redis redis;
 extern Method method;
@@ -77,7 +78,9 @@ void friend_apply_agree(TaskSocket,Message);
 void friend_apply_refuse(TaskSocket,Message);
 void friend_block(TaskSocket,Message);
 void friend_restore(TaskSocket,Message);
+void friend_chat(TaskSocket,Message);
 void Unreadnotice(TaskSocket, Message);
+void friend_sendmsg(TaskSocket,Message);
 class User{
     public:
     User(string name,string pass,string question,string answer,string UID);
