@@ -38,6 +38,7 @@
 #define CHAT_WITH_FRIEND 18
 #define SEND_MSG 19
 #define EXIT_CHAT 20
+#define UNREAD_NOTICE 21
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
 #define RESET "\033[0m"
@@ -66,3 +67,4 @@ void Friend_block();
 void friend_block();
 void friend_restore();
 void friend_chat();
+void Unreadnotice();

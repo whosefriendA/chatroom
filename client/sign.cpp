@@ -166,3 +166,15 @@ void pass_find()
     return ;
     }
 }
+void Unreadnotice(){
+    Message msg(curuid,UNREAD_NOTICE);
+    int ret=asocket.Send(msg.S_to_json());
+    err.server_close(ret);
+    string recv=asocket.Receive();
+    err.server_close(recv);
+    if(recv=="failure"){
+        cout<<"目前没有未读消息";
+    }else{
+        cout<<recv<<endl;
+    }
+}

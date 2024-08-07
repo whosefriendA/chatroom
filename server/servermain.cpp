@@ -94,18 +94,17 @@ int main(int argc,char*argv[]){
                    perror("new event error");
                    exit(0);
                 }
-            }
-            else {
+            }else {
                 TaskSocket asocket(nfd);
                 char *buf;
-                int ret=method.recvMsg(nfd,&buf);
+                int ret=method.Receivemsg(nfd,&buf);
                 //cout<<ret<<endl;
                 if(ret<=0){
                     cerr<<"error receiving data ."<<endl;
                     string uid =redis.Hget("fd-uid表",to_string(nfd)); // 获取客户端的用户ID
                     // 添加到在线用户
                     redis.Sadd("onlie_users",uid);
-                    redis.Hset(uid,"通知套接字","-1");
+                    redis.Hset(uid,"通知socket","-1");
                     redis.Hset("fd-uid表",to_string(nfd),"-1");
                     close(nfd);
                     continue;
@@ -114,10 +113,11 @@ int main(int argc,char*argv[]){
                 string comad_string=buf;
                 json data=json::parse(comad_string);
                 if(data.at("flag")==RECV){
-                redis.Hset(data.at("UID"), "通知套接字", to_string(nfd));
+                redis.Hset(data.at("UID"), "通知socket", to_string(nfd));
                 }else if(data.at("flag")==SENDFILE||data.at("flag")==RECVFILE||data.at("flag")==SENDFILE_GROUP||data.at("flag")==RECVFILE_GROUP){
                     event.events = EPOLLIN|EPOLLET;
                     event.data.fd = nfd;
+                    //摘树
                     epoll_ctl(epfd, EPOLL_CTL_DEL, nfd, &event);
                     //文件传输
                     std::thread fileThread([asocket,comad_string ,nfd, epfd]() {
@@ -125,7 +125,7 @@ int main(int argc,char*argv[]){
                         flag |= O_NONBLOCK;
                         fcntl(nfd, F_SETFL, flag);
                         transferfunc(asocket,comad_string);
-                        // 加入 epoll 
+                        // 挂树
                         struct epoll_event addEvent;
                         addEvent.events = EPOLLIN | EPOLLET;
                         addEvent.data.fd = nfd;
@@ -191,6 +191,5 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
         case RECVFILE:
             break;
     }
-
     return;
 }

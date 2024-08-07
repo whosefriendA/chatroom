@@ -57,32 +57,28 @@ void User_remove(TaskSocket asocket, Message msg)//部分实现
     redis.Valueremove("用户uid集合", msg.uid); // 从用户uid集合中移除
     asocket.Send("success");
 }
-void Unreadnotice(TaskSocket asocket, Message msg)
-{
-    string response;
-    int num = stoi(redis.Hget(msg.uid + "的未读消息", "通知类消息"));
-    int num1 = stoi(redis.Hget(msg.uid + "的未读消息", "好友申请"));
-    int num2 = num + num1;
-    if (num2 == 0){
+void Unreadnotice(TaskSocket asocket, Message msg){
+    string notice;
+    int nnum = stoi(redis.Hget(msg.uid + "的未读消息", "通知类消息"));
+    int rnum = stoi(redis.Hget(msg.uid + "的未读消息", "好友申请"));
+    int snum = nnum + rnum;
+    if (snum == 0){
         asocket.Send("failure");
         return;
     }else{
-        response = "有" + to_string(num2) + "条未读消息:\n";
-
-        for (int i = 0; i < num; ++i){
+        notice = "有" + to_string(snum) + "条未读消息:\n";
+        for (int i = 0; i < nnum; ++i){
             string notify = msg.uid + "的通知消息";
             string notification = redis.LValueget(notify, i);
-            response += "通知" + to_string(i + 1) + ":" + notification + "\n";
+            notice += "通知" + to_string(i + 1) + ":" + notification + "\n";
         }
-
         vector<string> fieldNames = redis.Hgetall(msg.uid, "收到的好友申请");
         for (size_t i = 0; i < fieldNames.size(); ++i){
             string friendRequest = redis.Hget(msg.uid + "收到的好友申请", fieldNames[i]);
-            response += "好友申请" + to_string(i + 1) + ":" + friendRequest + "\n";
+            notice += "好友申请" + to_string(i + 1) + ":" + friendRequest + "\n";
         }
     }
-    asocket.Send(YELLOW + response + RESET);
-  
+    asocket.Send(YELLOW + notice + RESET);
     redis.keyremove(msg.uid + "的通知消息");
     redis.Hset(msg.uid + "的未读消息", "通知类消息", "0");
 }

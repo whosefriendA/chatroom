@@ -41,7 +41,7 @@ void User_menu(){
     else if(stoi(a)==2)
 ;
     else if(stoi(a)==3)
-;
+    Unreadnotice();
     else if(stoi(a)==4)
 ;
     else if(stoi(a)==5)

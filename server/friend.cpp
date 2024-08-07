@@ -179,14 +179,12 @@ void friend_sendmsg(TaskSocket asocket,Message msg){
         string fr_recvfd = redis.Hget(msg.recuid , "通知socket");
         TaskSocket fr_socket(stoi(fr_recvfd));
         fr_socket.Send(GREEN + msg1 + RESET);
-    }
-    else if (!redis.Sismember(online_users,msg.recuid)) // 好友不在线
+    }else if (!redis.Sismember(online_users,msg.recuid)) // 好友不在线
     {
         string num = redis.Hget(msg.recuid  + "的未读消息", "通知类消息");
         redis.Hset(msg.recuid  + "的未读消息", "通知类消息", to_string(stoi(num) + 1));
         redis.Rpushvalue(msg.recuid  + "的通知消息", msg.uid + "给你发来了一条消息");
-    }
-    else{
+    }else{
         string fr_recvfd = redis.Hget(msg.recuid , "通知socket");
         TaskSocket fr_socket(stoi(fr_recvfd));
         fr_socket.Send(RED + msg.uid + "给你发来了一条消息" + RESET);

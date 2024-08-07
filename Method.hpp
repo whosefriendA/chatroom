@@ -76,7 +76,7 @@ class Method {
                 string recv_file=asocket.Receive();
                 err.server_close(recv_file);
                 if(recv_file=="failure"){
-                    cout<<"暂时没有未接收的文件"<<endl;
+                    cout<<"暂无未接收的文件"<<endl;
                     return;
                 }else{
                     int filefd=open(filepath.c_str(),O_APPEND|O_WRONLY|O_CREAT,S_IRWXU);
@@ -93,15 +93,15 @@ class Method {
                     lseek(filefd,0,SEEK_SET);
                     while(size>totalRecvByte){
                         cout<<"size:"<<size<<endl;
-                        ssize_t byteRead=read(asocket.getfd(),buf,sizeof(buf));
-                         if (byteRead == -1) {
+                        ssize_t read_byte=read(asocket.getfd(),buf,sizeof(buf));
+                         if (read_byte == -1) {
                             if(errno == EAGAIN || errno == EWOULDBLOCK){
                                 continue;
                             }else{
                                 cerr << "Error reading file: " << strerror(errno) << endl;
                             }
                         }
-                        if (byteRead == 0) {
+                        if (read_byte == 0) {
                             cerr << "Connection closed by client" << endl;
                             break;
                         }
@@ -111,14 +111,14 @@ class Method {
                             //cerr << "Connection closed by client" << endl;
                             break;
                         }
-                        ssize_t Writeb=write(filefd,buf,byteRead);
+                        ssize_t Writeb=write(filefd,buf,read_byte);
                         if (Writeb == -1) {
                             cerr << "Error writing to file" << endl;
                             break;
                         }
-                        totalRecvByte+=byteRead;
+                        totalRecvByte+=read_byte;
                         cout<<"Curtotal:"<<totalRecvByte<<endl;
-                        cout << "byteRead:" << byteRead << endl;
+                        cout << "byteRead:" << read_byte << endl;
                         cout << "bytewrite" << Writeb << endl;
                     }
                     if (totalRecvByte < size) {
@@ -128,12 +128,12 @@ class Method {
                     cout<<"文件接收完毕"<<endl;
                 }
     }
-    int recvMsg(int cfd,char** msg)
+    int Receivemsg(int cfd,char** msg)
 {
     int len=0;
     Read(cfd,(char *)&len,4);
     len=ntohl(len);
-    printf("数据大小为%d\n",len);//数据头
+    printf("数据大小为%d\n",len);
 
     char *buf=(char *)malloc(len+1);
     int ret=Read(cfd,buf,len);
