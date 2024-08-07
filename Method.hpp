@@ -1,4 +1,5 @@
 #include"./Error.hpp"
+#include"./Message.hpp"
 #include<iostream>
 #include<sys/sendfile.h>
 #include<fcntl.h>
@@ -7,7 +8,6 @@
 #include<sys/stat.h>
 #include<cerrno>
 #include<cstring>
-Error err;
 class Method {
     public:
     Method()=default;
@@ -28,10 +28,10 @@ class Method {
 
             Message msg_file(curuid,recvuid,SENDFILE,{filename,to_string(filesize)});
             int ret=asocket.Send(msg_file.S_to_json());
-            err.server_close(ret);
+            err1.server_close(ret);
 
             string recv_file=asocket.Receive();
-            err.server_close(recv_file);
+            err1.server_close(recv_file);
             if(recv_file=="success"){
                 ssize_t offset = 0;
                 cout<<filesize<<endl;
@@ -55,81 +55,78 @@ class Method {
             close(filefd);
         }
         string recv=asocket.Receive();
-        err.server_close(recv);
+        err1.server_close(recv);
         if(recv=="success"){
             cout<<"文件上传成功"<<endl;
         }
     }
     void Receiveflie_client(TaskSocket asocket,string curuid,string recvuid,int RECVFILE){
-                string filepath;
+        string filepath;
+        cout<<"请输入想保存文件的位置:"<<endl;
+        getline(cin,filepath);
 
-                cout<<"请输入想保存文件的位置:"<<endl;
-                getline(cin,filepath);
+        size_t lastSlash=filepath.find_last_of("/");
+        string filename=filepath.substr(lastSlash+1);//文件名
 
-                size_t lastSlash=filepath.find_last_of("/");//找到最后一个斜杠或者反斜杠
-                string filename=filepath.substr(lastSlash+1);//获取到文件名
+        Message msg_file(curuid,recvuid,RECVFILE,{filename});
+        int ret=asocket.Send(msg_file.S_to_json());
+        err1.server_close(ret);
 
-                Message msg_file(curuid,recvuid,RECVFILE,{filename});
-                int ret=asocket.Send(msg_file.S_to_json());
-                err.server_close(ret);
-
-                string recv_file=asocket.Receive();
-                err.server_close(recv_file);
-                if(recv_file=="failure"){
-                    cout<<"暂无未接收的文件"<<endl;
-                    return;
-                }else{
-                    int filefd=open(filepath.c_str(),O_APPEND|O_WRONLY|O_CREAT,S_IRWXU);
-                    if(filefd==-1){
-                        cerr<<"Error opening file:"<<strerror(errno)<<endl;
-                        return;
+        string recv_file=asocket.Receive();
+        err1.server_close(recv_file);
+        if(recv_file=="failure"){
+            cout<<"暂无未接收的文件"<<endl;
+            return;
+        }else{
+            int filefd=open(filepath.c_str(),O_APPEND|O_WRONLY|O_CREAT,S_IRWXU);
+            if(filefd==-1){
+                cerr<<"Error opening file:"<<strerror(errno)<<endl;
+                return;
+            }
+            cout<<recv_file.c_str()<<endl;
+            ssize_t size=stoll(recv_file.c_str());//文件大小
+            cout<<size<<endl;
+            char buf[BUFSIZ];
+            ssize_t Recv_bytes=0;
+            lseek(filefd,0,SEEK_SET);
+            while(size>Recv_bytes){
+                cout<<"size:"<<size<<endl;
+                ssize_t read_byte=read(asocket.getfd(),buf,sizeof(buf));
+                if (read_byte == -1) {
+                    if(errno == EAGAIN || errno == EWOULDBLOCK){
+                        continue;
+                    }else{
+                        cerr << "Error reading file: " << strerror(errno) << endl;
                     }
-                    cout<<recv_file.c_str()<<endl;
-                    ssize_t size=stoll(recv_file.c_str());//文件大小
-                    cout<<size<<endl;
-                    char buf[BUFSIZ];
-                    ssize_t totalRecvByte=0;
-
-                    lseek(filefd,0,SEEK_SET);
-                    while(size>totalRecvByte){
-                        cout<<"size:"<<size<<endl;
-                        ssize_t read_byte=read(asocket.getfd(),buf,sizeof(buf));
-                         if (read_byte == -1) {
-                            if(errno == EAGAIN || errno == EWOULDBLOCK){
-                                continue;
-                            }else{
-                                cerr << "Error reading file: " << strerror(errno) << endl;
-                            }
-                        }
-                        if (read_byte == 0) {
-                            cerr << "Connection closed by client" << endl;
-                            break;
-                        }
-                        if (size==totalRecvByte) {
-                            cout<<"size:"<<size<<endl;
-                            cout<<"totalRecvByte:"<<totalRecvByte<<endl;
-                            //cerr << "Connection closed by client" << endl;
-                            break;
-                        }
-                        ssize_t Writeb=write(filefd,buf,read_byte);
-                        if (Writeb == -1) {
-                            cerr << "Error writing to file" << endl;
-                            break;
-                        }
-                        totalRecvByte+=read_byte;
-                        cout<<"Curtotal:"<<totalRecvByte<<endl;
-                        cout << "byteRead:" << read_byte << endl;
-                        cout << "bytewrite" << Writeb << endl;
-                    }
-                    if (totalRecvByte < size) {
-                        cerr << "File transmission incomplete" << endl;
-                    }
-                    close(filefd);
-                    cout<<"文件接收完毕"<<endl;
                 }
+                if (read_byte == 0) {
+                    cerr << "Connection closed by client" << endl;
+                    break;
+                }
+                if (size==Recv_bytes) {
+                    cout<<"size:"<<size<<endl;
+                    cout<<"totalRecvByte:"<<Recv_bytes<<endl;
+                    //cerr << "Connection closed by client" << endl;
+                    break;
+                }
+                ssize_t Writeb=write(filefd,buf,read_byte);
+                if (Writeb == -1) {
+                    cerr << "Error writing to file" << endl;
+                    break;
+                }
+                Recv_bytes+=read_byte;
+                cout<<"total_receive:"<<Recv_bytes<<endl;
+                cout << "byteRead:" << read_byte << endl;
+                cout << "bytewrite" << Writeb << endl;
+            }
+            if (Recv_bytes < size) {
+                cerr << "File transmission incomplete" << endl;
+            }
+            close(filefd);
+            cout<<"文件接收完毕"<<endl;
+        }
     }
-    int Receivemsg(int cfd,char** msg)
-{
+    int Receivemsg(int cfd,char** msg){
     int len=0;
     Read(cfd,(char *)&len,4);
     len=ntohl(len);
@@ -171,4 +168,5 @@ ssize_t Read (int fd,void *aptr,size_t n)
     }
     return n-leftn;
 }
+Error err1;
 };

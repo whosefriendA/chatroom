@@ -1,3 +1,5 @@
+#ifndef _MESSAGE_
+#define _MESSAGE_
 #include<iostream>
 #include<string>
 #include<vector>
@@ -47,3 +49,5 @@ public:
         return js.dump();
     }
 };
+
+#endif

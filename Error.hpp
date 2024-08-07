@@ -1,3 +1,5 @@
+#ifndef _ERROR_
+#define _ERROR_
 #include<iostream>
 using namespace std;
 class Error{
@@ -18,3 +20,5 @@ class Error{
     }
 
 };
+
+#endif

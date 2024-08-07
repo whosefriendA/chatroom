@@ -176,5 +176,6 @@ void Unreadnotice(){
         cout<<"目前没有未读消息";
     }else{
         cout<<recv<<endl;
+        return;
     }
 }
