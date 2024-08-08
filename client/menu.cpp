@@ -9,6 +9,8 @@ int Main_menu(){
     cout<<"--------[3]找回密码-------"<<endl;
     cout<<"---------[4]退出---------"<<endl;
     getline(cin,a);
+    try{
+    int choice=stoi(a);
     if(stoi(a)==1){
     sign_up();
     continue;
@@ -19,11 +21,11 @@ int Main_menu(){
     pass_find();
     else if(stoi(a)==4)
     exit(0);
-    else{
-    cout<<"请输入正确的选项"<<endl;
+    return ret;
+    }catch (const std::invalid_argument& e) {
+    cout << "请输入正确的选项" << endl;
     continue;
     }
-    return ret;
     }
 }
 void User_menu(){
@@ -36,21 +38,23 @@ void User_menu(){
     cout<<"---------[4]注销---------"<<endl;
     cout<<"---------[5]退出---------"<<endl;
     getline(cin,a);
-    if(stoi(a)==1)
+    try{
+    int choice=stoi(a);
+    if(choice==1)
     Friend_menu();  
-    else if(stoi(a)==2)
+    else if(choice==2)
 ;
-    else if(stoi(a)==3)
+    else if(choice==3)
     Unreadnotice();
-    else if(stoi(a)==4)
+    else if(choice==4)
 ;
-    else if(stoi(a)==5)
+    else if(choice==5)
     exit(0);
-    else{
-    cout<<"请输入正确的选项"<<endl;
+    }catch (const std::invalid_argument& e) {
+    cout << "请输入正确的选项" << endl;
     continue;
     }
-  }
+    }
 }
 void Friend_menu(){
     string a;
@@ -64,24 +68,26 @@ void Friend_menu(){
     cout<<"-----------[6]私聊-----------"<<endl;
     cout<<"-----------[7]退出-----------"<<endl;
     getline(cin,a);
-    if(stoi(a)==1)
+    try{
+    int choice=stoi(a);
+    if(choice==1)
     friend_list_get();
-    else if(stoi(a)==2)
+    else if(choice==2)
     freind_add();
-    else if(stoi(a)==3)
+    else if(choice==3)
     friend_del();
-    else if(stoi(a)==4)
+    else if(choice==4)
     Friend_apply();
-    else if(stoi(a)==5)
+    else if(choice==5)
     Friend_block();
-    else if(stoi(a)==6)
+    else if(choice==6)
     friend_chat();
-    else if(stoi(a)==7)
+    else if(choice==7)
     exit(0);
-    else{
-    cout<<"请输入正确的选项"<<endl;
+    }catch (const std::invalid_argument& e) {
+    cout << "请输入正确的选项" << endl;
     continue;
-    }
+   }
   }
 }
 void Friend_apply(){
@@ -92,18 +98,21 @@ void Friend_apply(){
     cout<<"--------[2]拒绝好友申请--------"<<endl;
     cout<<"-----------[3]返回-----------"<<endl;
     getline(cin,a);
-    if(stoi(a)==1)
+    try{
+    int choice=stoi(a);
+    if(choice==1)
     friend_apply_agree();
-    else if(stoi(a)==2)
+    else if(choice==2)
     friend_apply_refuse();
-    else if(stoi(a)==3)
+    else if(choice==3)
     return;
-    else{
-    cout<<"请输入正确的选项"<<endl;
+  }catch (const std::invalid_argument& e) {
+    cout << "请输入正确的选项" << endl;
     continue;
-    }
-  }
 }
+}
+}
+
 void Friend_block(){
     string a;
     while(1){
@@ -111,15 +120,17 @@ void Friend_block(){
     cout<<"--------[2]恢复好友消息--------"<<endl;
     cout<<"-----------[3]返回-----------"<<endl;
     getline(cin,a);
-    if(stoi(a)==1)
+    try{
+    int choice=stoi(a);
+    if(choice==1)
     friend_block();
-    else if(stoi(a)==2)
+    else if(choice==2)
     friend_restore();
-    else if(stoi(a)==3)
+    else if(choice==3)
     return;
-    else{
-    cout<<"请输入正确的选项"<<endl;
-    continue;
+    }catch(const std::invalid_argument& e){
+      cout << "请输入正确的选项" << endl;
+      continue;
     }
   }
 }

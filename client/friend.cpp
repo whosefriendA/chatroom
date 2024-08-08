@@ -61,7 +61,7 @@ void friend_del(){
     string deluid;
     cout<<"请输入想删除的好友的uid:"<<endl;
     cin>>deluid;
-
+    cin.ignore();
     Message msg(curuid,DELETE_FRIEND,{deluid});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
@@ -84,7 +84,7 @@ void friend_apply_agree(){
     string agreeuid;//同意的uid
     cout<<"想同意加好友申请的好友uid为:"<<endl;
     cin>>agreeuid;
-
+    cin.ignore();
     Message msg(curuid,AGREE_ADDFRIEND,{agreeuid});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
@@ -104,11 +104,10 @@ void friend_apply_agree(){
     }
 }
 void friend_apply_refuse(){
-    friend_list_get();
     string refuseuid;//拒绝的uid
     cout<<"想拒绝加好友申请的uid为:"<<endl;
     cin>>refuseuid;
-
+    cin.ignore();
     Message msg(curuid,REFUSE_ADDFRIEND,{refuseuid});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
@@ -133,7 +132,7 @@ void friend_block(){
     string blockuid;//屏蔽好友
     cout<<"想屏蔽的好友的uid为:"<<endl;
     cin>>blockuid;
-
+    cin.ignore();
     Message msg(curuid,BLOCK_FRIEND,{blockuid});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
@@ -159,7 +158,7 @@ void friend_restore(){
     string restoreuid;//恢复好友会话
     cout<<"想恢复聊天的好友uid为:"<<endl;
     cin>>restoreuid;
-
+    cin.ignore();
     Message msg(curuid,RESTORE_FRIEND,{restoreuid});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
@@ -186,7 +185,7 @@ void friend_chat()
     string recvuid;
     cout<<"想聊天好友的uid为:"<<endl;
     cin>>recvuid;
-
+    cin.ignore();
     Message msg1(curuid,recvuid,CHAT_WITH_FRIEND);
     int ret = asocket.Send(msg1.S_to_json());
     err.server_close(ret);

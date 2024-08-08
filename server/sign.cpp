@@ -1,5 +1,4 @@
 #include"server.hpp"
-
 void Sign_up(TaskSocket asocket,Message msg){
     User_uid+=redis.Scard("uid集合");
     string uid=to_string(User_uid);
@@ -36,7 +35,7 @@ void Log_in(TaskSocket asocket,Message msg){
         cout<<pwd<<endl;
         asocket.Send("notcorrect");
     }else{
-        redis.Sadd(online_users,msg.uid);
+        online_users.insert(msg.uid);
         redis.Hset("fd_uid表",to_string(asocket.getfd()),msg.uid);
         redis.Hset(msg.uid,"聊天对象","0");
         redis.Hset(msg.uid,"通知socket","-1");

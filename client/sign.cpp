@@ -95,7 +95,7 @@ void* notify_receive(void* arg) {
 int log_in(){
     string uid,pass;
     uid=get_uid();
-    cout<<"uid="<<uid<<endl;
+    // cout<<"uid="<<uid<<endl;
     curuid=uid;
     cout<<"请输入您的密码:"<<endl;
     getline(cin,pass);
@@ -157,7 +157,7 @@ void pass_find()
     err.server_close(ret);
 
     recv=asocket.Receive();
-    cout<<"您的密码是："<<recv<<"请牢记您的密码"<<endl;
+    cout<<"你的密码是："<<recv<<"千万别再忘了"<<endl;
     return ;
     }
 }
@@ -168,7 +168,7 @@ void Unreadnotice(){
     string recv=asocket.Receive();
     err.server_close(recv);
     if(recv=="failure"){
-        cout<<"目前没有未读消息";
+        cout<<"你目前没有未读消息"<<endl;
     }else{
         cout<<recv<<endl;
         return;

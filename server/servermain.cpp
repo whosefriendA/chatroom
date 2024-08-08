@@ -188,8 +188,10 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
             friend_restore(asocket,msg);
             break;
         case SENDFILE:
+            Sendfile_toserver(asocket,msg);
             break;
         case RECVFILE:
+            Receivefile_fromserver(asocket,msg);
             break;
         case UNREAD_NOTICE:
             Unreadnotice(asocket,msg);

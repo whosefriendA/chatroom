@@ -1,4 +1,5 @@
 #include"./Error.hpp"
+#include"./Redis.hpp"
 #include"./Message.hpp"
 #include<iostream>
 #include<sys/sendfile.h>

@@ -70,22 +70,22 @@ void friend_del(TaskSocket asocket, Message msg){
     }
 }
 void friend_apply_agree(TaskSocket asocket, Message msg){
-    {
     if (!redis.hexists(msg.uid + "收到的好友申请", msg.para[0])){
         asocket.Send("notfind");
         return;
     }
     if (redis.HValueremove(msg.uid + "收到的好友申请", msg.para[0])){
         string nownum = redis.Hget(msg.uid + "的未读消息", "好友申请");
+        cout<<"first stoi"<<endl;
         redis.Hset(msg.uid + "的未读消息", "好友申请", (to_string(stoi(nownum) - 1)));
 
         redis.Hset(msg.uid + "的好友列表", msg.para[0], "hi");
-        redis.Rpushvalue(msg.uid + "和" + msg.para[0] + "的聊天记录", "------");
+        redis.Rpushvalue(msg.uid + "与" + msg.para[0] + "的聊天记录", "------");
 
         redis.Hset(msg.para[0] + "的好友列表", msg.uid, "hi");
-        redis.Rpushvalue(msg.para[0] + "和" + msg.uid + "的聊天记录", "------");
+        redis.Rpushvalue(msg.para[0] + "与" + msg.uid + "的聊天记录", "------");
         redis.Rpushvalue(msg.para[0]+ "的通知消息", msg.uid + "通过了你的好友申请");
-
+        cout<<"second stoi"<<endl;
         string num1 = redis.Hget(msg.para[0] + "的未读消息", "通知类消息");
         redis.Hset(msg.para[0]+ "的未读消息", "通知类消息", to_string(stoi(num1) + 1));
 
@@ -97,7 +97,6 @@ void friend_apply_agree(TaskSocket asocket, Message msg){
         asocket.Send("success");
         return;
     }
-}
 }
 void friend_apply_refuse(TaskSocket asocket,Message msg){
     if (!redis.hexists(msg.uid + "收到的好友申请", msg.para[0])){
@@ -164,7 +163,7 @@ void friend_chat(TaskSocket asocket,Message msg){
 }
 void friend_sendmsg(TaskSocket asocket,Message msg){
     string newmsg = "我:" + msg.para[0];
-    redis.Rpushvalue(msg.uid + "和" + msg.recuid + "的聊天记录", newmsg);
+    redis.Rpushvalue(msg.uid + "与" + msg.recuid + "的聊天记录", newmsg);
 
     string my_recvfd = redis.Hget(msg.uid, "通知socket");
     TaskSocket my_socket(stoi(my_recvfd));
@@ -178,7 +177,7 @@ void friend_sendmsg(TaskSocket asocket,Message msg){
     }
     string uid = msg.uid;
     string msg1 = uid  + msg.para[0];
-    redis.Rpushvalue(msg.recuid  + "和" + msg.uid + "的聊天记录", msg1);
+    redis.Rpushvalue(msg.recuid  + "与" + msg.uid + "的聊天记录", msg1);
 
     if (online_users.find(msg.recuid)!=online_users.end() && (redis.Hget(msg.recuid , "聊天对象") == msg.uid)){
         string fr_recvfd = redis.Hget(msg.recuid , "通知socket");
