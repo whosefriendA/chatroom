@@ -25,6 +25,7 @@
 #include<functional>
 #include<netdb.h>
 #include<atomic>
+#include<unordered_set>
 #define FID 1//始祖UID
 #define SERVERPORT 8080//默认端口号
 #define RECV -1
@@ -56,7 +57,7 @@
 #define RESET "\033[0m"
 extern Redis redis;
 extern Method method;
-extern string online_users;
+extern unordered_set<string> online_users;
 extern sockaddr_in server_addr;
 extern socklen_t server_addr_len;
 extern int server_fd;
@@ -70,7 +71,6 @@ ssize_t Read (int fd,void *aptr,size_t n);
 
 void Sign_up(TaskSocket,Message);
 void Log_in(TaskSocket,Message);
-void getname(TaskSocket,Message);
 void pass_find(TaskSocket,Message);
 void question_get(TaskSocket,Message);
 void pass_get(TaskSocket,Message);

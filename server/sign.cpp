@@ -93,6 +93,3 @@ void Unreadnotice(TaskSocket asocket, Message msg){
     redis.keyremove(msg.uid + "的通知消息");
     redis.Hset(msg.uid + "的未读消息", "通知类消息", "0");
 }
-void getname(TaskSocket asocket, Message msg){
-
-}

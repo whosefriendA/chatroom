@@ -1,7 +1,7 @@
 #include"server.hpp"
 Redis redis;
 Method method;
-string online_users;
+unordered_set<string> online_users;
 sockaddr_in server_addr;
 socklen_t server_addr_len=sizeof(server_addr);
 int server_port=SERVERPORT;
@@ -102,8 +102,7 @@ int main(int argc,char*argv[]){
                 if(ret<=0){
                     //cerr<<"error receiving data ."<<endl;
                     string uid =redis.Hget("fd-uid表",to_string(nfd));
-                    // 添加到在线用户
-                    redis.Sadd("onlie_users",uid);
+                    online_users.insert(uid);//添加到在线用户
                     redis.Hset(uid,"通知socket","-1");
                     redis.Hset("fd-uid表",to_string(nfd),"-1");
                     close(nfd);
@@ -136,9 +135,8 @@ int main(int argc,char*argv[]){
                     });
                     //分离
                     fileThread.detach();
-                    }
-                    else{
-                        // cout<<"will create task to thread"<<endl;
+                }else{
+                    // cout<<"will create task to thread"<<endl;
                     TaskSocket socket(nfd);
                     // 使用 lambda 表达式创建带参数的 taskhandler并添加到调度器
                     Task task([socket, comad_string](){ 
@@ -187,15 +185,14 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
             friend_block(asocket,msg);
             break;
         case RESTORE_FRIEND:
-        friend_restore(asocket,msg);
+            friend_restore(asocket,msg);
             break;
         case SENDFILE:
             break;
         case RECVFILE:
             break;
-        case GETNAME:
-            getname(asocket,msg);
-            break;
+        case UNREAD_NOTICE:
+            Unreadnotice(asocket,msg);
     }
     return;
 }

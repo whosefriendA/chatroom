@@ -137,7 +137,7 @@ int Receivemsg(int cfd,char** msg){
     if(ret!=len){
         printf("数据接收失败\n");
     }else if(ret==0){
-        printf("对方断开连接\n");
+        cout<<to_string(cfd)<<"断开链接"<<endl;
         close(cfd);
     }
     buf[len]='\0';
