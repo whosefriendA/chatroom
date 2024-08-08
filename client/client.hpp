@@ -39,6 +39,7 @@
 #define SEND_MSG 19
 #define EXIT_CHAT 20
 #define UNREAD_NOTICE 21
+#define GETNAME 22
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
 #define RESET "\033[0m"
@@ -49,6 +50,7 @@ extern sockaddr_in server_addr2;
 extern Method method;
 extern Error err;
 extern string curuid;
+extern string curname;
 int Main_menu();
 void User_menu();
 void Friend_menu();

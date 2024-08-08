@@ -21,7 +21,6 @@ public:
         recv_fd=socket(AF_INET,SOCK_STREAM,0);    
     }
 }
-
     ~TaskSocket(){};
 
 int Send(string msg) {
@@ -51,6 +50,7 @@ int Send(string msg) {
     delete[] data;
     return msg_size + 4;
 }
+
 
 string Receive() {
     // 数据头
@@ -102,8 +102,8 @@ string Receive() {
     return msg;
 }
     int getfd(){return tfd;}
-    int getresvfd(){return recv_fd;}
-    
+    int get_recvfd(){return recv_fd;}
+
     private:
     int tfd=-1;
     int recv_fd=-1;

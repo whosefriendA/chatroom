@@ -1,9 +1,9 @@
 #include"./client.hpp"
 sockaddr_in server_addr2;
-TaskSocket asocket;
+TaskSocket asocket("receive");
 Error err;
 Method method;
-string curuid;
+string curuid,curname;
 int main(int argc,char*argv[]){
     server_addr2.sin_family=AF_INET;
     server_addr2.sin_port=htons(SERVERPORT);

@@ -7,15 +7,11 @@ User::User(string name,string pass,string question,string answer,string UID){
     this->Answer=answer;
 }
 void User::user_mem(){
-    json people;
-    people["name"]=Name;
-    people["pass"]=Pass;
-    people["question"]=Question;
-    people["answer"]=Answer;
-    people["friend_list"]=friend_list;
-    people["group_list"]=group_list;
-    string info=people.dump();
-    redis.Sadd("UID",info);
+    redis.Hset(UID,"name",Name);
+    redis.Hset(UID,"pass",Pass);
+    cout<<Pass<<endl;
+    redis.Hset(UID,"question",Question);
+    redis.Hset(UID,"answer",Answer);
 }
 //好友相关
 // void User::friend_add(string friend_id){

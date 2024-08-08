@@ -20,7 +20,7 @@ int Main_menu(){
     else if(stoi(a)==4)
     exit(0);
     else{
-    cout<<"请输入正确的选项";
+    cout<<"请输入正确的选项"<<endl;
     continue;
     }
     return ret;
@@ -29,7 +29,7 @@ int Main_menu(){
 void User_menu(){
     string a;
     while(1){
-    cout<<"---------个人空间---------"<<endl;
+    cout<<"-------"+curname+"的个人空间------"<<endl;
     cout<<"---------[1]好友---------"<<endl;
     cout<<"---------[2]群聊---------"<<endl;
     cout<<"--------[3]未读消息-------"<<endl;
@@ -47,7 +47,7 @@ void User_menu(){
     else if(stoi(a)==5)
     exit(0);
     else{
-    cout<<"请输入正确的选项";
+    cout<<"请输入正确的选项"<<endl;
     continue;
     }
   }
@@ -79,7 +79,7 @@ void Friend_menu(){
     else if(stoi(a)==7)
     exit(0);
     else{
-    cout<<"请输入正确的选项";
+    cout<<"请输入正确的选项"<<endl;
     continue;
     }
   }
@@ -99,7 +99,7 @@ void Friend_apply(){
     else if(stoi(a)==3)
     return;
     else{
-    cout<<"请输入正确的选项";
+    cout<<"请输入正确的选项"<<endl;
     continue;
     }
   }
@@ -118,7 +118,7 @@ void Friend_block(){
     else if(stoi(a)==3)
     return;
     else{
-    cout<<"请输入正确的选项";
+    cout<<"请输入正确的选项"<<endl;
     continue;
     }
   }

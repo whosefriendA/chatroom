@@ -96,10 +96,10 @@ int log_in(){
     string uid,pass;
     uid=get_uid();
     cout<<"uid="<<uid<<endl;
-    curuid=stoi(uid);
+    curuid=uid;
     cout<<"请输入您的密码:"<<endl;
     getline(cin,pass);
-    cout<<pass<<endl;
+    // cout<<pass<<endl;
     Message msg(uid,LOGIN,{pass});
     int ret=asocket.Send(msg.S_to_json());
     //err.server_close(ret);
@@ -112,16 +112,17 @@ int log_in(){
     }else if(recv=="havenotsignup"){
         cout<<"帐号不存在,请注册"<<endl;
         return 0;
-    }else if(recv=="success"){
+    }else{
+        curname=recv;
         system("clear");
         cout<<"登录成功"<<endl;
     pthread_t tid;
     //额外创建线程处理通知
     struct ThreadParams {
-        std::string uid;
+        string uid;
         int recv_fd;
     };
-    ThreadParams* param = new ThreadParams{uid, asocket.get_recvfd()};
+    ThreadParams* param = new ThreadParams{curuid, asocket.get_recvfd()};
     pthread_create(&tid, NULL, &notify_receive, static_cast<void*>(param));
     pthread_detach(tid);
         return 1;

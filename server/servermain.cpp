@@ -5,7 +5,6 @@ string online_users;
 sockaddr_in server_addr;
 socklen_t server_addr_len=sizeof(server_addr);
 int server_port=SERVERPORT;
-int User_count=0;
 int User_uid=1001;
 using namespace std;
 
@@ -70,18 +69,19 @@ int main(int argc,char*argv[]){
         exit(0);
     }
     ThreadPool pool(10);
-    cout<<"下面是uid列表"<<endl;
-    vector<string> members=redis.Sgetall("用户uid集合");
-    for(const string&member :members){
-        cout<<member<<endl;
-    }
+    cout<<"服务器开始工作"<<endl;
+    // cout<<"下面是uid列表"<<endl;
+    // vector<string> members=redis.Sgetall("uid集合");
+    // for(const string&member :members){
+    //     cout<<member<<endl;
+    // }
     while(true){
         int count =epoll_wait(epfd,recvevent,size,-1);
         for(int i=0;i<count;i++){
-            //cout<<count<<endl;
+            // cout<<count<<endl;//
             int nfd=recvevent[i].data.fd;
             if(nfd==lfd){
-                //cout<<"nfd=lfd"<<endl;
+                // cout<<"nfd=lfd"<<endl;
                 cfd=accept(nfd,NULL,NULL);
                 
                 int flag=fcntl(cfd,F_GETFL);
@@ -98,10 +98,10 @@ int main(int argc,char*argv[]){
                 TaskSocket asocket(nfd);
                 char *buf;
                 int ret=method.Receivemsg(nfd,&buf);
-                //cout<<ret<<endl;
+                // cout<<ret<<endl;//
                 if(ret<=0){
-                    cerr<<"error receiving data ."<<endl;
-                    string uid =redis.Hget("fd-uid表",to_string(nfd)); // 获取客户端的用户ID
+                    //cerr<<"error receiving data ."<<endl;
+                    string uid =redis.Hget("fd-uid表",to_string(nfd));
                     // 添加到在线用户
                     redis.Sadd("onlie_users",uid);
                     redis.Hset(uid,"通知socket","-1");
@@ -109,12 +109,15 @@ int main(int argc,char*argv[]){
                     close(nfd);
                     continue;
                 }
-                cout<<buf<<endl;
+                buf[ret]='\0';
+                // cout<<buf<<endl;//
                 string comad_string=buf;
-                json data=json::parse(comad_string);
-                if(data.at("flag")==RECV){
-                redis.Hset(data.at("UID"), "通知socket", to_string(nfd));
-                }else if(data.at("flag")==SENDFILE||data.at("flag")==RECVFILE||data.at("flag")==SENDFILE_GROUP||data.at("flag")==RECVFILE_GROUP){
+                Message msg;
+                msg.Json_to_s(comad_string);
+                cout << "New request:" << comad_string << endl<<endl;
+                if(msg.flag==RECV){
+                redis.Hset(msg.uid, "通知socket", to_string(nfd));
+                }else if(msg.flag==SENDFILE||msg.flag==RECVFILE||msg.flag==SENDFILE_GROUP||msg.flag==RECVFILE_GROUP){
                     event.events = EPOLLIN|EPOLLET;
                     event.data.fd = nfd;
                     //摘树
@@ -135,7 +138,7 @@ int main(int argc,char*argv[]){
                     fileThread.detach();
                     }
                     else{
-                        cout<<"will create task to thread"<<endl;
+                        // cout<<"will create task to thread"<<endl;
                     TaskSocket socket(nfd);
                     // 使用 lambda 表达式创建带参数的 taskhandler并添加到调度器
                     Task task([socket, comad_string](){ 
@@ -189,6 +192,9 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
         case SENDFILE:
             break;
         case RECVFILE:
+            break;
+        case GETNAME:
+            getname(asocket,msg);
             break;
     }
     return;
