@@ -111,11 +111,15 @@ class Redis{
         return "";
     }
     bool hexists(const string& key, const string& field){
-        redisReply* reply = (redisReply*)redisCommand(this->con, "HGET %s %s", key.c_str(), field.c_str());
-        if (reply != nullptr && reply->type == REDIS_REPLY_STRING) {
+        // cout<<"key="<<key<<endl<<"filed="<<field<<endl;
+        redisReply* reply = (redisReply*)redisCommand(this->con, "HEXISTS %s %s", key.c_str(), field.c_str());
+        if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
+            bool a=reply->integer;
+            // cout<<"reply是"<<a<<endl;
             freeReplyObject(reply);
-            return true;
+            return a;
         }
+        // cout<<"错误"<<endl;
         freeReplyObject(reply);
         return false;
     }
@@ -203,6 +207,7 @@ string LValueget(const string& key, int index) {
 }
 vector<string> Lrangeall(const std::string& key) {
         vector<string> result;
+        // cout<<"lrange启动！"<<endl;
         redisReply* reply = (redisReply*)redisCommand(this->con, "LRANGE %s 0 -1", key.c_str());
         if (reply!=nullptr&&reply->type == REDIS_REPLY_ARRAY) {
             for (size_t i = 0; i < reply->elements; ++i) {

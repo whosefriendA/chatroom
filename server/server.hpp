@@ -87,6 +87,7 @@ void Unreadnotice(TaskSocket, Message);
 void friend_sendmsg(TaskSocket,Message);
 void Sendfile_toserver(TaskSocket,Message);
 void Receivefile_fromserver(TaskSocket,Message);
+void Exitchat(TaskSocket,Message);
 class User{
     public:
     User(string name,string pass,string question,string answer,string UID);

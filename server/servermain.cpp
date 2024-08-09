@@ -111,9 +111,9 @@ int main(int argc,char*argv[]){
                 buf[ret]='\0';
                 // cout<<buf<<endl;//
                 string comad_string=buf;
+                cout << "New request:" << comad_string << endl<<endl;
                 Message msg;
                 msg.Json_to_s(comad_string);
-                cout << "New request:" << comad_string << endl<<endl;
                 if(msg.flag==RECV){
                 redis.Hset(msg.uid, "通知socket", to_string(nfd));
                 }else if(msg.flag==SENDFILE||msg.flag==RECVFILE||msg.flag==SENDFILE_GROUP||msg.flag==RECVFILE_GROUP){
@@ -187,6 +187,14 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
         case RESTORE_FRIEND:
             friend_restore(asocket,msg);
             break;
+        case CHAT_WITH_FRIEND:
+            friend_chat(asocket,msg);
+            break;
+        case EXITCHAT:
+            Exitchat(asocket,msg);
+        case SEND_MSG:
+            friend_sendmsg(asocket,msg);
+            break;
         case SENDFILE:
             Sendfile_toserver(asocket,msg);
             break;
@@ -195,6 +203,7 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
             break;
         case UNREAD_NOTICE:
             Unreadnotice(asocket,msg);
+            break;
     }
     return;
 }

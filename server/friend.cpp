@@ -76,16 +76,14 @@ void friend_apply_agree(TaskSocket asocket, Message msg){
     }
     if (redis.HValueremove(msg.uid + "收到的好友申请", msg.para[0])){
         string nownum = redis.Hget(msg.uid + "的未读消息", "好友申请");
-        cout<<"first stoi"<<endl;
         redis.Hset(msg.uid + "的未读消息", "好友申请", (to_string(stoi(nownum) - 1)));
 
-        redis.Hset(msg.uid + "的好友列表", msg.para[0], "hi");
+        redis.Hset(msg.uid + "的好友列表", msg.para[0], "good");
         redis.Rpushvalue(msg.uid + "与" + msg.para[0] + "的聊天记录", "------");
 
-        redis.Hset(msg.para[0] + "的好友列表", msg.uid, "hi");
+        redis.Hset(msg.para[0] + "的好友列表", msg.uid, "good");
         redis.Rpushvalue(msg.para[0] + "与" + msg.uid + "的聊天记录", "------");
         redis.Rpushvalue(msg.para[0]+ "的通知消息", msg.uid + "通过了你的好友申请");
-        cout<<"second stoi"<<endl;
         string num1 = redis.Hget(msg.para[0] + "的未读消息", "通知类消息");
         redis.Hset(msg.para[0]+ "的未读消息", "通知类消息", to_string(stoi(num1) + 1));
 
@@ -148,12 +146,14 @@ void friend_restore(TaskSocket asocket, Message msg)
     return;
 }
 void friend_chat(TaskSocket asocket,Message msg){
-    if(!redis.hexists(msg.uid +"的好友列表",msg.para[0])){
+    if(!redis.hexists(msg.uid+"的好友列表",msg.recuid)){
     asocket.Send("notfind");
     return;
     }
+    // cout<<"什么鬼啊"<<endl;
     asocket.Send("success"); 
     vector<string> history = redis.Lrangeall(msg.uid + "与" + msg.recuid + "的聊天记录");
+    cout<<"开始发送聊天记录"<<endl;
     for (const string &msg : history){
         asocket.Send(msg);
     }
@@ -183,8 +183,7 @@ void friend_sendmsg(TaskSocket asocket,Message msg){
         string fr_recvfd = redis.Hget(msg.recuid , "通知socket");
         TaskSocket fr_socket(stoi(fr_recvfd));
         fr_socket.Send(GREEN + msg1 + RESET);
-    }else if (online_users.find(msg.para[0])==online_users.end()) // 好友不在线
-    {
+    }else if (online_users.find(msg.para[0])==online_users.end()){ // 好友不在线
         string num = redis.Hget(msg.recuid  + "的未读消息", "通知类消息");
         redis.Hset(msg.recuid  + "的未读消息", "通知类消息", to_string(stoi(num) + 1));
         redis.Rpushvalue(msg.recuid  + "的通知消息", msg.uid + "给你发来了一条消息");
@@ -194,5 +193,11 @@ void friend_sendmsg(TaskSocket asocket,Message msg){
         fr_socket.Send(RED + msg.uid + "给你发来了一条消息" + RESET);
     }
     asocket.Send("success");
+    return;
+}
+void Exitchat(TaskSocket mysocket, Message msg){
+    redis.Hset(msg.uid, "聊天对象", "0");
+    redis.Hset(msg.recuid, "聊天对象", "0");
+    mysocket.Send("success");
     return;
 }

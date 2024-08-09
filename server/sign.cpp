@@ -1,6 +1,9 @@
 #include"server.hpp"
 void Sign_up(TaskSocket asocket,Message msg){
+    mutex mtx;
+    {unique_lock<mutex> lock(mtx);
     User_uid+=redis.Scard("uid集合");
+    }
     string uid=to_string(User_uid);
     User u(msg.name,msg.pass,msg.question,msg.para[0],uid);
     // cout<<u.UID<<u.Name<<u.Pass<<u.Question<<u.Answer<<endl;
@@ -30,9 +33,9 @@ void Log_in(TaskSocket asocket,Message msg){
         asocket.Send("havenotsignup");
     }else{
     string pwd=redis.Hget(msg.uid,"pass");
-    cout<<pwd<<endl;
+    // cout<<pwd<<endl;
     if(pwd!=msg.para[0]){
-        cout<<pwd<<endl;
+        // cout<<pwd<<endl;
         asocket.Send("notcorrect");
     }else{
         online_users.insert(msg.uid);
