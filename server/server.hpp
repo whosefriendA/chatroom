@@ -50,8 +50,15 @@
 #define SEND_MSG 19
 #define EXITCHAT 20
 #define UNREAD_NOTICE 21
-#define GETNAME 22
+#define CREATE_GROUP 22
+#define GROUP_LIST 23
+#define ADD_GROUP 24
+#define GROUP_IN 25
+#define GROUP_APPLY_LIST 26
+#define GROUP_APPLY_AGREE 27
+#define GROUP_APPLY_REFUSE 28
 #define RED "\033[31m"
+#define BLUE "\033[34m"
 #define YELLOW "\033[33m"
 #define GREEN "\033[32m"
 #define RESET "\033[0m"
@@ -63,6 +70,7 @@ extern socklen_t server_addr_len;
 extern int server_fd;
 extern int server_port;
 extern int User_uid;
+extern int Group_uid;
 using std::string;
 using std::mutex;
 using json=nlohmann::json;
@@ -88,6 +96,13 @@ void friend_sendmsg(TaskSocket,Message);
 void Sendfile_toserver(TaskSocket,Message);
 void Receivefile_fromserver(TaskSocket,Message);
 void Exitchat(TaskSocket,Message);
+void group_create(TaskSocket,Message);
+void group_add(TaskSocket,Message);
+void group_list_get(TaskSocket,Message);
+void group_in(TaskSocket,Message);
+void group_apply_list(TaskSocket,Message);
+void group_apply_agree(TaskSocket,Message);
+void group_apply_refuse(TaskSocket,Message);
 class User{
     public:
     User(string name,string pass,string question,string answer,string UID);

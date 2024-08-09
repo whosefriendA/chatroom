@@ -3,7 +3,7 @@ sockaddr_in server_addr2;
 TaskSocket asocket("receive");
 Error err;
 Method method;
-string curuid,curname;
+string curuid,curname,cur_groupuid;
 int main(int argc,char*argv[]){
     server_addr2.sin_family=AF_INET;
     server_addr2.sin_port=htons(SERVERPORT);

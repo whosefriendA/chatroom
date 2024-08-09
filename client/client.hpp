@@ -39,7 +39,13 @@
 #define SEND_MSG 19
 #define EXIT_CHAT 20
 #define UNREAD_NOTICE 21
-#define GETNAME 22
+#define CREATE_GROUP 22
+#define GROUP_LIST 23
+#define ADD_GROUP 24
+#define GROUP_IN 25
+#define GROUP_APPLY_LIST 26
+#define GROUP_APPLY_AGREE 27
+#define GROUP_APPLY_REFUSE 28
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
 #define RESET "\033[0m"
@@ -54,9 +60,12 @@ extern Method method;
 extern Error err;
 extern string curuid;
 extern string curname;
+extern string cur_groupuid;
 int Main_menu();
 void User_menu();
 void Friend_menu();
+void Group_menu();
+void Agroup_menu();
 void pass_find();
 void sign_up();
 int log_in();
@@ -75,9 +84,13 @@ void friend_chat();
 void Unreadnotice();
 void group_create();
 void group_add();
+void group_in();
 void group_list_get();
 void group_disband();
 void group_memberlist_get();
-void group_apply();
+void group_apply_list();
+void group_apply_agree();
+void group_apply_refuse();
 void group_manager_set();
 void group_manager_unset();
+void Group_apply();

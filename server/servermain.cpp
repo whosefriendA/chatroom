@@ -6,6 +6,7 @@ sockaddr_in server_addr;
 socklen_t server_addr_len=sizeof(server_addr);
 int server_port=SERVERPORT;
 int User_uid=1001;
+int Group_uid=101;
 using namespace std;
 
 int cfd;
@@ -203,6 +204,27 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
             break;
         case UNREAD_NOTICE:
             Unreadnotice(asocket,msg);
+            break;
+        case CREATE_GROUP:
+            group_create(asocket,msg);
+            break;
+        case ADD_GROUP:
+            group_add(asocket,msg);
+            break;
+        case GROUP_IN:
+            group_in(asocket,msg);
+            break;
+        case GROUP_LIST:
+            group_list_get(asocket,msg);
+            break;
+        case GROUP_APPLY_LIST:
+            group_apply_list(asocket,msg);
+            break;
+        case GROUP_APPLY_AGREE:
+            group_apply_list(asocket,msg);
+            break;
+        case GROUP_APPLY_REFUSE:
+            group_apply_list(asocket,msg);
             break;
     }
     return;

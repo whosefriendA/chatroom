@@ -45,7 +45,7 @@ void User_menu(){
     if(choice==1)
     Friend_menu();  
     else if(choice==2)
-;
+    Group_menu();
     else if(choice==3)
     Unreadnotice();
     else if(choice==4)
@@ -130,6 +130,103 @@ void Friend_block(){
     else if(choice==2)
     friend_restore();
     else if(choice==3)
+    return;
+    }catch(const std::invalid_argument& e){
+      cout << "请输入正确的选项" << endl;
+      continue;
+    }
+  }
+}
+void Group_menu(){
+    string a;
+    while(1){
+    cout<<"-----------"<<WIDEWHITE<<"群聊界面"<<RESET<<"----------"<<endl;
+    cout<<"        [1]查看群聊列表"<<endl;
+    cout<<"         [2]创造群聊"<<endl;
+    cout<<"         [3]加入群聊"<<endl;
+    cout<<"         [4]进入群聊"<<endl;
+    cout<<"          [5]返回"<<endl;
+    cout<<"-----------------------------"<<endl;
+    getline(cin,a);
+    try{
+    int choice=stoi(a);
+    if(choice==1)
+    group_list_get();
+    else if(choice==2)
+    group_create();
+    else if(choice==3)
+    group_add();
+    else if(choice==4)
+    group_in();
+    else if(choice==5)
+    return;
+    }catch (const std::invalid_argument& e) {
+    cout << "请输入正确的选项" << endl;
+    continue;
+   }
+  }
+}
+void Agroup_menu(){
+    string a;
+    while(1){
+    cout<<"-----------"<<WIDEWHITE<<cur_groupuid<<RESET<<"----------"<<endl;
+    cout<<"         [1]查看群聊成员"<<endl;
+    cout<<"         [2]添加管理员"<<endl;
+    cout<<"         [3]取消管理员"<<endl;
+    cout<<"         [4]处理入群申请"<<endl;
+    cout<<"         [5]踢人"<<endl;
+    cout<<"         [6]聊天"<<endl;
+    cout<<"         [7]退群"<<endl;
+    cout<<"         [8]解散群聊"<<endl;
+    cout<<"         [9]返回"<<endl;
+    cout<<"-----------------------------"<<endl;
+    getline(cin,a);
+    try{
+    int choice=stoi(a);
+    if(choice==1)
+    ;
+    //group_memberlist_get();
+    else if(choice==2)
+    ;
+    //group_manager_set();
+    else if(choice==3)
+    ;
+    //group_manager_unset();
+    else if(choice==4)
+    Group_apply();
+    else if(choice==5)
+    ;
+    else if(choice==6)
+    ;
+    else if(choice==7)
+    ;
+    else if(choice==8)
+    ;
+    else if(choice==9)
+    return;
+    }catch (const std::invalid_argument& e) {
+    cout << "请输入正确的选项" << endl;
+    continue;
+   }
+  }
+}
+void Group_apply(){
+    string a;
+    while(1){
+    cout<<"--------[1]查看申请列表--------"<<endl;
+    cout<<"--------[2]通过入群申请--------"<<endl;
+    cout<<"--------[3]拒绝入群申请--------"<<endl;
+    cout<<"----------[4]返回------------"<<endl;
+    getline(cin,a);
+    try{
+    int choice=stoi(a);
+    if(choice==1)
+    group_apply_list();
+    else if(choice==2)
+    group_apply_agree();
+    else if(choice==3)
+    group_apply_refuse();
+    else if(choice==4)
     return;
     }catch(const std::invalid_argument& e){
       cout << "请输入正确的选项" << endl;
