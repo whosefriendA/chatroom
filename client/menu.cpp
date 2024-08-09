@@ -3,11 +3,12 @@ int Main_menu(){
     while(1){
     string a;
     int ret=0;
-    cout<<"-------欢迎来到聊天室------"<<endl;
-    cout<<"---------[1]注册---------"<<endl;
-    cout<<"---------[2]登录---------"<<endl;
-    cout<<"--------[3]找回密码-------"<<endl;
-    cout<<"---------[4]退出---------"<<endl;
+    cout<<"--------"<<WIDEWHITE<<"欢迎来到聊天室"<<RESET<<"-------"<<endl;
+    cout<<"         [1]注册       "<<endl;
+    cout<<"         [2]登录       "<<endl;
+    cout<<"         [3]找回密码        "<<endl;
+    cout<<"         [4]退出      "<<endl;
+    cout<<"-----------------------------"<<endl;
     getline(cin,a);
     try{
     int choice=stoi(a);
@@ -31,12 +32,13 @@ int Main_menu(){
 void User_menu(){
     string a;
     while(1){
-    cout<<"-------"+curname+"的个人空间------"<<endl;
-    cout<<"---------[1]好友---------"<<endl;
-    cout<<"---------[2]群聊---------"<<endl;
-    cout<<"--------[3]未读消息-------"<<endl;
-    cout<<"---------[4]注销---------"<<endl;
-    cout<<"---------[5]退出---------"<<endl;
+    cout<<"   ----"<<GREEN<<curname<<RESET<<"的"<<WIDEWHITE<<"个人空间"<<RESET<<"----"<<endl;
+    cout<<"         [1]好友         "<<endl;
+    cout<<"         [2]群聊         "<<endl;
+    cout<<"         [3]未读消息       "<<endl;
+    cout<<"         [4]注销        "<<endl;
+    cout<<"         [5]退出         "<<endl;
+    cout<<"-------------------------"<<endl;
     getline(cin,a);
     try{
     int choice=stoi(a);
@@ -59,14 +61,15 @@ void User_menu(){
 void Friend_menu(){
     string a;
     while(1){
-    cout<<"------------好友界面-----------"<<endl;
-    cout<<"--------[1]查看好友列表--------"<<endl;
-    cout<<"---------[2]添加好友----------"<<endl;
-    cout<<"---------[3]删除好友----------"<<endl;
-    cout<<"---------[4]好友申请----------"<<endl;
-    cout<<"--------[5]屏蔽好友消息--------"<<endl;
-    cout<<"-----------[6]私聊-----------"<<endl;
-    cout<<"-----------[7]退出-----------"<<endl;
+    cout<<"-----------"<<WIDEWHITE<<"好友界面"<<RESET<<"----------"<<endl;
+    cout<<"        [1]查看好友列表"<<endl;
+    cout<<"         [2]添加好友"<<endl;
+    cout<<"         [3]删除好友"<<endl;
+    cout<<"         [4]好友申请"<<endl;
+    cout<<"        [5]屏蔽好友消息"<<endl;
+    cout<<"          [6]私聊"<<endl;
+    cout<<"          [7]返回"<<endl;
+    cout<<"-----------------------------"<<endl;
     getline(cin,a);
     try{
     int choice=stoi(a);
@@ -83,7 +86,7 @@ void Friend_menu(){
     else if(choice==6)
     friend_chat();
     else if(choice==7)
-    exit(0);
+    return;
     }catch (const std::invalid_argument& e) {
     cout << "请输入正确的选项" << endl;
     continue;

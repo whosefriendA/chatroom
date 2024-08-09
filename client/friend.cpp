@@ -198,6 +198,7 @@ void friend_chat()
     }else if(recv=="success"){
         //打印历史聊天记录
         string historymsg;
+        cout<<"开始打印历史聊天记录"<<endl;
         while(1){
             historymsg=asocket.Receive();
             err.server_close(historymsg);
@@ -209,7 +210,6 @@ void friend_chat()
                 cout<<historymsg<<endl;
             }
         }
-        cin.ignore();
         string curmsg;
         while(1){
             getline(cin,curmsg);

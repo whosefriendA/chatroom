@@ -43,6 +43,9 @@
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
 #define RESET "\033[0m"
+#define GREEN "\033[32m"
+#define BLUE "\033[34m"
+#define WIDEWHITE "\033[1;37m"
 using namespace std;
 using json=nlohmann::json;
 extern TaskSocket asocket;
