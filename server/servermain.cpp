@@ -217,6 +217,9 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
         case GROUP_LIST:
             group_list_get(asocket,msg);
             break;
+        case GROUP_MEMBER_LIST:
+            group_memberlist_get(asocket,msg);
+            break;
         case GROUP_APPLY_LIST:
             group_apply_list(asocket,msg);
             break;
@@ -226,6 +229,12 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
         case GROUP_APPLY_REFUSE:
             group_apply_list(asocket,msg);
             break;
+        case GROUP_MANAGER_SET:
+           group_manager_set(asocket,msg);
+           break;
+        case GROUP_MANAGER_UNSET:
+           group_manager_unset(asocket,msg);
+           break;
     }
     return;
 }

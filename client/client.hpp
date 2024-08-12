@@ -46,6 +46,9 @@
 #define GROUP_APPLY_LIST 26
 #define GROUP_APPLY_AGREE 27
 #define GROUP_APPLY_REFUSE 28
+#define GROUP_MEMBER_LIST 29
+#define GROUP_MANAGER_SET 30
+#define GROUP_MANAGER_UNSET 31
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
 #define RESET "\033[0m"

@@ -57,6 +57,9 @@
 #define GROUP_APPLY_LIST 26
 #define GROUP_APPLY_AGREE 27
 #define GROUP_APPLY_REFUSE 28
+#define GROUP_MEMBER_LIST 29
+#define GROUP_MANAGER_SET 30
+#define GROUP_MANAGER_UNSET 31
 #define RED "\033[31m"
 #define BLUE "\033[34m"
 #define YELLOW "\033[33m"
@@ -103,6 +106,9 @@ void group_in(TaskSocket,Message);
 void group_apply_list(TaskSocket,Message);
 void group_apply_agree(TaskSocket,Message);
 void group_apply_refuse(TaskSocket,Message);
+void group_memberlist_get(TaskSocket,Message);
+void group_manager_set(TaskSocket,Message);
+void group_manager_unset(TaskSocket,Message);
 class User{
     public:
     User(string name,string pass,string question,string answer,string UID);

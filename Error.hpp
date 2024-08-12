@@ -6,19 +6,18 @@ class Error{
     public:
     Error()=default;
     ~Error()=default;
-    void server_close(int ret){
-        if(ret==0||ret==-1){
+    void server_close(int intger){
+        if(intger==0||intger==-1){
         cout<<"服务器已关闭"<<endl;
         exit(0);
     }
     }
-    void server_close(string recv){
-        if(recv=="close"){
+    void server_close(string str){
+        if(str=="close"){
         cout<<"服务器已关闭"<<endl;
         exit(0);
     }
     }
-
 };
 
 #endif

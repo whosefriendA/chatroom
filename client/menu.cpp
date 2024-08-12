@@ -171,27 +171,24 @@ void Agroup_menu(){
     while(1){
     cout<<"-----------"<<WIDEWHITE<<cur_groupuid<<RESET<<"----------"<<endl;
     cout<<"         [1]查看群聊成员"<<endl;
-    cout<<"         [2]添加管理员"<<endl;
-    cout<<"         [3]取消管理员"<<endl;
-    cout<<"         [4]处理入群申请"<<endl;
-    cout<<"         [5]踢人"<<endl;
+    cout<<"         [2]添加管理员（群主）"<<endl;
+    cout<<"         [3]取消管理员（群主）"<<endl;
+    cout<<"         [4]处理入群申请(管理员及以上权限)"<<endl;
+    cout<<"         [5]踢人（管理员及以上权限）"<<endl;
     cout<<"         [6]聊天"<<endl;
     cout<<"         [7]退群"<<endl;
-    cout<<"         [8]解散群聊"<<endl;
+    cout<<"         [8]解散群聊（群主）"<<endl;
     cout<<"         [9]返回"<<endl;
     cout<<"-----------------------------"<<endl;
     getline(cin,a);
     try{
     int choice=stoi(a);
     if(choice==1)
-    ;
-    //group_memberlist_get();
+    group_memberlist_get();
     else if(choice==2)
-    ;
-    //group_manager_set();
+    group_manager_set();
     else if(choice==3)
-    ;
-    //group_manager_unset();
+    group_manager_unset();
     else if(choice==4)
     Group_apply();
     else if(choice==5)
