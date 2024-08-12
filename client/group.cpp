@@ -83,6 +83,7 @@ void group_in(){
         cout<<"你不在这个群里，请先申请加入"<<endl;
         return;       
     }else if(recv=="success"){
+        system("clear");
         Agroup_menu();
         return;
     }else{
@@ -125,11 +126,11 @@ void group_apply_list(){
 void group_apply_agree(){
     string agreeuid;
     cout<<"请输入你想同意加群的uid:"<<endl;
-    cin>>agreeuid;
+    getline(cin,agreeuid);
     Message msg(curuid,cur_groupuid,GROUP_APPLY_AGREE,{agreeuid});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
-
+    
     string agree_recv=asocket.Receive();
     err.server_close(agree_recv);
     if(agree_recv=="failure"){
@@ -148,7 +149,7 @@ void group_apply_agree(){
 void group_apply_refuse(){
     string refuseuid;
     cout<<"请输入你想拒绝加群的uid:"<<endl;
-    cin>>refuseuid;
+    getline(cin,refuseuid);
     Message msg(curuid,cur_groupuid,GROUP_APPLY_REFUSE,{refuseuid});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
@@ -173,7 +174,7 @@ void group_manager_set(){
     group_memberlist_get();
     string addmanager;
     cout<<"你想添加为管理员的uid为:"<<endl;
-    cin>>addmanager;
+    getline(cin,addmanager);
 
     Message msg(curuid,cur_groupuid,GROUP_MANAGER_SET,{addmanager});
     int ret = asocket.Send(msg.S_to_json());
@@ -198,11 +199,11 @@ void group_manager_set(){
 }
 void group_manager_unset(){
     group_memberlist_get();
-    string deletemanager;
+    string unsetmanager;
     cout<<"你想取消的群管理的uid为:"<<endl;
-    cin>>deletemanager;
+    getline(cin,unsetmanager);
 
-    Message msg(curuid,cur_groupuid,GROUP_MANAGER_UNSET,{deletemanager});
+    Message msg(curuid,cur_groupuid,GROUP_MANAGER_UNSET,{unsetmanager});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
     string recv=asocket.Receive();
@@ -225,7 +226,7 @@ void group_delmember(){
     group_memberlist_get();
     string deleteuid;
     cout<<"你想踢出的群成员的uid为:"<<endl;
-    cin>>deleteuid;
+    getline(cin,deleteuid);
 
     Message msg(curuid,cur_groupuid,GROUP_DEL_MEMBER,{deleteuid});
     int ret = asocket.Send(msg.S_to_json());
@@ -266,5 +267,81 @@ void group_disband(){
     }
 }
 void group_exit(){
-    
+    Message msg(curuid,GROUP_EXIT,{cur_groupuid});
+    int ret = asocket.Send(msg.S_to_json());
+    err.server_close(ret);
+
+    string recv=asocket.Receive();
+    err.server_close(recv);
+    if(recv=="failure"){
+        cout<<"群主无法退群,可以解散群"<<endl;
+        return;
+    }else if(recv=="success"){
+        system("clear");
+        cout<<"已成功退出此群聊"<<endl;
+        return;
+    }else{
+        cout<<"错误"<<endl;
+        return;
+    }
+}
+void group_chat(){
+    Message msg(curuid,cur_groupuid,GROUP_CHAT);
+    int ret=asocket.Send(msg.S_to_json());
+    err.server_close(ret);
+
+    string recv=asocket.Receive();
+    err.server_close(recv);
+    if(recv=="success"){
+        //打印群聊历史聊天记录
+        string historymsg;
+        while(1){
+            historymsg=asocket.Receive();
+            err.server_close(historymsg);
+            if(historymsg=="The end"){
+                cout<<RED<<"输入:S发送文件,输入:R接收文件,输入:Q退出聊天"<<RESET<<endl;
+                break;
+            }else{
+                cout<<historymsg<<endl;
+            }
+        }
+    }
+    string newmsg;
+    while(1){
+        getline(cin,newmsg);
+        if(newmsg==":S"){
+            method.Sendflie_client(asocket,curuid,cur_groupuid,SENDFILE);
+            continue;
+        }else if(newmsg==":R"){
+            method.Receiveflie_client(asocket,curuid,cur_groupuid,RECVFILE);
+            continue;
+        }else if(newmsg==":Q"){
+                Message msg_exit(curuid,cur_groupuid,GRUOP_CHATEXIT);
+                int ret=asocket.Send(msg_exit.S_to_json());
+                err.server_close(ret);
+
+                string recv=asocket.Receive();
+                err.server_close(recv);
+                if(recv=="success"){
+                    cout<<"成功退出聊天"<<endl;
+                    return;
+                }else{
+                    cout<<"出现错误"<<endl;
+                    return;
+                }
+                break;
+        }
+        Message msg(curuid,cur_groupuid,GROUP_SENDMSG,{newmsg});
+        int ret = asocket.Send(msg.S_to_json());
+        err.server_close(ret);
+
+        string recv=asocket.Receive();
+        err.server_close(recv);
+        if(recv=="failure"){
+            return;
+        }else if(recv=="success"){
+            continue;
+        }
+    }
+    return;
 }

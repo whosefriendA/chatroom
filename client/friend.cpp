@@ -214,7 +214,6 @@ void friend_chat()
         while(1){
             getline(cin,curmsg);
             if(curmsg==":Q"){
-                //退出聊天
                 Message msg_exit(curuid,recvuid,EXIT_CHAT);
                 int ret=asocket.Send(msg_exit.S_to_json());
                 err.server_close(ret);

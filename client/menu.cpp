@@ -169,7 +169,7 @@ void Group_menu(){
 void Agroup_menu(){
     string a;
     while(1){
-    cout<<"-----------"<<WIDEWHITE<<cur_groupuid<<RESET<<"----------"<<endl;
+    cout<<"-----------"<<WIDEWHITE<<"群聊："<<RESET<<GREEN<<cur_groupuid<<RESET<<"----------"<<endl;
     cout<<"         [1]查看群聊成员"<<endl;
     cout<<"         [2]添加管理员（群主）"<<endl;
     cout<<"         [3]取消管理员（群主）"<<endl;
@@ -192,13 +192,13 @@ void Agroup_menu(){
     else if(choice==4)
     Group_apply();
     else if(choice==5)
-    ;
+    group_delmember();
     else if(choice==6)
-    ;
+    group_chat();
     else if(choice==7)
-    ;
+    group_exit;
     else if(choice==8)
-    ;
+    group_disband();
     else if(choice==9)
     return;
     }catch (const std::invalid_argument& e) {

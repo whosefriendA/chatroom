@@ -52,6 +52,9 @@
 #define GROUP_DEL_MEMBER 32
 #define GROUP_DISBAND 33
 #define GROUP_EXIT 34
+#define GROUP_CHAT 35
+#define GROUP_SENDMSG 36
+#define GRUOP_CHATEXIT 37
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
 #define RESET "\033[0m"
@@ -102,4 +105,5 @@ void group_manager_unset();
 void Group_apply();
 void group_delmember();
 void group_disband();
+void group_chat();
 void group_exit();

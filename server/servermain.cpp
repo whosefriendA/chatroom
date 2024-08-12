@@ -235,6 +235,24 @@ void transferfunc(TaskSocket asocket,const string& comad_string)
         case GROUP_MANAGER_UNSET:
            group_manager_unset(asocket,msg);
            break;
+        case GROUP_DISBAND:
+           group_disband(asocket,msg);
+           break; 
+        case GROUP_EXIT:
+            group_exit(asocket,msg);
+            break;
+        case GROUP_DEL_MEMBER:
+            group_delmember(asocket,msg);
+            break;
+        case GROUP_CHAT:
+            group_chat(asocket,msg);
+            break;
+        case GRUOP_CHATEXIT:
+            group_chatexit(asocket,msg);
+            break;
+        case GROUP_SENDMSG:
+            group_sendmsg(asocket,msg);
+            break;
     }
     return;
 }

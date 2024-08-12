@@ -63,11 +63,15 @@
 #define GROUP_DEL_MEMBER 32
 #define GROUP_DISBAND 33
 #define GROUP_EXIT 34
+#define GROUP_CHAT 35
+#define GROUP_SENDMSG 36
+#define GRUOP_CHATEXIT 37
 #define RED "\033[31m"
 #define BLUE "\033[34m"
 #define YELLOW "\033[33m"
 #define GREEN "\033[32m"
 #define RESET "\033[0m"
+#define WIDEWHITE "\033[1;37m"
 extern Redis redis;
 extern Method method;
 extern unordered_set<string> online_users;
@@ -115,6 +119,9 @@ void group_manager_unset(TaskSocket,Message);
 void group_delmember(TaskSocket,Message);
 void group_disband(TaskSocket,Message);
 void group_exit(TaskSocket,Message);
+void group_chatexit(TaskSocket,Message);
+void group_chat(TaskSocket,Message);
+void group_sendmsg(TaskSocket,Message);
 class User{
     public:
     User(string name,string pass,string question,string answer,string UID);
