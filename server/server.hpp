@@ -60,6 +60,8 @@
 #define GROUP_MEMBER_LIST 29
 #define GROUP_MANAGER_SET 30
 #define GROUP_MANAGER_UNSET 31
+#define GROUP_DEL_MEMBER 32
+#define GROUP_DISBAND 33
 #define RED "\033[31m"
 #define BLUE "\033[34m"
 #define YELLOW "\033[33m"
@@ -85,7 +87,7 @@ void Log_in(TaskSocket,Message);
 void pass_find(TaskSocket,Message);
 void question_get(TaskSocket,Message);
 void pass_get(TaskSocket,Message);
-void User_remove(TaskSocket, Message);
+void User_remove(TaskSocket,Message);
 void friend_list_get(TaskSocket,Message);
 void friend_add(TaskSocket,Message);
 void friend_del(TaskSocket,Message);
@@ -94,7 +96,7 @@ void friend_apply_refuse(TaskSocket,Message);
 void friend_block(TaskSocket,Message);
 void friend_restore(TaskSocket,Message);
 void friend_chat(TaskSocket,Message);
-void Unreadnotice(TaskSocket, Message);
+void Unreadnotice(TaskSocket,Message);
 void friend_sendmsg(TaskSocket,Message);
 void Sendfile_toserver(TaskSocket,Message);
 void Receivefile_fromserver(TaskSocket,Message);
@@ -109,6 +111,8 @@ void group_apply_refuse(TaskSocket,Message);
 void group_memberlist_get(TaskSocket,Message);
 void group_manager_set(TaskSocket,Message);
 void group_manager_unset(TaskSocket,Message);
+void group_delmember(TaskSocket,Message);
+void group_disband(TaskSocket,Message);
 class User{
     public:
     User(string name,string pass,string question,string answer,string UID);
@@ -130,6 +134,6 @@ class User{
     private:
     mutex user_mutex;
 };
-void transferfunc(TaskSocket asocket, const std::string& comad_string);
+void transferfunc(TaskSocket asocket,const std::string& comad_string);
 
 #endif

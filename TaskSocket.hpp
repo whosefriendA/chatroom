@@ -26,16 +26,16 @@ public:
 int Send(string msg) {
     int msg_size = msg.size();
     int biglen = htonl(msg_size);
-    char *data = new char[msg_size + 4];
+    char *data = new char[msg_size+4];
     // 数据头
-    memcpy(data, &biglen, 4);
+    memcpy(data,&biglen,4);
     // 数据体
-    memcpy(data + 4, msg.data(), msg_size);
+    memcpy(data+4,msg.data(),msg_size);
     // 发送数据
     const char *buf = data;
-    int cnt = msg_size + 4;
+    int cnt = msg_size+4;
     while (cnt > 0) {
-        int len = send(tfd, buf, cnt, 0);
+        int len = send(tfd,buf,cnt,0);
         if (len == -1) {
             close(tfd);
             perror("write error");
@@ -48,7 +48,7 @@ int Send(string msg) {
         cnt -= len; 
     }
     delete[] data;
-    return msg_size + 4;
+    return msg_size+4;
 }
 
 
@@ -59,7 +59,7 @@ string Receive() {
     int cnt = 4;
     char *pt = (char *)&len;
     while (cnt > 0) {
-        int ret = recv(tfd, pt, cnt, 0);
+        int ret = recv(tfd,pt,cnt,0);
         if (ret == -1) {
             close(tfd);
             perror("read error");
@@ -75,12 +75,12 @@ string Receive() {
     }
     len = ntohl(len);
     delete[] buf; 
-    buf = new char[len + 1];
+    buf = new char[len+1];
     cnt = len;
     pt = buf;
 
     while (cnt > 0) {
-        int ret = recv(tfd, pt, cnt, 0);
+        int ret = recv(tfd,pt,cnt,0);
         if (ret == -1) {
             close(tfd);
             perror("read error");

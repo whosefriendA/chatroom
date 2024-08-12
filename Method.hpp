@@ -23,7 +23,7 @@ class Method {
             return;
         }else{
             off_t filesize=lseek(filefd,0,SEEK_END);
-            lseek(filefd, 0, SEEK_SET);
+            lseek(filefd,0,SEEK_SET);
             size_t lastSlash=filepath.find_last_of("/");
             string filename=filepath.substr(lastSlash+1);//提取文件名
 
@@ -37,7 +37,7 @@ class Method {
                 ssize_t offset = 0;
                 cout<<filesize<<endl;
                 while (offset < filesize) {
-                    ssize_t sent_bytes = sendfile(asocket.getfd(), filefd, &offset, filesize - offset);
+                    ssize_t sent_bytes = sendfile(asocket.getfd(),filefd,&offset,filesize - offset);
                     cout<<sent_bytes<<endl;
                     if (sent_bytes == -1){
                         if (errno == EAGAIN || errno == EWOULDBLOCK) {

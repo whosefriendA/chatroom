@@ -122,8 +122,8 @@ int log_in(){
         string uid;
         int recv_fd;
     };
-    ThreadParams* param = new ThreadParams{curuid, asocket.get_recvfd()};
-    pthread_create(&tid, NULL, &notify_receive, static_cast<void*>(param));
+    ThreadParams* param = new ThreadParams{curuid,asocket.get_recvfd()};
+    pthread_create(&tid,NULL,&notify_receive,static_cast<void*>(param));
     pthread_detach(tid);
         return 1;
     }

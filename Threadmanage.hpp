@@ -23,7 +23,7 @@ class ThreadPool {
 public:
 ThreadPool(size_t numThreads) : stop(false) {
     for (size_t i = 0; i < numThreads; ++i) {
-        workers.emplace_back(&ThreadPool::worker, this);
+        workers.emplace_back(&ThreadPool::worker,this);
     }
 }
 
@@ -50,7 +50,7 @@ void worker() {
         Task task;
         {
             unique_lock<mutex> lock(tasksMutex);
-            condition.wait(lock, [this] {
+            condition.wait(lock,[this] {
                 return stop || !tasks.empty();
             });
             if (stop && tasks.empty()) {

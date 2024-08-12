@@ -16,8 +16,8 @@ class Redis{
     ~Redis(){
         redisFree(con);  
     }
-    int Sadd(const string& key, const string& value) {
-        redisReply* reply = (redisReply*)redisCommand(this->con, "SADD %s %s", key.c_str(), value.c_str());
+    int Sadd(const string& key,const string& value) {
+        redisReply* reply = (redisReply*)redisCommand(this->con,"SADD %s %s",key.c_str(),value.c_str());
         if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER && reply->integer == 1) {
             freeReplyObject(reply);
             return true;
@@ -29,7 +29,7 @@ class Redis{
     }
     int Scard(const string&key){
         int num;
-        redisReply *reply = (redisReply *)redisCommand(this->con, "SCARD %s", key.c_str());
+        redisReply *reply = (redisReply *)redisCommand(this->con,"SCARD %s",key.c_str());
         if(reply!=nullptr&&reply->type==REDIS_REPLY_INTEGER){
             num=reply->integer;
             freeReplyObject(reply);
@@ -58,7 +58,7 @@ class Redis{
     }
     vector<string> Sgetall(const string& key) {
     vector<string> members;
-    redisReply* reply = (redisReply*)redisCommand(this->con, "SMEMBERS %s", key.c_str());
+    redisReply* reply = (redisReply*)redisCommand(this->con,"SMEMBERS %s",key.c_str());
     if (reply != nullptr && reply->type == REDIS_REPLY_ARRAY) {
         for (size_t i = 0; i < reply->elements; ++i) {
             members.push_back(reply->element[i]->str);
@@ -74,7 +74,7 @@ class Redis{
     vector<std::string> Hgetall(const string& key,const string& type) {
     string listkey=key+type;
     vector<string> friendlist;
-    redisReply* reply = (redisReply*)redisCommand(this->con, "HKEYS %s", listkey.c_str());
+    redisReply* reply = (redisReply*)redisCommand(this->con,"HKEYS %s",listkey.c_str());
     if (reply != nullptr && reply->type == REDIS_REPLY_ARRAY) {
         for (size_t i = 0; i < reply->elements; ++i) {
             friendlist.push_back(reply->element[i]->str);
@@ -83,8 +83,8 @@ class Redis{
     }
     return friendlist;
     }
-    int Hset(const string& key, const string& field, const string& value) {
-        redisReply* reply = (redisReply*)redisCommand(this->con, "HSET %s %s %s", key.c_str(), field.c_str(), value.c_str());
+    int Hset(const string& key,const string& field,const string& value) {
+        redisReply* reply = (redisReply*)redisCommand(this->con,"HSET %s %s %s",key.c_str(),field.c_str(),value.c_str());
         if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER && reply->integer == 1) {
             freeReplyObject(reply);
             return true;
@@ -95,9 +95,9 @@ class Redis{
         return false;
     }
 
-    string Hget(const string& key, const string& field) {
+    string Hget(const string& key,const string& field) {
         string value;
-        redisReply* reply = (redisReply*)redisCommand(this->con, "HGET %s %s", key.c_str(), field.c_str());
+        redisReply* reply = (redisReply*)redisCommand(this->con,"HGET %s %s",key.c_str(),field.c_str());
         if (reply != nullptr && reply->type == REDIS_REPLY_STRING) {
             value = reply->str;
             // cout<<"value="<<value<<endl;
@@ -110,9 +110,9 @@ class Redis{
         cout<<"not find"<<endl;
         return "";
     }
-    bool hexists(const string& key, const string& field){
+    bool hexists(const string& key,const string& field){
         // cout<<"key="<<key<<endl<<"filed="<<field<<endl;
-        redisReply* reply = (redisReply*)redisCommand(this->con, "HEXISTS %s %s", key.c_str(), field.c_str());
+        redisReply* reply = (redisReply*)redisCommand(this->con,"HEXISTS %s %s",key.c_str(),field.c_str());
         if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
             bool a=reply->integer;
             // cout<<"reply是"<<a<<endl;
@@ -123,8 +123,8 @@ class Redis{
         freeReplyObject(reply);
         return false;
     }
-    int Sismember(const string& key, const string& member) {
-        redisReply* reply = (redisReply*)redisCommand(this->con, "SISMEMBER %s %s", key.c_str(), member.c_str());
+    int Sismember(const string& key,const string& member) {
+        redisReply* reply = (redisReply*)redisCommand(this->con,"SISMEMBER %s %s",key.c_str(),member.c_str());
         if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
             bool exists = (reply->integer == 1);
             freeReplyObject(reply);
@@ -135,8 +135,8 @@ class Redis{
         }
         return false;
     }
-    int Valueremove(const string& key, const string& member) {
-    redisReply* reply = (redisReply*)redisCommand(this->con, "SREM %s %s", key.c_str(), member.c_str());
+    int Valueremove(const string& key,const string& member) {
+    redisReply* reply = (redisReply*)redisCommand(this->con,"SREM %s %s",key.c_str(),member.c_str());
     if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
         bool success = (reply->integer > 0); 
         freeReplyObject(reply);
@@ -145,7 +145,7 @@ class Redis{
     return false; 
     }
     int keyremove(const string& key) {
-        redisReply* reply = (redisReply*)redisCommand(this->con, "DEL %s", key.c_str());
+        redisReply* reply = (redisReply*)redisCommand(this->con,"DEL %s",key.c_str());
         if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
             bool success = (reply->integer > 0); 
             return success;
@@ -153,7 +153,7 @@ class Redis{
         return false;
     }
     int exists(const string& key) {
-    redisReply* reply = (redisReply*)redisCommand(this->con, "EXISTS %s", key.c_str());
+    redisReply* reply = (redisReply*)redisCommand(this->con,"EXISTS %s",key.c_str());
     if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
         bool exists = (reply->integer == 1);
         freeReplyObject(reply);
@@ -165,10 +165,10 @@ class Redis{
     }
     return false;
 }
-    int Sgetcount(const string& userID, const string& listType) {
-        string listKey = userID + listType;
+    int Sgetcount(const string& userID,const string& listType) {
+        string listKey = userID+listType;
 
-        redisReply* reply = (redisReply*)redisCommand(this->con, "HLEN %s", listKey.c_str());
+        redisReply* reply = (redisReply*)redisCommand(this->con,"HLEN %s",listKey.c_str());
         if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
             int listCount = static_cast<int>(reply->integer);
             freeReplyObject(reply);
@@ -180,15 +180,15 @@ class Redis{
         return 0;
     }
     bool HValueremove(const string& key,const string& field) {
-    redisReply* reply = (redisReply*)redisCommand(this->con, "HDEL %s %s", key.c_str(), field.c_str());
+    redisReply* reply = (redisReply*)redisCommand(this->con,"HDEL %s %s",key.c_str(),field.c_str());
     if (reply != nullptr&&reply->type==REDIS_REPLY_INTEGER) {
         bool success = (reply->integer > 0);
         return success;
     }
     return false;
     }
-    bool Rpushvalue(const string& key, const string& value) {
-    redisReply* reply = (redisReply*)redisCommand(this->con, "RPUSH %s %s", key.c_str(), value.c_str());
+    bool Rpushvalue(const string& key,const string& value) {
+    redisReply* reply = (redisReply*)redisCommand(this->con,"RPUSH %s %s",key.c_str(),value.c_str());
     if (reply != nullptr && reply->type == REDIS_REPLY_INTEGER) {
         bool success = (reply->integer >= 0);
         freeReplyObject(reply);
@@ -196,8 +196,8 @@ class Redis{
     }
     return false;
 }
-string LValueget(const string& key, int index) {
-    redisReply* reply = (redisReply*)redisCommand(this->con, "LINDEX %s %d", key.c_str(), index);
+string LValueget(const string& key,int index) {
+    redisReply* reply = (redisReply*)redisCommand(this->con,"LINDEX %s %d",key.c_str(),index);
     if (reply != nullptr && reply->type == REDIS_REPLY_STRING) {
         string value = reply->str;
         freeReplyObject(reply);
@@ -208,7 +208,7 @@ string LValueget(const string& key, int index) {
 vector<string> Lrangeall(const std::string& key) {
         vector<string> result;
         // cout<<"lrange启动！"<<endl;
-        redisReply* reply = (redisReply*)redisCommand(this->con, "LRANGE %s 0 -1", key.c_str());
+        redisReply* reply = (redisReply*)redisCommand(this->con,"LRANGE %s 0 -1",key.c_str());
         if (reply!=nullptr&&reply->type == REDIS_REPLY_ARRAY) {
             for (size_t i = 0; i < reply->elements; ++i) {
                 if (reply->element[i]->type == REDIS_REPLY_STRING) {

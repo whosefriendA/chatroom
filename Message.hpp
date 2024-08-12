@@ -15,7 +15,7 @@ public:
     Message(string uid,string recuid,int flag,vector<string>para):uid(uid),recuid(recuid),flag(flag),para(para){};
     Message(string name,string question,int flag,string pass,vector<string>para):name(name),question(question),flag(flag),pass(pass),para(para){};
     Message(string uid,string question,string recuid,int flag,string name,string pass,vector<string> para)
-    : uid(uid),question(question),recuid(recuid), flag(flag), name(name),pass(pass),para(para){}
+    : uid(uid),question(question),recuid(recuid),flag(flag),name(name),pass(pass),para(para){}
     ~Message()=default;
     string uid="",name="",pass="",recuid="",question="";
     int flag;

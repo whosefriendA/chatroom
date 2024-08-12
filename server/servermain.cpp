@@ -46,7 +46,7 @@ int main(int argc,char*argv[]){
     }
     char host[1024];
     // char service[20];
-    // if (getnameinfo((struct sockaddr*)&server_addr, sizeof(server_addr), host, sizeof(host), service, sizeof(service), NI_NUMERICHOST) == 0) {
+    // if (getnameinfo((struct sockaddr*)&server_addr,sizeof(server_addr),host,sizeof(host),service,sizeof(service),NI_NUMERICHOST) == 0) {
     //     std::cout << "Server IP address: " << host << std::endl;
     // }测试ip地址
     if(listen(lfd,150)==-1){
@@ -116,23 +116,23 @@ int main(int argc,char*argv[]){
                 Message msg;
                 msg.Json_to_s(comad_string);
                 if(msg.flag==RECV){
-                redis.Hset(msg.uid, "通知socket", to_string(nfd));
+                redis.Hset(msg.uid,"通知socket",to_string(nfd));
                 }else if(msg.flag==SENDFILE||msg.flag==RECVFILE||msg.flag==SENDFILE_GROUP||msg.flag==RECVFILE_GROUP){
                     event.events = EPOLLIN|EPOLLET;
                     event.data.fd = nfd;
                     //摘树
-                    epoll_ctl(epfd, EPOLL_CTL_DEL, nfd, &event);
+                    epoll_ctl(epfd,EPOLL_CTL_DEL,nfd,&event);
                     //文件传输
-                    std::thread fileThread([asocket,comad_string ,nfd, epfd]() {
-                        int flag = fcntl(nfd, F_GETFL);
+                    std::thread fileThread([asocket,comad_string ,nfd,epfd]() {
+                        int flag = fcntl(nfd,F_GETFL);
                         flag |= O_NONBLOCK;
-                        fcntl(nfd, F_SETFL, flag);
+                        fcntl(nfd,F_SETFL,flag);
                         transferfunc(asocket,comad_string);
                         // 挂树
                         struct epoll_event addEvent;
                         addEvent.events = EPOLLIN | EPOLLET;
                         addEvent.data.fd = nfd;
-                        epoll_ctl(epfd, EPOLL_CTL_ADD, nfd, &addEvent);
+                        epoll_ctl(epfd,EPOLL_CTL_ADD,nfd,&addEvent);
                     });
                     //分离
                     fileThread.detach();
@@ -140,15 +140,15 @@ int main(int argc,char*argv[]){
                     // cout<<"will create task to thread"<<endl;
                     TaskSocket socket(nfd);
                     // 使用 lambda 表达式创建带参数的 taskhandler并添加到调度器
-                    Task task([socket, comad_string](){ 
-                    transferfunc(socket, comad_string);});
+                    Task task([socket,comad_string](){ 
+                    transferfunc(socket,comad_string);});
                     pool.addTask(task);
         }
     }
 }
 }
 }
-void transferfunc(TaskSocket asocket, const string& comad_string)
+void transferfunc(TaskSocket asocket,const string& comad_string)
 {   Message msg;
     msg.Json_to_s(comad_string);
     switch((int)msg.flag){
@@ -156,7 +156,7 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
             Sign_up(asocket,msg);
             break;
         case LOGIN:
-            Log_in(asocket, msg);
+            Log_in(asocket,msg);
             break;
         case QUESTION_GET:
             question_get(asocket,msg);
@@ -168,19 +168,19 @@ void transferfunc(TaskSocket asocket, const string& comad_string)
             pass_get(asocket,msg);
             break;
         case FRIEND_LIST:
-            friend_list_get(asocket, msg);
+            friend_list_get(asocket,msg);
             break;
         case ADD_FRIEND:
-            friend_add(asocket, msg);
+            friend_add(asocket,msg);
             break;
         case DELETE_FRIEND:
-            friend_del(asocket, msg);
+            friend_del(asocket,msg);
             break;
         case AGREE_ADDFRIEND:
-            friend_apply_agree(asocket, msg);
+            friend_apply_agree(asocket,msg);
             break;
         case REFUSE_ADDFRIEND:
-            friend_apply_refuse(asocket, msg);
+            friend_apply_refuse(asocket,msg);
             break;
         case BLOCK_FRIEND:
             friend_block(asocket,msg);

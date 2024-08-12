@@ -24,12 +24,12 @@ int main(int argc,char*argv[]){
         exit(0);
     }
     struct termios term;
-    tcgetattr(0, &term); // 获取终端属性
+    tcgetattr(0,&term); // 获取终端属性
     term.c_cc[VEOF] = 0; // 禁用 EOF 键
-    tcsetattr(0,TCSANOW, &term); // 设置新的终端属性
+    tcsetattr(0,TCSANOW,&term); // 设置新的终端属性
     signal(SIGINT,SIG_IGN);//忽略ctrl+c信号
     signal(SIGQUIT,SIG_IGN);//忽略ctrl+\信号
-    signal(SIGTSTP, SIG_IGN);//忽略ctrl+z信号
+    signal(SIGTSTP,SIG_IGN);//忽略ctrl+z信号
     int ret=Main_menu();
     if(ret==1){
         User_menu();
