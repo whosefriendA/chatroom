@@ -62,6 +62,7 @@
 #define GROUP_MANAGER_UNSET 31
 #define GROUP_DEL_MEMBER 32
 #define GROUP_DISBAND 33
+#define GROUP_EXIT 34
 #define RED "\033[31m"
 #define BLUE "\033[34m"
 #define YELLOW "\033[33m"
@@ -113,6 +114,7 @@ void group_manager_set(TaskSocket,Message);
 void group_manager_unset(TaskSocket,Message);
 void group_delmember(TaskSocket,Message);
 void group_disband(TaskSocket,Message);
+void group_exit(TaskSocket,Message);
 class User{
     public:
     User(string name,string pass,string question,string answer,string UID);

@@ -51,6 +51,7 @@
 #define GROUP_MANAGER_UNSET 31
 #define GROUP_DEL_MEMBER 32
 #define GROUP_DISBAND 33
+#define GROUP_EXIT 34
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
 #define RESET "\033[0m"
@@ -101,3 +102,4 @@ void group_manager_unset();
 void Group_apply();
 void group_delmember();
 void group_disband();
+void group_exit();

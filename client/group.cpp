@@ -265,3 +265,6 @@ void group_disband(){
         return;
     }
 }
+void group_exit(){
+    
+}
