@@ -41,8 +41,8 @@
 #define DELETE_FRIEND 10
 #define AGREE_ADDFRIEND 11
 #define REFUSE_ADDFRIEND 12
-#define SENDFILE 13
-#define RECVFILE 14
+#define F_SENDFILE 13
+#define F_RECVFILE 14
 #define QUESTION_GET 15
 #define PASSWORD_FIND 16
 #define PASSWORD_GET 17
@@ -86,7 +86,10 @@ using std::mutex;
 using json=nlohmann::json;
 int Receivemsg(int cfd,char** msg);
 ssize_t Read (int fd,void *aptr,size_t n);
-
+void F_sendfile_toserver(TaskSocket,Message);
+void F_receivefile_fromserver(TaskSocket,Message);
+void G_sendfile_toserver(TaskSocket,Message);
+void G_receivefile_fromserver(TaskSocket,Message);
 void Sign_up(TaskSocket,Message);
 void Log_in(TaskSocket,Message);
 void pass_find(TaskSocket,Message);

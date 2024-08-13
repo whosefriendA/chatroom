@@ -117,7 +117,7 @@ int main(int argc,char*argv[]){
                 msg.Json_to_s(comad_string);
                 if(msg.flag==RECV){
                 redis.Hset(msg.uid,"通知socket",to_string(nfd));
-                }else if(msg.flag==SENDFILE||msg.flag==RECVFILE||msg.flag==SENDFILE_GROUP||msg.flag==RECVFILE_GROUP){
+                }else if(msg.flag==F_SENDFILE||msg.flag==F_RECVFILE||msg.flag==SENDFILE_GROUP||msg.flag==RECVFILE_GROUP){
                     event.events = EPOLLIN|EPOLLET;
                     event.data.fd = nfd;
                     //摘树
@@ -199,11 +199,11 @@ void transferfunc(TaskSocket asocket,const string& comad_string)
         case SEND_MSG:
             friend_sendmsg(asocket,msg);
             break;
-        case SENDFILE:
-            Sendfile_toserver(asocket,msg);
+        case F_SENDFILE:
+            F_sendfile_toserver(asocket,msg);
             break;
-        case RECVFILE:
-            Receivefile_fromserver(asocket,msg);
+        case F_RECVFILE:
+            F_receivefile_fromserver(asocket,msg);
             break;
         case UNREAD_NOTICE:
             Unreadnotice(asocket,msg);

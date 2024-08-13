@@ -1,6 +1,149 @@
 #include"server.hpp"
-void Sendfile_toserver(TaskSocket asocket,Message msg)
-{
+void F_sendfile_toserver(TaskSocket asocket,Message msg){
+    Sendfile_toserver(asocket,msg);
+    string newmsg = "我:发送了一个文件"+msg.para[0];//入队列
+    redis.Rpushvalue(msg.uid+"与"+msg.recuid+"的聊天记录",newmsg);
+    //在发送者消息
+    string my_recvfd = redis.Hget(msg.uid,"通知socket");
+    TaskSocket my_socket(stoi(my_recvfd));
+    my_socket.Send(newmsg);
+    //被屏蔽
+    if (redis.Sismember(msg.recuid+"的屏蔽列表",msg.uid)){
+        string msg = "对方拒绝了你的消息";
+        my_socket.Send(RED+msg+RESET);
+        asocket.Send("failure");
+        return;
+    }
+    string uid = msg.uid;
+    string msg1 = uid+":发送了一个文件"+msg.para[0];
+    redis.Rpushvalue(msg.recuid+"与"+msg.uid+"的聊天记录",msg1);
+    // ta在线并在和我聊天
+    if (online_users.find(msg.recuid) != online_users.end() && (redis.Hget(msg.recuid,"聊天对象") == msg.uid)){
+        string fr_recvfd = redis.Hget(msg.recuid,"通知socket");
+        TaskSocket fr_socket(stoi(fr_recvfd));
+        fr_socket.Send(GREEN+msg1+RESET);
+    }else if (online_users.find(msg.recuid) == online_users.end()) {//不在线
+        string num = redis.Hget(msg.recuid+"的未读消息","通知类消息");
+        redis.Hset(msg.recuid+"的未读消息","通知类消息",to_string(stoi(num)+1));
+        redis.Rpushvalue(msg.recuid+"的通知消息",msg.uid+"发来了一个文件");
+    }else{
+        string fr_recvfd = redis.Hget(msg.recuid,"通知socket");
+        TaskSocket fr_socket(stoi(fr_recvfd));
+        fr_socket.Send(RED+msg.uid+"发来了一个文件"+RESET);
+    }
+    asocket.Send("success");
+    return;
+}
+void F_receivefile_fromserver(TaskSocket asocket,Message msg){
+    Receivefile_fromserver(asocket,msg);
+    string newmsg = "我:成功接收了一个文件"+msg.para[0];
+    redis.Rpushvalue(msg.uid+"与"+msg.recuid+"的聊天记录",newmsg);
+    // 发送者消息
+    string my_recvfd = redis.Hget(msg.uid,"通知socket");
+    TaskSocket my_socket(stoi(my_recvfd));
+    my_socket.Send(newmsg);
+    // 被屏蔽
+    if (redis.Sismember(msg.recuid+"的屏蔽列表",msg.uid)){
+        string msg = "对方拒收了你的消息";
+        my_socket.Send(RED+msg+RESET);
+        asocket.Send("failure");
+        return;
+    }
+    string uid = msg.uid;
+    string msg1 = uid+":成功接收到一个文件"+msg.para[0];
+    redis.Rpushvalue(msg.recuid+"与"+msg.uid+"的聊天记录",msg1);
+    // 好友在线并与我聊天
+    if ((online_users.find(msg.recuid) != online_users.end()) && (redis.Hget(msg.recuid,"聊天对象") == msg.uid)){
+        string fr_recvfd = redis.Hget(msg.recuid,"通知socket");
+        TaskSocket fr_socket(stoi(fr_recvfd));
+        fr_socket.Send(GREEN+msg1+RESET);
+    }else if (online_users.find(msg.recuid) == online_users.end()){// 好友不在线
+        string num = redis.Hget(msg.recuid+"的未读消息","通知类消息");
+        redis.Hset(msg.recuid+"的未读消息","通知类消息",to_string(stoi(num)+1));
+        redis.Rpushvalue(msg.recuid+"的通知消息",msg.uid+"成功接收到你发送的文件");
+    }else{
+        string fr_recvfd = redis.Hget(msg.recuid,"通知socket");
+        TaskSocket fr_socket(stoi(fr_recvfd));
+        fr_socket.Send(RED+msg.uid+"成功接收到你发送的文件"+RESET);
+    }
+    return;
+}
+void G_sendfile_toserver(TaskSocket asocket,Message msg){
+    Sendfile_toserver(asocket,msg);
+    string newmsg = msg.uid+":发送了一个文件"+msg.para[0];
+    redis.Rpushvalue(msg.recuid+"的群聊消息", newmsg);
+    // 发送者消息
+    string my_recvfd = redis.Hget(msg.uid, "通知socket");
+    TaskSocket my_socket(stoi(my_recvfd));
+    my_socket.Send(WIDEWHITE+newmsg+RESET);
+    string uid = msg.uid;
+    string msg1 = uid+":发送了一个文件"+msg.para[0];
+    vector<string> memberlist = redis.Hgetall(msg.recuid, "群成员列表");
+    for (const string &memberid : memberlist){
+        if ((online_users.find(memberid) == online_users.end()) && memberid != uid){
+            string apply = msg.recuid+"群聊中有人发来了一个新文件";
+            string num = redis.Hget(memberid+"的未读消息", "群聊消息");
+            redis.Hset(memberid+"的未读消息", "群聊消息", to_string(stoi(num)+1));
+            redis.Rpushvalue(memberid+"群聊消息", apply);
+        }else if ((online_users.find(msg.recuid) != online_users.end()) && (redis.Hget(memberid, "聊天对象") == msg.recuid) && memberid != uid){
+            string gr_recvfd = redis.Hget(memberid, "通知socket");
+            TaskSocket gr_socket(stoi(gr_recvfd));
+            gr_socket.Send(GREEN+msg1+RESET);
+        }else if ((online_users.find(msg.recuid) != online_users.end()) && memberid != uid){
+            string apply = msg.recuid+"群聊中有人发来了一个新文件";
+            string gr_recvfd = redis.Hget(memberid, "通知socket");
+            TaskSocket gr_socket(stoi(gr_recvfd));
+            gr_socket.Send(GREEN+apply+RESET);
+        }
+    }
+    asocket.Send("success");
+    return;
+}
+void G_receivefile_fromserver(TaskSocket asocket,Message msg){
+    Receivefile_fromserver(asocket,msg);
+}
+void Receivefile_fromserver(TaskSocket asocket,Message msg){
+    string filename = msg.para[0];
+    string savepath = "/home/wanggang/chatroom/file/";
+    string filepath = savepath+filename;
+    int filefd = open(filepath.c_str(),O_RDONLY);
+    if (filefd == -1){
+        cerr << "Error opening file for writing" << endl;
+        asocket.Send("close");
+        return;
+    }else{
+        struct stat statbuf;
+        fstat(filefd,&statbuf);
+        int ret = asocket.Send(to_string(statbuf.st_size));
+        if (ret == 0 || ret == -1){
+            cout << "已关闭" << endl;
+            exit(0);
+        }
+        ssize_t bytes_sent = 0;
+        cout << statbuf.st_size << endl;
+        while (bytes_sent < statbuf.st_size){
+            ssize_t ret_send = sendfile(asocket.getfd(),filefd,&bytes_sent,statbuf.st_size - bytes_sent);
+            cout << "statbuf:" << statbuf.st_size << endl;
+            cout << "bytes:" << ret_send << endl;
+            if (ret_send == -1){
+                if (errno == EAGAIN || errno == EWOULDBLOCK){
+                    // 继续尝试发送
+                    continue;
+                }else{
+                    cerr << "Error sending file data: " << strerror(errno) << endl;
+                    close(filefd);
+                    break;
+                }
+            }else if (ret_send == 0){
+                cerr << "Connection closed by peer while sending file data." << endl;
+                break;
+            }
+            cout << bytes_sent << endl;
+        }
+    }
+    close(filefd);
+}
+void Sendfile_toserver(TaskSocket asocket,Message msg){
     string filename = msg.para[0];
     size_t filesize = stoul(msg.para[1]); 
     string savepath = "/home/wanggang/chatroom/file/"; // 保存文件的路径
@@ -47,116 +190,4 @@ void Sendfile_toserver(TaskSocket asocket,Message msg)
         cout << totalRecvByte << endl;
     }
     close(filefd);
-    string newmsg = "我:发送了一个文件"+msg.para[0];//入队列
-    redis.Rpushvalue(msg.uid+"与"+msg.recuid+"的聊天记录",newmsg);
-    // 在发送者的页面展示消息
-    string my_recvfd = redis.Hget(msg.uid,"通知socket");
-    TaskSocket my_socket(stoi(my_recvfd));
-    my_socket.Send(newmsg);
-
-    if (redis.Sismember(msg.recuid+"的屏蔽列表",msg.uid)){
-        string msg = "对方拒绝了你的消息";
-        my_socket.Send(RED+msg+RESET);
-        asocket.Send("failure");
-        return;
-    }
-    string uid = msg.uid;
-    string msg1 = uid+":发送了一个文件"+msg.para[0];
-    redis.Rpushvalue(msg.recuid+"与"+msg.uid+"的聊天记录",msg1);
-
-    // ta在线并在和我聊天
-    if (online_users.find(msg.recuid) != online_users.end() && (redis.Hget(msg.recuid,"聊天对象") == msg.uid)){
-        string fr_recvfd = redis.Hget(msg.recuid,"通知socket");
-        TaskSocket fr_socket(stoi(fr_recvfd));
-        fr_socket.Send(GREEN+msg1+RESET);
-    }else if (online_users.find(msg.recuid) == online_users.end()) {//不在线
-        string num = redis.Hget(msg.recuid+"的未读消息","通知类消息");
-        redis.Hset(msg.recuid+"的未读消息","通知类消息",to_string(stoi(num)+1));
-        redis.Rpushvalue(msg.recuid+"的通知消息",msg.uid+"发来了一个文件");
-    }else{
-        string fr_recvfd = redis.Hget(msg.recuid,"通知socket");
-        TaskSocket fr_socket(stoi(fr_recvfd));
-        fr_socket.Send(RED+msg.uid+"发来了一个文件"+RESET);
-    }
-    asocket.Send("success");
-    return;
-}
-
-void Receivefile_fromserver(TaskSocket asocket,Message msg){
-    string filename = msg.para[0];
-    string savepath = "/home/wanggang/chatroom/file/";
-    string filepath = savepath+filename;
-
-    int filefd = open(filepath.c_str(),O_RDONLY);
-    if (filefd == -1){
-        cerr << "Error opening file for writing" << endl;
-        asocket.Send("close");
-        return;
-    }else{
-        struct stat statbuf;
-        fstat(filefd,&statbuf);
-        int ret = asocket.Send(to_string(statbuf.st_size));
-        if (ret == 0 || ret == -1){
-            cout << "已关闭" << endl;
-            exit(0);
-        }
-        ssize_t bytes_sent = 0;
-        cout << statbuf.st_size << endl;
-        while (bytes_sent < statbuf.st_size)
-        {
-            ssize_t ret_send = sendfile(asocket.getfd(),filefd,&bytes_sent,statbuf.st_size - bytes_sent);
-            cout << "statbuf:" << statbuf.st_size << endl;
-            cout << "bytes:" << ret_send << endl;
-            if (ret_send == -1){
-                if (errno == EAGAIN || errno == EWOULDBLOCK){
-                    // 继续尝试发送
-                    continue;
-                }else{
-                    cerr << "Error sending file data: " << strerror(errno) << endl;
-                    close(filefd);
-                    break;
-                }
-            }else if (ret_send == 0){
-                cerr << "Connection closed by peer while sending file data." << endl;
-                break;
-            }
-            cout << bytes_sent << endl;
-        }
-    }
-    close(filefd);
-    // 将新的消息加入消息队列
-    string newmsg = "我:成功接收了一个文件"+msg.para[0];
-    redis.Rpushvalue(msg.uid+"与"+msg.recuid+"的聊天记录",newmsg);
-
-    // 在发送者的页面展示消息
-    string my_recvfd = redis.Hget(msg.uid,"通知socket");
-    TaskSocket my_socket(stoi(my_recvfd));
-    my_socket.Send(newmsg);
-
-    // 被好友屏蔽
-    if (redis.Sismember(msg.recuid+"的屏蔽列表",msg.uid)){
-        string msg = "对方拒收了你的消息";
-        my_socket.Send(RED+msg+RESET);
-        asocket.Send("failure");
-        return;
-    }
-    string uid = msg.uid;
-    string msg1 = uid+":成功接收到一个文件"+msg.para[0];
-    redis.Rpushvalue(msg.recuid+"与"+msg.uid+"的聊天记录",msg1);
-
-    // 好友此时在线并且在和我聊天
-    if ((online_users.find(msg.recuid) != online_users.end()) && (redis.Hget(msg.recuid,"聊天对象") == msg.uid)){
-        string fr_recvfd = redis.Hget(msg.recuid,"通知socket");
-        TaskSocket fr_socket(stoi(fr_recvfd));
-        fr_socket.Send(GREEN+msg1+RESET);
-    }else if (online_users.find(msg.recuid) == online_users.end()){// 好友不在线
-        string num = redis.Hget(msg.recuid+"的未读消息","通知类消息");
-        redis.Hset(msg.recuid+"的未读消息","通知类消息",to_string(stoi(num)+1));
-        redis.Rpushvalue(msg.recuid+"的通知消息",msg.uid+"成功接收到你发送的文件");
-    }else{
-        string fr_recvfd = redis.Hget(msg.recuid,"通知socket");
-        TaskSocket fr_socket(stoi(fr_recvfd));
-        fr_socket.Send(RED+msg.uid+"成功接收到你发送的文件"+RESET);
-    }
-    return;
 }

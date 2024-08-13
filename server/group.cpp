@@ -270,17 +270,17 @@ void group_disband(TaskSocket asocket,Message msg){
     asocket.Send("success");
 }
 void group_exit(TaskSocket asocket,Message msg){
-    if (redis.Hget(msg.para[0] + "群成员列表", msg.uid) == "群主"){
+    if (redis.Hget(msg.para[0]+"群成员列表", msg.uid) == "群主"){
         asocket.Send("failure");
         return;
     }
-    redis.HValueremove(msg.uid + "的群聊列表", msg.para[0]);
-    redis.HValueremove(msg.para[0] + "群成员列表", msg.uid);
+    redis.HValueremove(msg.uid+"的群聊列表", msg.para[0]);
+    redis.HValueremove(msg.para[0]+"群成员列表", msg.uid);
     asocket.Send("success");
 }
 void group_chat(TaskSocket asocket,Message msg){
     asocket.Send("success");
-    vector<string> history = redis.Lrangeall(msg.recuid + "的群聊消息");
+    vector<string> history = redis.Lrangeall(msg.recuid+"的群聊消息");
     for (const string &msg : history){
         asocket.Send(msg);
     }
@@ -293,35 +293,35 @@ void group_chatexit(TaskSocket asocket,Message msg){
     return;
 }
 void group_sendmsg(TaskSocket asocket,Message msg){
-    string newmsg = msg.uid + ":" + msg.para[0];
-    redis.Rpushvalue(msg.recuid + "的群聊消息", newmsg);
+    string newmsg = msg.uid+":"+msg.para[0];
+    redis.Rpushvalue(msg.recuid+"的群聊消息", newmsg);
 
     string my_recvfd = redis.Hget(msg.uid, "通知socket");
     TaskSocket my_socket(stoi(my_recvfd));
-    my_socket.Send(GREEN+ newmsg + RESET);
+    my_socket.Send(GREEN+ newmsg+RESET);
 
     string uid = msg.uid;
-    string msg1 = uid + ":" + msg.para[0];
+    string msg1 = uid+":"+msg.para[0];
 
     vector<string> memberlist = redis.Hgetall(msg.recuid, "群成员列表");
 
     for (const string &memberid : memberlist){
         if ((online_users.find(memberid) == online_users.end()) && memberid != uid){
-            string apply = msg.recuid + "群聊中有人发来了一条消息";
-            string num = redis.Hget(memberid + "的未读消息", "群聊消息");
-            redis.Hset(memberid + "的未读消息", "群聊消息", to_string(stoi(num) + 1));
-            redis.Rpushvalue(memberid + "群聊消息", apply);
+            string apply = msg.recuid+"群聊中有人发来了一条消息";
+            string num = redis.Hget(memberid+"的未读消息", "群聊消息");
+            redis.Hset(memberid+"的未读消息", "群聊消息", to_string(stoi(num)+1));
+            redis.Rpushvalue(memberid+"群聊消息", apply);
         }else if ((online_users.find(memberid) != online_users.end()) && (redis.Hget(memberid, "聊天对象") == msg.recuid)){
             if (memberid != uid){
                 string gr_recvfd = redis.Hget(memberid, "通知socket");
                 TaskSocket gr_socket(stoi(gr_recvfd));
-                gr_socket.Send(WIDEWHITE + msg1 + RESET);
+                gr_socket.Send(WIDEWHITE+msg1+RESET);
             }
         }else if ((online_users.find(memberid) != online_users.end()) && memberid != uid){
-            string apply = msg.recuid + "群聊中有人发来了一条消息";
+            string apply = msg.recuid+"群聊中有人发来了一条消息";
             string gr_recvfd = redis.Hget(memberid, "通知socket");
             TaskSocket gr_socket(stoi(gr_recvfd));
-            gr_socket.Send(RED + apply + RESET);
+            gr_socket.Send(RED+apply+RESET);
         }
     }
     asocket.Send("success");

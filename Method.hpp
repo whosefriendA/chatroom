@@ -15,7 +15,7 @@ class Method {
     ~Method()=default;
     void Sendflie_client(TaskSocket asocket,string curuid,string recvuid,int SENDFILE){
         string filepath;
-        cout<<"请输入要发送文件的位置:"<<endl;
+        cout<<"请输入要发送文件的路径"<<endl;
         getline(cin,filepath);
         int filefd=open(filepath.c_str(),O_RDONLY);
         if(filefd==-1){
@@ -63,7 +63,7 @@ class Method {
     }
     void Receiveflie_client(TaskSocket asocket,string curuid,string recvuid,int RECVFILE){
         string filepath;
-        cout<<"请输入想保存文件的位置:"<<endl;
+        cout<<"请输入想接收的文件路径:"<<endl;
         getline(cin,filepath);
 
         size_t lastSlash=filepath.find_last_of("/");
