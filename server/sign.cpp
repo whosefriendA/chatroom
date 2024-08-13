@@ -65,9 +65,24 @@ void pass_get(TaskSocket asocket,Message msg){
     return;
 }
 
-void User_remove(TaskSocket asocket,Message msg)//部分实现
+void User_remove(TaskSocket asocket,Message msg)
 {
-    redis.Valueremove("用户uid集合",msg.uid); // 从用户uid集合中移除
+    vector<string> friendList = redis.Hgetall(msg.uid, "的好友列表");
+    for (const string &friendID : friendList){
+        redis.HValueremove(friendID + "的好友列表", msg.uid);
+    }
+    redis.keyremove(msg.uid + "的好友列表");
+    redis.keyremove(msg.uid + "的屏蔽列表");
+    redis.keyremove(msg.uid + "的未读消息");
+    redis.keyremove(msg.uid + "的通知消息");
+
+    vector<string> grouplist=redis.Hgetall(msg.uid,"的群聊列表");
+    for(const string &groupID:grouplist){
+       redis.HValueremove(groupID+"群成员列表",msg.uid);
+    }
+    redis.keyremove(msg.uid+"的群聊列表");
+    redis.keyremove(msg.uid); 
+    redis.Valueremove("用户uid集合", msg.uid);
     asocket.Send("success");
 }
 void Unreadnotice(TaskSocket asocket,Message msg){

@@ -18,18 +18,18 @@ int main(int argc,char*argv[]){
     server_addr.sin_family=AF_INET;
     server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
     server_addr.sin_port=htons(SERVERPORT);
-    //命令行参数设置服务器地址
-    // int opt;
-    // while((opt=getopt(argc,argv,"i:p:"))!=-1){
-    //     switch(opt){
-    //     case 'i':
-    //     server_addr.sin_addr.s_addr=inet_addr(optarg);
-    //     break;
-    //     case 'p':
-    //     server_addr.sin_port=std::stoi(optarg);
-    //     break;
-    //     }
-    // }
+    // 命令行参数设置服务器地址
+    int opt;
+    while((opt=getopt(argc,argv,"i:p:"))!=-1){
+        switch(opt){
+        case 'i':
+        server_addr.sin_addr.s_addr=inet_addr(optarg);
+        break;
+        case 'p':
+        server_addr.sin_port=std::stoi(optarg);
+        break;
+        }
+    }
     //创建服务器套接字
     if((lfd=socket(AF_INET,SOCK_STREAM,0))==-1){
         perror("sever_socket error");
@@ -157,6 +157,9 @@ void transferfunc(TaskSocket asocket,const string& comad_string)
             break;
         case LOGIN:
             Log_in(asocket,msg);
+            break;
+        case USER_REMOVE:
+            User_remove(asocket,msg);
             break;
         case QUESTION_GET:
             question_get(asocket,msg);

@@ -31,7 +31,7 @@
 #define RECV -1
 #define SIGNUP 1
 #define LOGIN 2
-#define LOGOUT 3
+#define USER_REMOVE 3
 #define BLOCK_FRIEND 4
 #define RESTORE_FRIEND 5
 #define SENDFILE_GROUP 6

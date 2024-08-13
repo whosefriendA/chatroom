@@ -176,3 +176,15 @@ void Unreadnotice(){
         return;
     }
 }
+int user_remove(){
+    Message msg(curuid,USER_REMOVE);
+    int ret=asocket.Send(msg.S_to_json());
+    err.server_close(ret);
+    string recv=asocket.Receive();
+    err.server_close(recv);
+    if(recv=="success"){
+    cout<<"注销成功"<<endl;
+    return 1;
+    }
+    return 0;
+}

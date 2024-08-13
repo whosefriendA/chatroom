@@ -48,8 +48,10 @@ void User_menu(){
     Group_menu();
     else if(choice==3)
     Unreadnotice();
-    else if(choice==4)
-;
+    else if(choice==4){
+      if(user_remove())
+      return;
+    }
     else if(choice==5)
     exit(0);
     }catch (const std::invalid_argument& e) {
