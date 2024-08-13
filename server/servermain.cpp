@@ -256,6 +256,12 @@ void transferfunc(TaskSocket asocket,const string& comad_string)
         case GROUP_SENDMSG:
             group_sendmsg(asocket,msg);
             break;
+        case SENDFILE_GROUP:
+            G_sendfile_toserver(asocket,msg);
+            break;
+        case RECVFILE_GROUP:
+            G_receivefile_fromserver(asocket,msg);
+            break;
     }
     return;
 }
