@@ -113,6 +113,9 @@ int log_in(){
     }else if(recv=="havenotsignup"){
         cout<<"帐号不存在,请注册"<<endl;
         continue;
+    }else if(recv=="again"){
+        cout<<"这个帐号已经登录了，请勿重复登录"<<endl;
+        continue;
     }else{
         curname=recv;
         system("clear");
@@ -131,7 +134,6 @@ int log_in(){
     return 1;
     }
 }
-
 void pass_find()
 {
     string uid,pass,answer;

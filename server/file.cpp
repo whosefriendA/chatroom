@@ -104,7 +104,7 @@ void G_receivefile_fromserver(TaskSocket asocket,Message msg){
 }
 void Receivefile_fromserver(TaskSocket asocket,Message msg){
     string filename = msg.para[0];
-    string savepath = "/home/wanggang/chatroom/file/";
+    string savepath = "/home/wanggang/chatroom/file/"+msg.recuid+"/";
     string filepath = savepath+filename;
     int filefd = open(filepath.c_str(),O_RDONLY);
     if (filefd == -1){
@@ -146,7 +146,7 @@ void Receivefile_fromserver(TaskSocket asocket,Message msg){
 void Sendfile_toserver(TaskSocket asocket,Message msg){
     string filename = msg.para[0];
     size_t filesize = stoul(msg.para[1]); 
-    string savepath = "/home/wanggang/chatroom/file/"; // 保存文件的路径
+    string savepath = "/home/wanggang/chatroom/file/"+msg.recuid+"/"; 
     string filepath = savepath+filename;
     // 创建目录
     int mkdirStatus = mkdir(savepath.c_str(),S_IRWXU | S_IRWXG | S_IRWXO);

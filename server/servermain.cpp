@@ -101,7 +101,6 @@ int main(int argc,char*argv[]){
                 int ret=method.Receivemsg(nfd,&buf);
                 // cout<<ret<<endl;//
                 if(ret<=0){
-                    //cerr<<"error receiving data ."<<endl;
                     string uid =redis.Hget("fd-uid表",to_string(nfd));
                     online_users.insert(uid);//添加到在线用户
                     redis.Hset(uid,"通知socket","-1");

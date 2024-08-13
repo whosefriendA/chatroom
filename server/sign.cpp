@@ -31,6 +31,8 @@ void Log_in(TaskSocket asocket,Message msg){
     // cout<<"a="<< a<<endl;
     if(!a){
         asocket.Send("havenotsignup");
+    }else if(online_users.find(msg.uid)!=online_users.end()){
+        asocket.Send("again");
     }else{
     string pwd=redis.Hget(msg.uid,"pass");
     // cout<<pwd<<endl;
@@ -47,7 +49,7 @@ void Log_in(TaskSocket asocket,Message msg){
         cout<<"用户"<<msg.uid<<"登录成功"<<endl;
     }
   }
-};
+}
 void question_get(TaskSocket asocket,Message msg){
     string mesg=redis.Hget(msg.uid,"question");
     asocket.Send(mesg);
