@@ -224,10 +224,10 @@ void transferfunc(TaskSocket asocket,const string& comad_string)
             group_apply_list(asocket,msg);
             break;
         case GROUP_APPLY_AGREE:
-            group_apply_list(asocket,msg);
+            group_apply_agree(asocket,msg);
             break;
         case GROUP_APPLY_REFUSE:
-            group_apply_list(asocket,msg);
+            group_apply_refuse(asocket,msg);
             break;
         case GROUP_MANAGER_SET:
            group_manager_set(asocket,msg);

@@ -37,22 +37,25 @@ void group_create(TaskSocket asocket,Message msg){
     return;
 }
 void group_add(TaskSocket asocket,Message msg){
-    if (redis.hexists(msg.para[0]+"群成员列表",msg.uid)){
+    if (redis.hexists(msg.recuid+"群成员列表",msg.uid)){
         asocket.Send("already");
         return;
-    }else if (!redis.Sismember("群聊集合",msg.para[0])){
+    }else if (!redis.Sismember("群聊集合",msg.recuid)){
         asocket.Send("none");
         return;
-    }else if (redis.hexists(msg.para[0]+"的申请加群列表",msg.uid)){
+    }else if (redis.hexists(msg.recuid+"的申请加群列表",msg.uid)){
         asocket.Send("again");
         return;
     }else{
         string mesg = "申请加入群聊";
-        redis.Hset(msg.para[0]+"的申请加群列表",msg.uid,mesg);
-        vector<string> memberlist = redis.Hgetall(msg.para[0],"群成员列表");
+        redis.Hset(msg.recuid+"的申请加群列表",msg.uid,mesg);
+        cout<<"whathappend"<<endl;
+        string recv=redis.Hget(msg.recuid+"的申请加群列表",msg.uid);
+        cout<<recv<<endl;
+        vector<string> memberlist = redis.Hgetall(msg.recuid,"群成员列表");
         for (const string &memberid : memberlist){
-            if (redis.Hget(msg.para[0]+"群成员列表",memberid) != "普通成员"){
-                string apply = msg.uid+"申请加入群聊"+msg.para[0];
+            if (redis.Hget(msg.recuid+"群成员列表",memberid) != "普通成员"){
+                string apply = msg.uid+"申请加入群聊"+msg.recuid;
                 string num = redis.Hget(memberid+"的未读消息","群聊消息");
                 redis.Hset(memberid+"的未读消息","群聊消息",to_string(stoi(num)+1));
                 redis.Rpushvalue(memberid+"群聊消息",apply);
@@ -68,13 +71,13 @@ void group_add(TaskSocket asocket,Message msg){
     }
 }
 void group_in(TaskSocket asocket,Message msg){
-    if (!redis.Sismember("群聊集合",msg.para[0])){
+    if (!redis.Sismember("群聊集合",msg.recuid)){
         asocket.Send("none");
         return;
-    }else if (!redis.hexists(msg.para[0]+"群成员列表",msg.uid)){
+    }else if (!redis.hexists(msg.recuid+"群成员列表",msg.uid)){
         asocket.Send("failure");
         return;
-    }else if (redis.hexists(msg.para[0]+"群成员列表",msg.uid)){
+    }else if (redis.hexists(msg.recuid+"群成员列表",msg.uid)){
         asocket.Send("success");
         return;
     }
@@ -91,16 +94,15 @@ void group_list_get(TaskSocket asocket,Message msg){
     asocket.Send("end");
 }
 void group_memberlist_get(TaskSocket asocket,Message msg){
-    vector<string> memberlist = redis.Hgetall(msg.para[0],"群成员列表");
+    vector<string> memberlist = redis.Hgetall(msg.recuid,"群成员列表");
     for (const string &memberid : memberlist){
         asocket.Send(memberid);
     }
     asocket.Send("end");
 }
 void group_apply_list(TaskSocket asocket,Message msg){
-    if (redis.Hget(msg.para[0]+"群成员列表",msg.uid) != "普通成员"){
-        vector<string> memberlist = redis.Hgetall(msg.para[0],"的申请加群列表");
-
+    if (redis.Hget(msg.recuid+"群成员列表",msg.uid) != "普通成员"){
+        vector<string> memberlist = redis.Hgetall(msg.recuid,"的申请加群列表");
         for (const string &memberid : memberlist){
             asocket.Send(memberid);
         }
@@ -319,7 +321,7 @@ void group_sendmsg(TaskSocket asocket,Message msg){
             string apply = msg.recuid + "群聊中有人发来了一条消息";
             string gr_recvfd = redis.Hget(memberid, "通知socket");
             TaskSocket gr_socket(stoi(gr_recvfd));
-            gr_socket.Send(WIDEWHITE + apply + RESET);
+            gr_socket.Send(RED + apply + RESET);
         }
     }
     asocket.Send("success");

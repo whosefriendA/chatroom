@@ -195,10 +195,14 @@ void Agroup_menu(){
     group_delmember();
     else if(choice==6)
     group_chat();
-    else if(choice==7)
-    group_exit;
-    else if(choice==8)
-    group_disband();
+    else if(choice==7){
+    if(group_exit())
+    return;
+    }
+    else if(choice==8){
+    if(group_disband())
+    return;
+    }
     else if(choice==9)
     return;
     }catch (const std::invalid_argument& e) {

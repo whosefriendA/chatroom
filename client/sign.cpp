@@ -94,6 +94,7 @@ void* notify_receive(void* arg) {
 }
 int log_in(){
     string uid,pass;
+    while(1){
     uid=get_uid();
     // cout<<"uid="<<uid<<endl;
     curuid=uid;
@@ -108,10 +109,10 @@ int log_in(){
     err.server_close(recv);
     if(recv=="notcorrect"){
         cout<<"密码错误："<<endl;
-        return 0;
+        continue;
     }else if(recv=="havenotsignup"){
         cout<<"帐号不存在,请注册"<<endl;
-        return 0;
+        continue;
     }else{
         curname=recv;
         system("clear");
@@ -128,6 +129,7 @@ int log_in(){
         return 1;
     }
     return 1;
+    }
 }
 
 void pass_find()

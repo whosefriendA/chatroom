@@ -1,6 +1,7 @@
 #include"./client.hpp"
 void group_create(){
-    friend_list_get();
+    if(friend_list_get()==0)
+    return;
     cout<<"选择一个好友创建群聊"<<endl;
     string frienduid;
     getline(cin,frienduid);
@@ -44,7 +45,7 @@ void group_add(){
     cout<<"输入你想加入的群聊的uid:"<<endl;
     getline(cin,groupuid);
 
-    Message msg(curuid,ADD_GROUP,{groupuid});
+    Message msg(curuid,groupuid,ADD_GROUP);
     int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
@@ -70,7 +71,7 @@ void group_add(){
 void group_in(){
     cout<<"输入你要进入的群聊uid:"<<endl;
     getline(cin,cur_groupuid);
-    Message msg(curuid,GROUP_IN,{cur_groupuid});
+    Message msg(curuid,cur_groupuid,GROUP_IN);
     int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
@@ -92,7 +93,7 @@ void group_in(){
     }
 }
 void group_memberlist_get(){
-    Message msg(curuid,GROUP_MEMBER_LIST,{cur_groupuid});
+    Message msg(curuid,cur_groupuid,GROUP_MEMBER_LIST);
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
     string member=asocket.Receive();
@@ -105,7 +106,7 @@ void group_memberlist_get(){
     return;
 }
 void group_apply_list(){
-    Message msg(curuid,GROUP_APPLY_LIST,{cur_groupuid});
+    Message msg(curuid,cur_groupuid,GROUP_APPLY_LIST);
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
@@ -142,6 +143,7 @@ void group_apply_agree(){
         cout<<"已通过该用户的申请"<<endl;
         return;
     }else{
+        cout<<agree_recv<<endl;
         cout<<"错误"<<endl;
         return;
     }
@@ -248,7 +250,7 @@ void group_delmember(){
         return;
     }
 }
-void group_disband(){
+int group_disband(){
     Message msg(curuid,GROUP_DISBAND,{cur_groupuid});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
@@ -256,17 +258,17 @@ void group_disband(){
     err.server_close(recv);
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
-        return;
+        return 0;
     }if(recv=="success"){
         system("clear");
         cout<<RED<<"已成功解散此群聊"<<RESET<<endl;
-        return;
+        return 1;
     }else{
         cout<<"错误"<<endl;
-        return;
+        return 0;
     }
 }
-void group_exit(){
+int group_exit(){
     Message msg(curuid,GROUP_EXIT,{cur_groupuid});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
@@ -275,14 +277,14 @@ void group_exit(){
     err.server_close(recv);
     if(recv=="failure"){
         cout<<"群主无法退群,可以解散群"<<endl;
-        return;
+        return 0;
     }else if(recv=="success"){
         system("clear");
         cout<<"已成功退出此群聊"<<endl;
-        return;
+        return 1;
     }else{
         cout<<"错误"<<endl;
-        return;
+        return 0;
     }
 }
 void group_chat(){
