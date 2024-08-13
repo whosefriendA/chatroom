@@ -237,12 +237,12 @@ void group_delmember(){
     string recv=asocket.Receive();
     err.server_close(recv);
     if(recv=="failure"){
-        cout<<"你不能踢自己"<<endl;
-        return;
-    }else if(recv=="failure2"){
         cout<<"你没有权限"<<endl;
         return;
-    }else if(recv=="ok"){
+    }else if(recv=="failure2"){
+        cout<<"你不能踢自己"<<endl;
+        return;
+    }else if(recv=="success"){
         cout<<"你已成功踢出ta"<<endl;
         return;
     }else{

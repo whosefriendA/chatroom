@@ -49,9 +49,9 @@ void group_add(TaskSocket asocket,Message msg){
     }else{
         string mesg = "申请加入群聊";
         redis.Hset(msg.recuid+"的申请加群列表",msg.uid,mesg);
-        cout<<"whathappend"<<endl;
+        // cout<<"whathappend"<<endl;
         string recv=redis.Hget(msg.recuid+"的申请加群列表",msg.uid);
-        cout<<recv<<endl;
+        // cout<<recv<<endl;
         vector<string> memberlist = redis.Hgetall(msg.recuid,"群成员列表");
         for (const string &memberid : memberlist){
             if (redis.Hget(msg.recuid+"群成员列表",memberid) != "普通成员"){

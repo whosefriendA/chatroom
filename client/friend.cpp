@@ -1,5 +1,5 @@
 #include"./client.hpp"
-void friend_list_get(){
+int friend_list_get(){
     Message msg(curuid,FRIEND_LIST); // 展示好友列表
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
@@ -7,7 +7,7 @@ void friend_list_get(){
     while ((Friend = asocket.Receive()) != "end"){
         if (Friend == "none"){
             cout << "你当前还没有好友" << endl;
-            return;
+            return 0;
         }else if (Friend == "close"){
             cout << "服务器端已关闭" << endl;
             exit(0);
@@ -16,7 +16,7 @@ void friend_list_get(){
         }
     }
     cout << "黄色表示好友在线" << endl;
-    return;
+    return 1;
 }
 void freind_add(){
     string recv_uid;//被添加好友的uid
