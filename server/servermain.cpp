@@ -109,7 +109,7 @@ int main(int argc,char*argv[]){
                 client_lastactive_now(nfd);
                 // cout<<buf<<endl;//
                 string comad_string=buf;
-                cout << "New request:" << comad_string << endl<<endl;
+                // cout << "New request:" << comad_string << endl<<endl;
                 
                 Message msg;
                 msg.Json_to_s(comad_string);
