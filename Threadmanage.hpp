@@ -6,17 +6,17 @@
 #include<atomic>
 using namespace std;
 struct Task {
-    using callback = std::function<void()>;
+    using funcv = std::function<void()>;
 
     Task() = default;
-    Task(callback f) : function(std::move(f)) {}
+    Task(funcv f) : function(std::move(f)) {}
 
     void execute() {
         if (function) {
             function();
         }
     }
-    callback function;
+    funcv function;
 };
 
 class ThreadPool {
