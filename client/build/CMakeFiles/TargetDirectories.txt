@@ -1,3 +1,0 @@
-/home/wanggang/chatroom/client/build/CMakeFiles/client.dir
-/home/wanggang/chatroom/client/build/CMakeFiles/edit_cache.dir
-/home/wanggang/chatroom/client/build/CMakeFiles/rebuild_cache.dir

@@ -1,1 +1,0 @@
-/usr/bin/c++ -rdynamic CMakeFiles/client.dir/clientmain.cpp.o CMakeFiles/client.dir/menu.cpp.o CMakeFiles/client.dir/sign.cpp.o CMakeFiles/client.dir/friend.cpp.o CMakeFiles/client.dir/group.cpp.o -o client  -Wl,-rpath,/usr/local/lib /usr/local/lib/libhiredis.so 
