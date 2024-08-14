@@ -310,10 +310,10 @@ void group_chat(){
     while(1){
         getline(cin,newmsg);
         if(newmsg==":S"){
-            method.Sendflie_client(asocket,curuid,cur_groupuid,SENDFILE_GROUP);
+            Sendflie_client(asocket,curuid,cur_groupuid,SENDFILE_GROUP);
             continue;
         }else if(newmsg==":R"){
-            method.Receiveflie_client(asocket,cur_groupuid,curuid,RECVFILE_GROUP);
+            Receiveflie_client(asocket,cur_groupuid,curuid,RECVFILE_GROUP);
             continue;
         }else if(newmsg==":Q"){
                 Message msg_exit(curuid,cur_groupuid,GRUOP_CHATEXIT);

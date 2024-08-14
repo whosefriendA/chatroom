@@ -1,6 +1,5 @@
 #include"server.hpp"
 Redis redis;
-Method method;
 unordered_set<string> online_users;
 sockaddr_in server_addr;
 socklen_t server_addr_len=sizeof(server_addr);

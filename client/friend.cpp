@@ -231,12 +231,12 @@ void friend_chat()
             }
             //发送文件
             if(curmsg==":S"){
-                method.Sendflie_client(asocket,curuid,recvuid,F_SENDFILE);
+                 Sendflie_client(asocket,curuid,recvuid,F_SENDFILE);
                 continue;
             }
             //接收文件
             if(curmsg==":R"){
-                method.Receiveflie_client(asocket,curuid,recvuid,F_RECVFILE);
+                 Receiveflie_client(asocket,curuid,recvuid,F_RECVFILE);
                 continue;
             }
             //发消息

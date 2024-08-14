@@ -52,7 +52,7 @@ int Send(string msg) {
 }
 
 
-string Receive() {
+string Receive_client() {
     // 数据头
     int len = 0;
     char *buf = new char[4];
@@ -101,6 +101,47 @@ string Receive() {
 
     return msg;
 }
+
+int Receive_server(int cfd,char** msg){
+    int len=0;
+    Read(cfd,(char *)&len,4);
+    len=ntohl(len);
+    // printf("数据大小为%d\n",len);
+    char *buf=(char *)malloc(len+1);
+    int ret=Read(cfd,buf,len);
+    if(ret!=len){
+        printf("数据接收失败\n");
+    }else if(ret==0){
+        cout<<to_string(cfd)<<"断开链接"<<endl;
+        close(cfd);
+    }
+    buf[len]='\0';
+    *msg=buf;
+    return ret;
+}
+ssize_t Read (int fd,void *aptr,size_t n)
+{
+    size_t leftn;
+    ssize_t readn;
+    char *ptr;
+    ptr=(char *)aptr;
+    leftn=n;
+    while(leftn>0){
+        if((readn=read(fd,ptr,leftn))<0){
+            if(errno==EINTR||EWOULDBLOCK){
+                readn=0;
+            }else{
+                return -1;
+            }
+        }else if(readn==0){
+            break;
+        }
+        leftn-=readn;
+        ptr+=readn;
+    }
+    return n-leftn;
+}
+
     int getfd(){return tfd;}
     int get_recvfd(){return recv_fd;}
 

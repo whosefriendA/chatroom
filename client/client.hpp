@@ -2,7 +2,6 @@
 #include"../Redis.hpp"
 #include"../Error.hpp"
 #include"../Message.hpp"
-#include"../Method.hpp"
 #include<signal.h>
 #include<iostream>
 #include<chrono>
@@ -65,7 +64,6 @@ using namespace std;
 using json=nlohmann::json;
 extern TaskSocket asocket;
 extern sockaddr_in server_addr2;
-extern Method method;
 extern Error err;
 extern string curuid;
 extern string curname;
@@ -107,3 +105,5 @@ void Group_apply();
 void group_delmember();
 void group_chat();
 int group_exit();
+void Sendflie_client(TaskSocket,string,string,int);
+void Receiveflie_client(TaskSocket,string,string,int);

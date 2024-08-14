@@ -3,7 +3,6 @@
 #include"../TaskSocket.hpp"
 #include"../Redis.hpp"
 #include"../Threadmanage.hpp"
-#include"../Method.hpp"
 #include"../Message.hpp"
 #include<hiredis/hiredis.h>
 #include<nlohmann/json.hpp>
@@ -26,6 +25,11 @@
 #include<netdb.h>
 #include<atomic>
 #include<unordered_set>
+#include<sys/sendfile.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<cerrno>
+#include<cstring>
 #define FID 1//始祖UID
 #define SERVERPORT 8080//默认端口号
 #define RECV -1
@@ -73,7 +77,6 @@
 #define RESET "\033[0m"
 #define WIDEWHITE "\033[1;37m"
 extern Redis redis;
-extern Method method;
 extern unordered_set<string> online_users;
 extern sockaddr_in server_addr;
 extern socklen_t server_addr_len;
