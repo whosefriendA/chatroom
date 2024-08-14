@@ -224,7 +224,7 @@ void friend_chat()
                     cout<<"成功退出聊天"<<endl;
                     return;
                 }else{
-                    cout<<"出现错误"<<endl;
+                    cout<<"错误"<<endl;
                     return;
                 }
                 break;

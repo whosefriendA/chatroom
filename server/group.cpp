@@ -29,7 +29,7 @@ void group_create(TaskSocket asocket,Message msg){
     redis.Hset(groupuid+"群成员列表",msg.para[0],"普通成员");
     redis.Hset(msg.para[0]+"的群聊列表",groupuid,"普通成员");
     if (online_users.find(msg.para[0]) != online_users.end()){
-        string friend_fd = redis.Hget(msg.para[0],"通知socket");
+        string friend_fd = redis.Hget(msg.para[0],"实时socket");
         TaskSocket friendsocket(stoi(friend_fd));
         friendsocket.Send(BLUE+msg.uid+"邀请你加入群聊"+RESET);
     }
@@ -60,7 +60,7 @@ void group_add(TaskSocket asocket,Message msg){
                 redis.Hset(memberid+"的未读消息","群聊消息",to_string(stoi(num)+1));
                 redis.Rpushvalue(memberid+"群聊消息",apply);
                 if(redis.Sismember("在线用户列表",memberid)){
-                    string member_fd = redis.Hget(memberid,"通知socket");
+                    string member_fd = redis.Hget(memberid,"实时socket");
                     TaskSocket membersocket(stoi(member_fd));
                     membersocket.Send(BLUE+apply+RESET);
                 }
@@ -129,7 +129,7 @@ void group_apply_agree(TaskSocket asocket,Message msg){
                 redis.Rpushvalue(memberid+"群聊消息",apply);
 
                 if (online_users.find(memberid) != online_users.end()){
-                    string member_fd = redis.Hget(memberid,"通知socket");
+                    string member_fd = redis.Hget(memberid,"实时socket");
                     TaskSocket membersocket(stoi(member_fd));
                     membersocket.Send(BLUE+apply+RESET);
                 }
@@ -138,7 +138,7 @@ void group_apply_agree(TaskSocket asocket,Message msg){
     }
     asocket.Send("success");
     if (online_users.find(msg.para[0]) != online_users.end()){
-        string member_fd = redis.Hget(msg.para[0],"通知socket");
+        string member_fd = redis.Hget(msg.para[0],"实时socket");
         TaskSocket membersocket(stoi(member_fd));
         membersocket.Send(BLUE+msg.recuid+":你的加群申请已被通过"+RESET);
     }
@@ -159,7 +159,7 @@ void group_apply_refuse(TaskSocket asocket,Message msg){
                 redis.Rpushvalue(memberid+"群聊消息",apply);
 
                 if (online_users.find(memberid) != online_users.end()){
-                    string member_fd = redis.Hget(memberid,"通知socket");
+                    string member_fd = redis.Hget(memberid,"实时socket");
                     TaskSocket membersocket(stoi(member_fd));
                     membersocket.Send(BLUE+apply+RESET);
                 }
@@ -168,7 +168,7 @@ void group_apply_refuse(TaskSocket asocket,Message msg){
     }
     asocket.Send("success");
     if (online_users.find(msg.para[0]) != online_users.end()){
-        string member_fd = redis.Hget(msg.para[0],"通知socket");
+        string member_fd = redis.Hget(msg.para[0],"实时socket");
         TaskSocket membersocket(stoi(member_fd));
         membersocket.Send(BLUE+msg.recuid+":你的加群申请已被拒绝"+RESET);
     }
@@ -183,7 +183,7 @@ void group_manager_set(TaskSocket asocket,Message msg){
     }
     redis.Hset(msg.recuid+"群成员列表",msg.para[0],"群管理员");
     if (online_users.find(msg.para[0]) != online_users.end()){
-        string member_fd = redis.Hget(msg.para[0],"通知socket");
+        string member_fd = redis.Hget(msg.para[0],"实时socket");
         TaskSocket membersocket(stoi(member_fd));
         membersocket.Send(BLUE+msg.uid+"将你添加为群聊"+msg.recuid+"的群管理员"+RESET);
     }
@@ -199,7 +199,7 @@ void group_manager_unset(TaskSocket asocket,Message msg){
     }
     redis.Hset(msg.recuid+"群成员列表",msg.para[0],"普通成员");
     if (online_users.find(msg.para[0]) != online_users.end()){
-        string member_fd = redis.Hget(msg.para[0],"通知socket");
+        string member_fd = redis.Hget(msg.para[0],"实时socket");
         TaskSocket membersocket(stoi(member_fd));
         membersocket.Send(BLUE+msg.uid+"取消了你的"+msg.recuid+"的群管理员身份"+RESET);
     }
@@ -231,7 +231,7 @@ void group_delmember(TaskSocket asocket,Message msg){
             redis.Rpushvalue(memberid+"群聊消息",apply);
 
             if (online_users.find(memberid) != online_users.end()){
-                string member_fd = redis.Hget(memberid,"通知socket");
+                string member_fd = redis.Hget(memberid,"实时socket");
                 TaskSocket membersocket(stoi(member_fd));
                 membersocket.Send(BLUE+apply+RESET);
             }
@@ -257,7 +257,7 @@ void group_disband(TaskSocket asocket,Message msg){
         redis.Rpushvalue(memberid+"群聊消息", apply);
 
         if ((online_users.find(memberid) != online_users.end()) && redis.Hget(msg.para[0]+"群成员列表", memberid) != "群主"){
-            string member_fd = redis.Hget(memberid, "通知socket");
+            string member_fd = redis.Hget(memberid, "实时socket");
             TaskSocket membersocket(stoi(member_fd));
             membersocket.Send(BLUE+apply+RESET);
         }
@@ -296,7 +296,7 @@ void group_sendmsg(TaskSocket asocket,Message msg){
     string newmsg = msg.uid+":"+msg.para[0];
     redis.Rpushvalue(msg.recuid+"的群聊消息", newmsg);
 
-    string my_recvfd = redis.Hget(msg.uid, "通知socket");
+    string my_recvfd = redis.Hget(msg.uid, "实时socket");
     TaskSocket my_socket(stoi(my_recvfd));
     my_socket.Send(GREEN+ newmsg+RESET);
 
@@ -313,13 +313,13 @@ void group_sendmsg(TaskSocket asocket,Message msg){
             redis.Rpushvalue(memberid+"群聊消息", apply);
         }else if ((online_users.find(memberid) != online_users.end()) && (redis.Hget(memberid, "聊天对象") == msg.recuid)){
             if (memberid != uid){
-                string gr_recvfd = redis.Hget(memberid, "通知socket");
+                string gr_recvfd = redis.Hget(memberid, "实时socket");
                 TaskSocket gr_socket(stoi(gr_recvfd));
                 gr_socket.Send(WIDEWHITE+msg1+RESET);
             }
         }else if ((online_users.find(memberid) != online_users.end()) && memberid != uid){
             string apply = msg.recuid+"群聊中有人发来了一条消息";
-            string gr_recvfd = redis.Hget(memberid, "通知socket");
+            string gr_recvfd = redis.Hget(memberid, "实时socket");
             TaskSocket gr_socket(stoi(gr_recvfd));
             gr_socket.Send(RED+apply+RESET);
         }

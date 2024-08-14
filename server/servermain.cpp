@@ -99,11 +99,11 @@ int main(int argc,char*argv[]){
                 TaskSocket asocket(nfd);
                 char *buf;
                 int ret=method.Receivemsg(nfd,&buf);
-                // cout<<ret<<endl;//
-                if(ret<=0){
+                cout<<"ret="<<ret<<endl;//
+                if(ret<=0){//用户退出了
                     string uid =redis.Hget("fd-uid表",to_string(nfd));
-                    online_users.insert(uid);//添加到在线用户
-                    redis.Hset(uid,"通知socket","-1");
+                    online_users.erase(uid);//删除在线用户
+                    redis.Hset(uid,"实时socket","-1");
                     redis.Hset("fd-uid表",to_string(nfd),"-1");
                     close(nfd);
                     continue;
@@ -115,7 +115,7 @@ int main(int argc,char*argv[]){
                 Message msg;
                 msg.Json_to_s(comad_string);
                 if(msg.flag==RECV){
-                redis.Hset(msg.uid,"通知socket",to_string(nfd));
+                redis.Hset(msg.uid,"实时socket",to_string(nfd));
                 }else if(msg.flag==F_SENDFILE||msg.flag==F_RECVFILE||msg.flag==SENDFILE_GROUP||msg.flag==RECVFILE_GROUP){
                     event.events = EPOLLIN|EPOLLET;
                     event.data.fd = nfd;
@@ -195,6 +195,7 @@ void transferfunc(TaskSocket asocket,const string& comad_string)
             break;
         case EXITCHAT:
             Exitchat(asocket,msg);
+            break;
         case SEND_MSG:
             friend_sendmsg(asocket,msg);
             break;

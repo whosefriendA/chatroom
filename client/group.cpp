@@ -315,7 +315,7 @@ void group_chat(){
             method.Sendflie_client(asocket,curuid,cur_groupuid,SENDFILE_GROUP);
             continue;
         }else if(newmsg==":R"){
-            method.Receiveflie_client(asocket,curuid,cur_groupuid,RECVFILE_GROUP);
+            method.Receiveflie_client(asocket,cur_groupuid,curuid,RECVFILE_GROUP);
             continue;
         }else if(newmsg==":Q"){
                 Message msg_exit(curuid,cur_groupuid,GRUOP_CHATEXIT);

@@ -31,8 +31,7 @@ void friend_add(TaskSocket asocket,Message msg){
         vector<string> friendlist = redis.Hgetall(msg.uid,"的好友列表");
 
         auto it = find(friendlist.begin(),friendlist.end(),msg.recuid);
-        if (it != friendlist.end())
-        {
+        if (it != friendlist.end()){
             asocket.Send("exist"); 
             return;
         }
@@ -51,7 +50,7 @@ void friend_add(TaskSocket asocket,Message msg){
     redis.Hset(msg.recuid+"的未读消息","好友申请",to_string(stoi(nums)+1));
     // 给好友发送实时通知
     if (online_users.find(msg.recuid)!= online_users.end()){
-        string friend_fd = redis.Hget(msg.recuid,"通知socket");
+        string friend_fd = redis.Hget(msg.recuid,"实时socket");
         TaskSocket friendsocket(stoi(friend_fd));
         string mesg = "收到来自"+msg.uid+"的好友申请";
         friendsocket.Send(RED+mesg+RESET);
@@ -88,7 +87,7 @@ void friend_apply_agree(TaskSocket asocket,Message msg){
         redis.Hset(msg.para[0]+ "的未读消息","通知类消息",to_string(stoi(num1)+1));
 
         if (online_users.find(msg.para[0])!=online_users.end()){
-            string friend_fd = redis.Hget(msg.para[0],"通知socket");
+            string friend_fd = redis.Hget(msg.para[0],"实时socket");
             TaskSocket friendsocket(stoi(friend_fd));
             friendsocket.Send(RED+msg.uid+"通过了你的好友申请"+RESET);
         }
@@ -165,8 +164,9 @@ void friend_sendmsg(TaskSocket asocket,Message msg){
     string newmsg = "我:"+msg.para[0];
     redis.Rpushvalue(msg.uid+"与"+msg.recuid+"的聊天记录",newmsg);
 
-    string my_recvfd = redis.Hget(msg.uid,"通知socket");
+    string my_recvfd = redis.Hget(msg.uid,"实时socket");
     TaskSocket my_socket(stoi(my_recvfd));
+    cout<<"发个我:"<<endl;
     my_socket.Send(newmsg);
 
     if (redis.Sismember(msg.recuid +"的屏蔽列表",msg.uid)){
@@ -180,22 +180,23 @@ void friend_sendmsg(TaskSocket asocket,Message msg){
     redis.Rpushvalue(msg.recuid +"与"+msg.uid+"的聊天记录",msg1);
 
     if (online_users.find(msg.recuid)!=online_users.end() && (redis.Hget(msg.recuid ,"聊天对象") == msg.uid)){
-        cout<<"在线"<<endl;
-        string fr_recvfd = redis.Hget(msg.recuid ,"通知socket");
+        // cout<<"在线"<<endl;
+        string fr_recvfd = redis.Hget(msg.recuid ,"实时socket");
         TaskSocket fr_socket(stoi(fr_recvfd));
         fr_socket.Send(GREEN+msg1+RESET);
     }else if (online_users.find(msg.recuid)==online_users.end()){
-    cout<<"不在线"<<endl;
+    // cout<<"不在线"<<endl;
         string num = redis.Hget(msg.recuid +"的未读消息","通知类消息");
         redis.Hset(msg.recuid +"的未读消息","通知类消息",to_string(stoi(num)+1));
         redis.Rpushvalue(msg.recuid +"的通知消息",msg.uid+"给你发来了一条消息");
     }else{
-        cout<<"在线但是没在和你聊天"<<endl;
-        string fr_recvfd = redis.Hget(msg.recuid ,"通知socket");
+        // cout<<"在线但是没在和你聊天"<<endl;
+        string fr_recvfd = redis.Hget(msg.recuid ,"实时socket");
         TaskSocket fr_socket(stoi(fr_recvfd));
         fr_socket.Send(RED+msg.uid+"给你发来了一条消息"+RESET);
     }
     asocket.Send("success");
+    cout<<"我运行完返回了"<<endl;
     return;
 }
 void Exitchat(TaskSocket mysocket,Message msg){

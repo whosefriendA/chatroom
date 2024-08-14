@@ -41,9 +41,9 @@ void Log_in(TaskSocket asocket,Message msg){
         asocket.Send("notcorrect");
     }else{
         online_users.insert(msg.uid);
-        redis.Hset("fd_uid表",to_string(asocket.getfd()),msg.uid);
+        redis.Hset("fd-uid表",to_string(asocket.getfd()),msg.uid);
         redis.Hset(msg.uid,"聊天对象","0");
-        redis.Hset(msg.uid,"通知socket","-1");
+        redis.Hset(msg.uid,"实时socket","-1");
         string name=redis.Hget(msg.uid,"name");
         asocket.Send(name);
         cout<<"用户"<<msg.uid<<"登录成功"<<endl;
