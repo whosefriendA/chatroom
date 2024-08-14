@@ -98,7 +98,7 @@ int main(int argc,char*argv[]){
             }else {
                 TaskSocket asocket(nfd);
                 char *buf;
-                int ret=method.Receivemsg(nfd,&buf);
+                int ret=asocket.Receive_server(nfd,&buf);
                 cout<<"ret="<<ret<<endl;//
                 if(ret<=0){//用户退出了
                     string uid =redis.Hget("fd-uid表",to_string(nfd));

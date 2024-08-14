@@ -84,7 +84,7 @@ extern int Group_uid;
 using std::string;
 using std::mutex;
 using json=nlohmann::json;
-int Receivemsg(int cfd,char** msg);
+int Receive_server(int cfd,char** msg);
 ssize_t Read (int fd,void *aptr,size_t n);
 void F_sendfile_toserver(TaskSocket,Message);
 void F_receivefile_fromserver(TaskSocket,Message);

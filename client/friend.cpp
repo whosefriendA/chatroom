@@ -4,7 +4,7 @@ int friend_list_get(){
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
     string Friend;
-    while ((Friend = asocket.Receive()) != "end"){
+    while ((Friend = asocket.Receive_client()) != "end"){
         if (Friend == "none"){
             cout << "你当前还没有好友" << endl;
             return 0;
@@ -21,16 +21,16 @@ int friend_list_get(){
 void freind_add(){
     string recv_uid;//被添加好友的uid
     string option;//发送的验证消息
-    cout<<"您想添加的好友的uid为:"<<endl; 
+    cout<<"你想添加的好友的uid为:"<<endl; 
     cin>>recv_uid;
-    cout<<"您想发送的验证消息为"<<endl;
+    cout<<"你想发送的验证消息为"<<endl;
     cin.ignore();
     getline(cin,option);
 
     Message command1(curuid,recv_uid,ADD_FRIEND,{option});
     int ret = asocket.Send(command1.S_to_json());
     err.server_close(ret);
-    string recv = asocket.Receive();
+    string recv = asocket.Receive_client();
     err.server_close(recv);
     if (recv == "success"){
         system("clear");
@@ -66,7 +66,7 @@ void friend_del(){
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string recv = asocket.Receive();
+    string recv = asocket.Receive_client();
     err.server_close(recv);
     if (recv == "success"){
         system("clear");
@@ -89,7 +89,7 @@ void friend_apply_agree(){
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string recv = asocket.Receive();
+    string recv = asocket.Receive_client();
     err.server_close(recv);
     if (recv == "success"){
         system("clear");
@@ -112,7 +112,7 @@ void friend_apply_refuse(){
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="notfind"){
         cout<<"不存在ta的好友申请"<<endl;
@@ -137,7 +137,7 @@ void friend_block(){
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="success"){
         cout<<"已屏蔽该好友"<<endl;
@@ -162,7 +162,7 @@ void friend_restore(){
     Message msg(curuid,RESTORE_FRIEND,{restoreuid});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="success"){
         cout<<"已恢复与ta聊天"<<endl;
@@ -190,7 +190,7 @@ void friend_chat()
     int ret = asocket.Send(msg1.S_to_json());
     err.server_close(ret);
 
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="notfind"){
         cout<<"ta不是你的好友"<<endl;
@@ -200,7 +200,7 @@ void friend_chat()
         string historymsg;
         cout<<"开始打印历史聊天记录"<<endl;
         while(1){
-            historymsg=asocket.Receive();
+            historymsg=asocket.Receive_client();
             err.server_close(historymsg);
             if(historymsg=="The end"){
                 cout<<"上面为历史聊天记录，开始新的聊天吧"<<endl;
@@ -218,7 +218,7 @@ void friend_chat()
                 int ret=asocket.Send(msg_exit.S_to_json());
                 err.server_close(ret);
 
-                string recv=asocket.Receive();
+                string recv=asocket.Receive_client();
                 err.server_close(recv);
                 if(recv=="success"){
                     cout<<"成功退出聊天"<<endl;
@@ -244,7 +244,7 @@ void friend_chat()
             int ret = asocket.Send(msg.S_to_json());
             err.server_close(ret);
 
-            string recv=asocket.Receive();
+            string recv=asocket.Receive_client();
             err.server_close(recv);
             if(recv=="failure"){
                 return;

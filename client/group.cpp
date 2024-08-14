@@ -8,13 +8,13 @@ void group_create(){
     Message msg(curuid,CREATE_GROUP,{frienduid});
     int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="failure"){
         cout<<"你不能邀请自己进群"<<endl;
         return;
     }else if(recv=="nofind"){
-        cout<<"您暂时还没有该好友"<<endl;
+        cout<<"你暂时还没有该好友"<<endl;
         return;
     }else{
     cout<<"群聊创建成功,群号为:"<<recv<<endl;
@@ -26,7 +26,7 @@ void group_list_get(){
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
     string Group;
-    while ((Group = asocket.Receive()) != "end"){
+    while ((Group = asocket.Receive_client()) != "end"){
         err.server_close(Group);
         if (Group == "none"){
             cout << "你当前还没有加入群聊" << endl;
@@ -47,7 +47,7 @@ void group_add(){
     int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="already"){
         cout<<"你已在该群聊中"<<endl;
@@ -73,7 +73,7 @@ void group_in(){
     int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="none"){
         cout<<"此群不存在"<<endl;
@@ -94,11 +94,11 @@ void group_memberlist_get(){
     Message msg(curuid,cur_groupuid,GROUP_MEMBER_LIST);
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
-    string member=asocket.Receive();
+    string member=asocket.Receive_client();
     while(member!="end"){
         err.server_close(member);
         cout<<member<<endl;
-        member=asocket.Receive();
+        member=asocket.Receive_client();
     }
     cout<<"The end"<<endl;
     return;
@@ -108,7 +108,7 @@ void group_apply_list(){
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     while(recv!="end"){
         err.server_close(recv);
         if(recv=="failure"){
@@ -117,7 +117,7 @@ void group_apply_list(){
         }else{
             cout<<recv<<endl;
         }
-        recv=asocket.Receive();
+        recv=asocket.Receive_client();
     }
     cout<<"The end"<<endl;
     return;
@@ -130,7 +130,7 @@ void group_apply_agree(){
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
     
-    string agree_recv=asocket.Receive();
+    string agree_recv=asocket.Receive_client();
     err.server_close(agree_recv);
     if(agree_recv=="failure"){
     cout<<"你没有权限"<<endl;
@@ -154,7 +154,7 @@ void group_apply_refuse(){
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string refuse_recv=asocket.Receive();
+    string refuse_recv=asocket.Receive_client();
     err.server_close(refuse_recv);
     if(refuse_recv=="failure"){
         cout<<"你没有权限"<<endl;
@@ -180,7 +180,7 @@ void group_manager_set(){
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
@@ -206,7 +206,7 @@ void group_manager_unset(){
     Message msg(curuid,cur_groupuid,GROUP_MANAGER_UNSET,{unsetmanager});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
@@ -232,7 +232,7 @@ void group_delmember(){
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
@@ -252,7 +252,7 @@ int group_disband(){
     Message msg(curuid,GROUP_DISBAND,{cur_groupuid});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
@@ -271,7 +271,7 @@ int group_exit(){
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="failure"){
         cout<<"群主无法退群,可以解散群"<<endl;
@@ -290,13 +290,13 @@ void group_chat(){
     int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="success"){
         //打印群聊历史聊天记录
         string historymsg;
         while(1){
-            historymsg=asocket.Receive();
+            historymsg=asocket.Receive_client();
             err.server_close(historymsg);
             if(historymsg=="The end"){
                 cout<<RED<<"输入:S发送文件,输入:R接收文件,输入:Q退出聊天"<<RESET<<endl;
@@ -320,7 +320,7 @@ void group_chat(){
                 int ret=asocket.Send(msg_exit.S_to_json());
                 err.server_close(ret);
 
-                string recv=asocket.Receive();
+                string recv=asocket.Receive_client();
                 err.server_close(recv);
                 if(recv=="success"){
                     cout<<"成功退出聊天"<<endl;
@@ -335,7 +335,7 @@ void group_chat(){
         int ret = asocket.Send(msg.S_to_json());
         err.server_close(ret);
 
-        string recv=asocket.Receive();
+        string recv=asocket.Receive_client();
         err.server_close(recv);
         if(recv=="failure"){
             return;

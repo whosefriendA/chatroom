@@ -27,7 +27,7 @@ void sign_up(){
     int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
-    string uid=asocket.Receive();//收到生成的uid
+    string uid=asocket.Receive_client();//收到生成的uid
     if(uid=="close"){
         cout<<"已关闭"<<endl;
         exit(0);
@@ -82,7 +82,7 @@ void* notify_receive(void* arg) {
         exit(0);
     }
     while (true) {
-        std::string recv = recvsocket.Receive(); 
+        std::string recv = recvsocket.Receive_client(); 
         if (recv == "close") {
             std::cout << "服务器已关闭" << std::endl;
             delete params;
@@ -98,13 +98,13 @@ int log_in(){
     uid=get_uid();
     // cout<<"uid="<<uid<<endl;
     curuid=uid;
-    cout<<"请输入您的密码:"<<endl;
+    cout<<"请输入你的密码:"<<endl;
     getline(cin,pass);
     // cout<<pass<<endl;
     Message msg(uid,LOGIN,{pass});
     int ret=asocket.Send(msg.S_to_json());
     //err.server_close(ret);
-    string recv=asocket.Receive();//接收返回的结果
+    string recv=asocket.Receive_client();//接收返回的结果
     cout<<recv<<endl;
     err.server_close(recv);
     if(recv=="notcorrect"){
@@ -134,14 +134,13 @@ int log_in(){
     return 1;
     }
 }
-void pass_find()
-{
+void pass_find(){
     string uid,pass,answer;
     uid=get_uid();
     Message msg(uid,QUESTION_GET);
     int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     cout<<recv<<endl;
     getline(cin,answer);
@@ -149,7 +148,7 @@ void pass_find()
     ret=asocket.Send(msg1.S_to_json());
     err.server_close(ret);
 
-    recv=asocket.Receive();//接收返回的结果
+    recv=asocket.Receive_client();//接收返回的结果
     err.server_close(recv);
     if(recv!=answer){
         cout<<"答案不正确,无法找回"<<endl;
@@ -160,7 +159,7 @@ void pass_find()
     ret=asocket.Send(msg2.S_to_json());
     err.server_close(ret);
 
-    recv=asocket.Receive();
+    recv=asocket.Receive_client();
     cout<<"你的密码是："<<recv<<"千万别再忘了"<<endl;
     return ;
     }
@@ -169,7 +168,7 @@ void Unreadnotice(){
     Message msg(curuid,UNREAD_NOTICE);
     int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="failure"){
         cout<<"你目前没有未读消息"<<endl;
@@ -182,7 +181,7 @@ int user_remove(){
     Message msg(curuid,USER_REMOVE);
     int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
-    string recv=asocket.Receive();
+    string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="success"){
     cout<<"注销成功"<<endl;
