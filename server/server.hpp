@@ -22,7 +22,6 @@
 #include<thread>
 #include<condition_variable>
 #include<functional>
-#include<netdb.h>
 #include<atomic>
 #include<unordered_set>
 #include<sys/sendfile.h>
