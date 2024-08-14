@@ -1,6 +1,7 @@
 #include"server.hpp"
 Redis redis;
 unordered_set<string> online_users;
+unordered_map<int, chrono::time_point<chrono::steady_clock>> client_last_active;
 sockaddr_in server_addr;
 socklen_t server_addr_len=sizeof(server_addr);
 int server_port=SERVERPORT;
@@ -75,6 +76,9 @@ int main(int argc,char*argv[]){
     // for(const string&member :members){
     //     cout<<member<<endl;
     // }
+    thread heartbeatThread(checkHeartbeat, epfd);
+    heartbeatThread.detach();
+
     while(true){
         int count =epoll_wait(epfd,recvevent,size,-1);
         for(int i=0;i<count;i++){
@@ -90,32 +94,34 @@ int main(int argc,char*argv[]){
 
                 event.events = EPOLLIN | EPOLLET; 
                 event.data.fd=cfd;
-                if(epoll_ctl(epfd,EPOLL_CTL_ADD,cfd,&event)==-1){
-                   perror("new event error");
-                   exit(0);
-                }
+                epoll_ctl(epfd,EPOLL_CTL_ADD,cfd,&event);
+
+                client_lastactive_now(nfd);//更新时间
             }else {
                 TaskSocket asocket(nfd);
                 char *buf;
                 int ret=asocket.Receive_server(nfd,&buf);
                 // cout<<"ret="<<ret<<endl;//
                 if(ret<=0){//用户退出了
-                    string uid =redis.Hget("fd-uid表",to_string(nfd));
-                    online_users.erase(uid);//删除在线用户
-                    redis.Hset(uid,"实时socket","-1");
-                    redis.Hset("fd-uid表",to_string(nfd),"-1");
-                    close(nfd);
+                    client_dead(nfd);
                     continue;
                 }
-                buf[ret]='\0';
+                client_lastactive_now(nfd);
                 // cout<<buf<<endl;//
                 string comad_string=buf;
-                // cout << "New request:" << comad_string << endl<<endl;
+                cout << "New request:" << comad_string << endl<<endl;
+                
                 Message msg;
                 msg.Json_to_s(comad_string);
+                if (msg.flag == HEARTBEAT) {
+                    client_lastactive_now(nfd);
+                    // cout<<"接受到了心跳包"<<endl;
+                    continue; // 如果是心跳包，直接继续
+                }
                 if(msg.flag==RECV){
                 redis.Hset(msg.uid,"实时socket",to_string(nfd));
                 }else if(msg.flag==F_SENDFILE||msg.flag==F_RECVFILE||msg.flag==SENDFILE_GROUP||msg.flag==RECVFILE_GROUP){
+                   client_lastactive_now(nfd);
                     event.events = EPOLLIN|EPOLLET;
                     event.data.fd = nfd;
                     //摘树
@@ -135,6 +141,7 @@ int main(int argc,char*argv[]){
                     //分离
                     fileThread.detach();
                 }else{
+                    client_lastactive_now(nfd);
                     // cout<<"will create task to thread"<<endl;
                     TaskSocket socket(nfd);
                     // 使用 lambda 表达式创建带参数的 taskhandler并添加到调度器
@@ -144,5 +151,36 @@ int main(int argc,char*argv[]){
                 }
             }     
         }
+    }
+}
+
+void checkHeartbeat(int epfd) {
+    while (true) {
+        auto now = chrono::steady_clock::now();
+        for (auto it = client_last_active.begin(); it != client_last_active.end(); ) {
+
+            if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 30) { // 30秒超时
+                cout << "Client " << it->first << " 超时" << endl;
+                close(it->first);
+                client_dead(it->first);
+                it = client_last_active.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        this_thread::sleep_for(chrono::seconds(5)); // 每5秒检查一次
+    }
+}
+void client_dead(int nfd){
+    string uid =redis.Hget("fd-uid表",to_string(nfd));
+    online_users.erase(uid);//删除在线用户
+    redis.Hset(uid,"实时socket","-1");
+    redis.Hset("fd-uid表",to_string(nfd),"-1");
+    close(nfd);
+}
+void client_lastactive_now(int nfd){
+    string uid =redis.Hget("fd-uid表",to_string(nfd));
+    if(stoi(uid)!=-1){
+    client_last_active[nfd] = chrono::steady_clock::now();
     }
 }

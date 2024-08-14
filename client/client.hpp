@@ -15,12 +15,13 @@
 #include<unistd.h>
 #include<nlohmann/json.hpp>
 #include<hiredis/hiredis.h>
+#include<thread>
 #define SERVERPORT 8080//默认端口号
 #define RECV -1
 #define SIGNUP 1
 #define LOGIN 2
 #define USER_REMOVE 3
-#define BLOCK_FRIEND 4
+#define  SHIELD_FRIEND 4
 #define RESTORE_FRIEND 5
 #define SENDFILE_GROUP 6
 #define RECVFILE_GROUP 7
@@ -54,6 +55,7 @@
 #define GROUP_CHAT 35
 #define GROUP_SENDMSG 36
 #define GRUOP_CHATEXIT 37
+#define HEARTBEAT 38
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
 #define RESET "\033[0m"
@@ -68,6 +70,7 @@ extern Error err;
 extern string curuid;
 extern string curname;
 extern string cur_groupuid;
+void sendHeartbeat(TaskSocket);
 int Main_menu();
 void User_menu();
 void Friend_menu();
@@ -79,14 +82,16 @@ int log_in();
 int user_remove();
 void* notify_receive(void* arg);
 string get_uid();
+void Sendflie_client(TaskSocket,string,string,int);
+void Receiveflie_client(TaskSocket,string,string,int);
 int friend_list_get();
 void freind_add();
 void friend_del();
 void Friend_apply();
 void friend_apply_agree();
 void friend_apply_refuse();
-void Friend_block();
-void friend_block();
+void Friend_shield();
+void friend_shield();
 void friend_restore();
 void friend_chat();
 void Unreadnotice();
@@ -105,5 +110,3 @@ void Group_apply();
 void group_delmember();
 void group_chat();
 int group_exit();
-void Sendflie_client(TaskSocket,string,string,int);
-void Receiveflie_client(TaskSocket,string,string,int);

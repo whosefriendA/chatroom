@@ -127,13 +127,13 @@ void friend_apply_refuse(){
         return;
     }
 }
-void friend_block(){
+void friend_shield(){
     friend_list_get();
-    string blockuid;//屏蔽好友
+    string shielduid;//屏蔽好友
     cout<<"想屏蔽的好友的uid为:"<<endl;
-    cin>>blockuid;
+    cin>>shielduid;
     cin.ignore();
-    Message msg(curuid,BLOCK_FRIEND,{blockuid});
+    Message msg(curuid,SHIELD_FRIEND,{shielduid});
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
 

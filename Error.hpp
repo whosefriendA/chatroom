@@ -18,6 +18,7 @@ class Error{
         exit(0);
     }
     }
+
 };
 
 #endif

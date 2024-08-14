@@ -36,8 +36,8 @@ void transferfunc(TaskSocket asocket,const string& comad_string)
         case REFUSE_ADDFRIEND:
             friend_apply_refuse(asocket,msg);
             break;
-        case BLOCK_FRIEND:
-            friend_block(asocket,msg);
+        case  SHIELD_FRIEND:
+            friend_shield(asocket,msg);
             break;
         case RESTORE_FRIEND:
             friend_restore(asocket,msg);

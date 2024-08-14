@@ -36,7 +36,7 @@
 #define SIGNUP 1
 #define LOGIN 2
 #define USER_REMOVE 3
-#define BLOCK_FRIEND 4
+#define SHIELD_FRIEND 4
 #define RESTORE_FRIEND 5
 #define SENDFILE_GROUP 6
 #define RECVFILE_GROUP 7
@@ -70,6 +70,7 @@
 #define GROUP_CHAT 35
 #define GROUP_SENDMSG 36
 #define GRUOP_CHATEXIT 37
+#define HEARTBEAT 38
 #define RED "\033[31m"
 #define BLUE "\033[34m"
 #define YELLOW "\033[33m"
@@ -87,6 +88,8 @@ extern int Group_uid;
 using std::string;
 using std::mutex;
 using json=nlohmann::json;
+void client_dead(int);
+void client_lastactive_now(int);
 int Receive_server(int cfd,char** msg);
 ssize_t Read (int fd,void *aptr,size_t n);
 void F_sendfile_toserver(TaskSocket,Message);
@@ -104,7 +107,7 @@ void friend_add(TaskSocket,Message);
 void friend_del(TaskSocket,Message);
 void friend_apply_agree(TaskSocket,Message);
 void friend_apply_refuse(TaskSocket,Message);
-void friend_block(TaskSocket,Message);
+void friend_shield(TaskSocket,Message);
 void friend_restore(TaskSocket,Message);
 void friend_chat(TaskSocket,Message);
 void Unreadnotice(TaskSocket,Message);
@@ -150,5 +153,5 @@ class User{
     mutex user_mutex;
 };
 void transferfunc(TaskSocket asocket,const std::string& comad_string);
-
+void checkHeartbeat(int epfd);
 #endif

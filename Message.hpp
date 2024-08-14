@@ -9,6 +9,7 @@ using json=nlohmann::json;
 class Message{
 public:
     Message()=default;
+    Message(int flag):flag(flag){};
     Message(string uid,int flag):uid(uid),flag(flag){};
     Message(string uid,int flag,vector<string>para):uid(uid),flag(flag),para(para){};
     Message(string uid,string recuid,int flag):uid(uid),recuid(recuid),flag(flag){};

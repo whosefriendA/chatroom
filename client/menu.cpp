@@ -84,7 +84,7 @@ void Friend_menu(){
     else if(choice==4)
     Friend_apply();
     else if(choice==5)
-    Friend_block();
+    Friend_shield();
     else if(choice==6)
     friend_chat();
     else if(choice==7)
@@ -118,7 +118,7 @@ void Friend_apply(){
 }
 }
 
-void Friend_block(){
+void Friend_shield(){
     string a;
     while(1){
     cout<<"--------[1]屏蔽好友消息--------"<<endl;
@@ -128,7 +128,7 @@ void Friend_block(){
     try{
     int choice=stoi(a);
     if(choice==1)
-    friend_block();
+    friend_shield();
     else if(choice==2)
     friend_restore();
     else if(choice==3)

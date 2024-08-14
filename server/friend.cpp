@@ -116,7 +116,7 @@ void friend_apply_refuse(TaskSocket asocket,Message msg){
         asocket.Send("success");
     }
 }
-void friend_block(TaskSocket asocket,Message msg)
+void friend_shield(TaskSocket asocket,Message msg)
 {
     if (!redis.hexists(msg.uid+"的好友列表",msg.para[0])){
         asocket.Send("none"); 
@@ -166,7 +166,7 @@ void friend_sendmsg(TaskSocket asocket,Message msg){
 
     string my_recvfd = redis.Hget(msg.uid,"实时socket");
     TaskSocket my_socket(stoi(my_recvfd));
-    cout<<"发个我:"<<endl;
+    // cout<<"发个我:"<<endl;
     my_socket.Send(newmsg);
 
     if (redis.Sismember(msg.recuid +"的屏蔽列表",msg.uid)){
@@ -196,7 +196,7 @@ void friend_sendmsg(TaskSocket asocket,Message msg){
         fr_socket.Send(RED+msg.uid+"给你发来了一条消息"+RESET);
     }
     asocket.Send("success");
-    cout<<"我运行完返回了"<<endl;
+    // cout<<"我运行完返回了"<<endl;
     return;
 }
 void Exitchat(TaskSocket mysocket,Message msg){

@@ -16,8 +16,6 @@ void group_create(TaskSocket asocket,Message msg){
 
     redis.Sadd("群聊集合",groupuid);
     redis.Hset(groupuid+"的详情","群号",groupuid);
-    redis.Hset(groupuid+"的详情","群名称",groupuid);
-    redis.Hset(groupuid+"的详情","群介绍","--");
     redis.Hset(groupuid+"群成员列表",msg.uid,"群主");
     redis.Hset(msg.uid+"的群聊列表",groupuid,"群主");
 
