@@ -82,7 +82,7 @@ void User_remove(TaskSocket asocket,Message msg)
     }
     redis.keyremove(msg.uid+"的群聊列表");
     redis.keyremove(msg.uid); 
-    redis.Valueremove("用户uid集合", msg.uid);
+    redis.Valueremove("uid集合", msg.uid);
     asocket.Send("success");
 }
 void Unreadnotice(TaskSocket asocket,Message msg){

@@ -25,12 +25,10 @@ void group_list_get(){
     Message msg(curuid,GROUP_LIST);
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
-    system("clear");
     string Group;
     while ((Group = asocket.Receive()) != "end"){
         err.server_close(Group);
         if (Group == "none"){
-            system("clear");
             cout << "你当前还没有加入群聊" << endl;
             return;
         }else{

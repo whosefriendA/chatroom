@@ -63,7 +63,7 @@ class Method {
     }
     void Receiveflie_client(TaskSocket asocket,string curuid,string recvuid,int RECVFILE){
         string filepath;
-        cout<<"请输入想接收的文件路径:"<<endl;
+        cout<<"请输入保存文件的路径（带上想接收文件名）:"<<endl;
         getline(cin,filepath);
 
         size_t lastSlash=filepath.find_last_of("/");
