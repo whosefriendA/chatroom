@@ -1,5 +1,5 @@
 #include"client.hpp"
-void Sendflie_client(TaskSocket asocket,string curuid,string recvuid,int SENDFILE){
+void Sendflie_client(TaskSocket file_socket,string curuid,string recvuid,int SENDFILE){
     string filepath;
     cout<<"请输入要发送文件的路径"<<endl;
     getline(cin,filepath);
@@ -14,16 +14,16 @@ void Sendflie_client(TaskSocket asocket,string curuid,string recvuid,int SENDFIL
         string filename=filepath.substr(lastSlash+1);//提取文件名
 
         Message msg_file(curuid,recvuid,SENDFILE,{filename,to_string(filesize)});
-        int ret=asocket.Send(msg_file.S_to_json());
+        int ret=file_socket.Send(msg_file.S_to_json());
         err.server_close(ret);
 
-        string recv_file=asocket.Receive_client();
+        string recv_file=file_socket.Receive_client();
         err.server_close(recv_file);
         if(recv_file=="success"){
             ssize_t offset = 0;
                 cout<<filesize<<endl;
             while (offset < filesize) {
-                ssize_t sent_bytes = sendfile(asocket.getfd(),filefd,&offset,filesize - offset);
+                ssize_t sent_bytes = sendfile(file_socket.getfd(),filefd,&offset,filesize - offset);
                 // cout<<sent_bytes<<endl;
                 if (sent_bytes == -1){
                     if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -73,7 +73,7 @@ void Sendflie_client(TaskSocket asocket,string curuid,string recvuid,int SENDFIL
             cout<<recv_file.c_str()<<endl;
             ssize_t size=stoll(recv_file.c_str());//文件大小
             cout<<size<<endl;
-            char buf[BUFSIZE];
+            char buf[BUFSIZ];
             ssize_t Recv_bytes=0;
             lseek(filefd,0,SEEK_SET);
             while(size>Recv_bytes){

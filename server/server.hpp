@@ -77,7 +77,6 @@
 #define GREEN "\033[32m"
 #define RESET "\033[0m"
 #define WIDEWHITE "\033[1;37m"
-#define BUFSIZE 81920
 extern Redis redis;
 extern unordered_set<string> online_users;
 extern sockaddr_in server_addr;
@@ -154,5 +153,5 @@ class User{
     mutex user_mutex;
 };
 void transferfunc(TaskSocket asocket,const std::string& comad_string);
-// void checkHeartbeat(int epfd);
+void checkHeartbeat(int epfd);
 #endif

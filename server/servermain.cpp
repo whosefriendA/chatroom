@@ -78,8 +78,8 @@ int main(int argc,char*argv[]){
     // for(const string&member :members){
     //     cout<<member<<endl;
     // }
-    // thread heartbeatThread(checkHeartbeat, epfd);
-    // heartbeatThread.detach();
+    thread heartbeatThread(checkHeartbeat, epfd);
+    heartbeatThread.detach();
 
     while(true){
         int count =epoll_wait(epfd,recvevent,size,-1);
@@ -97,9 +97,8 @@ int main(int argc,char*argv[]){
                 event.events = EPOLLIN | EPOLLET; 
                 event.data.fd=cfd;
                 epoll_ctl(epfd,EPOLL_CTL_ADD,cfd,&event);
-
-                client_lastactive_now(nfd);//更新时间
             }else {
+                client_lastactive_now(nfd);//更新时间
                 TaskSocket asocket(nfd);
                 char *buf;
                 int ret=asocket.Receive_server(nfd,&buf);
@@ -108,8 +107,7 @@ int main(int argc,char*argv[]){
                     client_dead(nfd);
                     continue;
                 }
-                client_lastactive_now(nfd);
-                // cout<<buf<<endl;//
+                // cout<<buf<<endl;
                 string comad_string=buf;
                 cout << "New request:" << comad_string << endl<<endl;
                 Message msg;
@@ -122,6 +120,7 @@ int main(int argc,char*argv[]){
                 if(msg.flag==RECV){
                 redis.Hset(msg.uid,"实时socket",to_string(nfd));
                 }else if(msg.flag==F_SENDFILE||msg.flag==F_RECVFILE||msg.flag==SENDFILE_GROUP||msg.flag==RECVFILE_GROUP){
+                    client_last_active.erase(nfd);
                     event.events = EPOLLIN|EPOLLET;
                     event.data.fd = nfd;
                     //摘树
@@ -153,23 +152,23 @@ int main(int argc,char*argv[]){
     }
 }
 
-// void checkHeartbeat(int epfd) {
-//     while (true) {
-//         auto now = chrono::steady_clock::now();
-//         for (auto it = client_last_active.begin(); it != client_last_active.end(); ) {
+void checkHeartbeat(int epfd) {
+    while (true) {
+        auto now = chrono::steady_clock::now();
+        for (auto it = client_last_active.begin(); it != client_last_active.end(); ) {
 
-//             if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 30) { // 30秒超时
-//                 cout << "Client " << it->first << " 超时" << endl;
-//                 close(it->first);
-//                 client_dead(it->first);
-//                 it = client_last_active.erase(it);
-//             } else {
-//                 ++it;
-//             }
-//         }
-//         this_thread::sleep_for(chrono::seconds(5)); // 每5秒检查一次
-//     }
-// }
+            if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 400) { // 180秒超时
+                cout << "Client " << it->first << " 超时" << endl;
+                close(it->first);
+                client_dead(it->first);
+                it = client_last_active.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        this_thread::sleep_for(chrono::seconds(300)); // 每5秒检查一次
+    }
+}
 void client_dead(int nfd){
     string uid =redis.Hget("fd-uid表",to_string(nfd));
     online_users.erase(uid);//删除在线用户
