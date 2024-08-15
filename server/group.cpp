@@ -192,10 +192,18 @@ void group_manager_set(TaskSocket asocket,Message msg){
         asocket.Send("notingroup");
         return;
     }
-    if (redis.Hget(msg.recuid+"群成员列表",msg.uid) != "群主"&&msg.para[0]==msg.uid){
+     else if(!redis.hexists(msg.recuid+"群成员列表",msg.para[0])){
+        asocket.Send("none");
+        return ;
+    }
+    if (redis.Hget(msg.recuid+"群成员列表",msg.uid) != "群主"){
         asocket.Send("failure");
         return;
-    }else if (redis.Hget(msg.recuid+"群成员列表",msg.para[0]) == "群管理员"){
+    }else if(msg.uid==msg.para[0]){
+        asocket.Send("whatthef");
+        return;
+    }
+    else if (redis.Hget(msg.recuid+"群成员列表",msg.para[0]) == "群管理员"){
         asocket.Send("again");
         return;
     }
@@ -211,6 +219,10 @@ void group_manager_unset(TaskSocket asocket,Message msg){
     if (!redis.hexists(msg.recuid+"群成员列表",msg.uid)){
         asocket.Send("notingroup");
         return;
+    }
+    else if(!redis.hexists(msg.recuid+"群成员列表",msg.para[0])){
+        asocket.Send("none");
+        return ;
     }
     if (redis.Hget(msg.recuid+"群成员列表",msg.uid) != "群主"){
         asocket.Send("failure");
@@ -231,8 +243,11 @@ void group_delmember(TaskSocket asocket,Message msg){
     if (!redis.hexists(msg.recuid+"群成员列表",msg.uid)){
         asocket.Send("notingroup");
         return;
+    }else if(!redis.hexists(msg.recuid+"群成员列表",msg.para[0])){
+        asocket.Send("none");
+        return ;
     }
-    if (redis.Hget(msg.recuid+"群成员列表",msg.uid)=="普通成员"){
+    else if (redis.Hget(msg.recuid+"群成员列表",msg.uid)=="普通成员"){
         asocket.Send("failure");
         return;
     }else if (redis.Hget(msg.recuid+"群成员列表",msg.uid)!="普通成员" && msg.uid == msg.para[0]){

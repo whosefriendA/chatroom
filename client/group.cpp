@@ -203,10 +203,18 @@ int group_manager_set(){
         cout<<"你被踢了，孩子"<<endl;
         return 0;
     }
+    if(recv=="none"){
+        cout<<"这个人不在群里"<<endl;
+        return;
+    }
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
         return 1;
-    }else if(recv=="again"){
+    }else if(recv=="whatthef"){
+        cout<<"倒反天罡"<<endl;
+        return 1;
+    }
+    else if(recv=="again"){
         cout<<"ta已经是群管理员,不能再添加"<<endl;
         return 1;
     }else if(recv=="success")
@@ -232,6 +240,10 @@ int group_manager_unset(){
      if(recv=="notingroup"){
         cout<<"你被踢了，孩子"<<endl;
         return 0;
+    }
+    if(recv=="none"){
+        cout<<"这个人不在群里"<<endl;
+        return;
     }
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
@@ -259,9 +271,12 @@ int group_delmember(){
 
     string recv=asocket.Receive_client();
     err.server_close(recv);
-     if(recv=="notingroup"){
+    if(recv=="notingroup"){
         cout<<"你被踢了，孩子"<<endl;
         return 0;
+    }
+    if(recv=="none"){
+        cout<<"没这个人，踢不了空气"<<endl;
     }
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
