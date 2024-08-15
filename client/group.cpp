@@ -90,20 +90,24 @@ void group_in(){
         return;
     }
 }
-void group_memberlist_get(){
+int group_memberlist_get(){
     Message msg(curuid,cur_groupuid,GROUP_MEMBER_LIST);
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
     string member=asocket.Receive_client();
+    if(member=="failure"){
+        cout<<"你被踢了，孩子"<<endl;
+        return 0;
+    };
     while(member!="end"){
         err.server_close(member);
         cout<<member<<endl;
         member=asocket.Receive_client();
     }
     cout<<"The end"<<endl;
-    return;
+    return 1;
 }
-void group_apply_list(){
+int group_apply_list(){
     Message msg(curuid,cur_groupuid,GROUP_APPLY_LIST);
     int ret = asocket.Send(msg.S_to_json());
     err.server_close(ret);
@@ -111,18 +115,23 @@ void group_apply_list(){
     string recv=asocket.Receive_client();
     while(recv!="end"){
         err.server_close(recv);
+        if(recv=="notingroup"){
+        cout<<"你被踢了，孩子"<<endl;
+        return 0;
+    }
         if(recv=="failure"){
             cout<<"你没有权限"<<endl;
-            return;
-        }else{
+            return 1;
+        }
+        else{
             cout<<recv<<endl;
         }
         recv=asocket.Receive_client();
     }
     cout<<"The end"<<endl;
-    return;
+    return 1;
 }
-void group_apply_agree(){
+int group_apply_agree(){
     string agreeuid;
     cout<<"请输入你想同意加群的uid:"<<endl;
     getline(cin,agreeuid);
@@ -132,21 +141,24 @@ void group_apply_agree(){
     
     string agree_recv=asocket.Receive_client();
     err.server_close(agree_recv);
-    if(agree_recv=="failure"){
+    if(agree_recv=="notingroup"){
+        cout<<"你被踢了，孩子"<<endl;
+        return 0;
+    }else if(agree_recv=="failure"){
     cout<<"你没有权限"<<endl;
     }else if(agree_recv=="notfind"){
         cout<<"此人未申请加群"<<endl;
-        return;
+        return 1;
     }else if(agree_recv=="success"){
         cout<<"已通过该用户的申请"<<endl;
-        return;
+        return 1;
     }else{
         cout<<agree_recv<<endl;
         cout<<"错误"<<endl;
-        return;
+        return 1;
     }
 }
-void group_apply_refuse(){
+int group_apply_refuse(){
     string refuseuid;
     cout<<"请输入你想拒绝加群的uid:"<<endl;
     getline(cin,refuseuid);
@@ -156,21 +168,25 @@ void group_apply_refuse(){
 
     string refuse_recv=asocket.Receive_client();
     err.server_close(refuse_recv);
+    if(refuse_recv=="notingroup"){
+        cout<<"你被踢了，孩子"<<endl;
+        return 0;
+    }
     if(refuse_recv=="failure"){
         cout<<"你没有权限"<<endl;
-        return;
+        return 1;
     }else if(refuse_recv=="notfind"){
         cout<<"此人未申请加群"<<endl;
-        return;
+        return 1;
     }else if(refuse_recv=="success"){
         cout<<"已拒绝该用户的申请"<<endl;
-        return;
+        return 1;
     }else{
         cout<<"错误"<<endl;
-        return;
+        return 1;
     }
 }
-void group_manager_set(){
+int group_manager_set(){
     group_memberlist_get();
     string addmanager;
     cout<<"你想添加为管理员的uid为:"<<endl;
@@ -182,22 +198,26 @@ void group_manager_set(){
 
     string recv=asocket.Receive_client();
     err.server_close(recv);
+    if(recv=="notingroup"){
+        cout<<"你被踢了，孩子"<<endl;
+        return 0;
+    }
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
-        return;
+        return 1;
     }else if(recv=="again"){
         cout<<"ta已经是群管理员,不能再添加"<<endl;
-        return;
+        return 1;
     }else if(recv=="success")
     {
         cout<<"已成功添加"<<addmanager<<"为群管理员"<<endl;
-        return;
+        return 1;
     }else{
         cout<<"错误"<<endl;
-        return;
+        return 1;
     }
 }
-void group_manager_unset(){
+int group_manager_unset(){
     group_memberlist_get();
     string unsetmanager;
     cout<<"你想取消的群管理的uid为:"<<endl;
@@ -208,21 +228,25 @@ void group_manager_unset(){
     err.server_close(ret);
     string recv=asocket.Receive_client();
     err.server_close(recv);
+     if(recv=="notingroup"){
+        cout<<"你被踢了，孩子"<<endl;
+        return 0;
+    }
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
-        return;
+        return 1;
     }else if(recv=="again"){
         cout<<"ta不是管理员"<<endl;
-        return;
+        return 1;
     }else if(recv=="success"){
         cout<<"已成功取消ta管理员身份"<<endl;
-        return;
+        return 1;
     }else{
         cout<<"其他错误"<<endl;
-        return;
+        return 1;
     }
 }
-void group_delmember(){
+int group_delmember(){
     group_memberlist_get();
     string deleteuid;
     cout<<"你想踢出的群成员的uid为:"<<endl;
@@ -234,18 +258,22 @@ void group_delmember(){
 
     string recv=asocket.Receive_client();
     err.server_close(recv);
+     if(recv=="notingroup"){
+        cout<<"你被踢了，孩子"<<endl;
+        return 0;
+    }
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
-        return;
+        return 1;
     }else if(recv=="failure2"){
         cout<<"你不能踢自己"<<endl;
-        return;
+        return 1;
     }else if(recv=="success"){
         cout<<"你已成功踢出ta"<<endl;
-        return;
+        return 1;
     }else{
         cout<<"错误"<<endl;
-        return;
+        return 1;
     }
 }
 int group_disband(){
@@ -254,6 +282,10 @@ int group_disband(){
     err.server_close(ret);
     string recv=asocket.Receive_client();
     err.server_close(recv);
+     if(recv=="notingroup"){
+        cout<<"你被踢了，孩子"<<endl;
+        return 1;
+    }
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
         return 0;
@@ -285,13 +317,17 @@ int group_exit(){
         return 0;
     }
 }
-void group_chat(){
+int group_chat(){
     Message msg(curuid,cur_groupuid,GROUP_CHAT);
     int ret=asocket.Send(msg.S_to_json());
     err.server_close(ret);
 
     string recv=asocket.Receive_client();
     err.server_close(recv);
+    if(recv=="notingroup"){
+        cout<<"你被踢了，孩子"<<endl;
+        return 0;
+    }
     if(recv=="success"){
         //打印群聊历史聊天记录
         string historymsg;

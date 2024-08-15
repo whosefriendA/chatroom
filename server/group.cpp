@@ -92,6 +92,10 @@ void group_list_get(TaskSocket asocket,Message msg){
     asocket.Send("end");
 }
 void group_memberlist_get(TaskSocket asocket,Message msg){
+    if (!redis.hexists(msg.recuid+"群成员列表",msg.uid)){
+        asocket.Send("failure");
+        return;
+    }
     vector<string> memberlist = redis.Hgetall(msg.recuid,"群成员列表");
     for (const string &memberid : memberlist){
         asocket.Send(memberid);
@@ -99,6 +103,10 @@ void group_memberlist_get(TaskSocket asocket,Message msg){
     asocket.Send("end");
 }
 void group_apply_list(TaskSocket asocket,Message msg){
+    if (!redis.hexists(msg.recuid+"群成员列表",msg.uid)){
+        asocket.Send("notingroup");
+        return;
+    }
     if (redis.Hget(msg.recuid+"群成员列表",msg.uid) != "普通成员"){
         vector<string> memberlist = redis.Hgetall(msg.recuid,"的申请加群列表");
         for (const string &memberid : memberlist){
@@ -110,6 +118,10 @@ void group_apply_list(TaskSocket asocket,Message msg){
     }
 }
 void group_apply_agree(TaskSocket asocket,Message msg){
+    if (!redis.hexists(msg.recuid+"群成员列表",msg.uid)){
+        asocket.Send("notingroup");
+        return;
+    }
     if (!redis.hexists(msg.recuid+"的申请加群列表",msg.para[0])){
         asocket.Send("notfind");
         return;
@@ -142,6 +154,10 @@ void group_apply_agree(TaskSocket asocket,Message msg){
     }
 }
 void group_apply_refuse(TaskSocket asocket,Message msg){
+     if (!redis.hexists(msg.recuid+"群成员列表",msg.uid)){
+        asocket.Send("notingroup");
+        return;
+    }
     if (!redis.hexists(msg.recuid+"的申请加群列表",msg.para[0])){
         asocket.Send("notfind");
         return;
@@ -172,7 +188,11 @@ void group_apply_refuse(TaskSocket asocket,Message msg){
     }
 }
 void group_manager_set(TaskSocket asocket,Message msg){
-    if (redis.Hget(msg.recuid+"群成员列表",msg.uid) != "群主"){
+    if (!redis.hexists(msg.recuid+"群成员列表",msg.uid)){
+        asocket.Send("notingroup");
+        return;
+    }
+    if (redis.Hget(msg.recuid+"群成员列表",msg.uid) != "群主"&&msg.recuid==msg.uid){
         asocket.Send("failure");
         return;
     }else if (redis.Hget(msg.recuid+"群成员列表",msg.para[0]) == "群管理员"){
@@ -188,6 +208,10 @@ void group_manager_set(TaskSocket asocket,Message msg){
     asocket.Send("success");
 }
 void group_manager_unset(TaskSocket asocket,Message msg){
+    if (!redis.hexists(msg.recuid+"群成员列表",msg.uid)){
+        asocket.Send("notingroup");
+        return;
+    }
     if (redis.Hget(msg.recuid+"群成员列表",msg.uid) != "群主"){
         asocket.Send("failure");
         return;
@@ -204,6 +228,10 @@ void group_manager_unset(TaskSocket asocket,Message msg){
     asocket.Send("success");
 }
 void group_delmember(TaskSocket asocket,Message msg){
+    if (!redis.hexists(msg.recuid+"群成员列表",msg.uid)){
+        asocket.Send("notingroup");
+        return;
+    }
     if (redis.Hget(msg.recuid+"群成员列表",msg.uid)=="普通成员"){
         asocket.Send("failure");
         return;
@@ -239,6 +267,10 @@ void group_delmember(TaskSocket asocket,Message msg){
     return;
 }
 void group_disband(TaskSocket asocket,Message msg){
+    if (!redis.hexists(msg.para[0]+"群成员列表",msg.uid)){
+        asocket.Send("notingroup");
+        return;
+    }
     if (redis.Hget(msg.para[0]+"群成员列表", msg.uid) != "群主"){
         asocket.Send("failure");
         return;
@@ -277,7 +309,12 @@ void group_exit(TaskSocket asocket,Message msg){
     asocket.Send("success");
 }
 void group_chat(TaskSocket asocket,Message msg){
-    asocket.Send("success");
+    if (!redis.hexists(msg.recuid+"群成员列表",msg.uid)){
+        asocket.Send("notingroup");
+        return;
+    }
+    else {asocket.Send("success");
+    }
     vector<string> history = redis.Lrangeall(msg.recuid+"的群聊消息");
     for (const string &msg : history){
         asocket.Send(msg);

@@ -186,17 +186,22 @@ void Agroup_menu(){
     try{
     int choice=stoi(a);
     if(choice==1)
-    group_memberlist_get();
+    if(!group_memberlist_get())
+    return ;
     else if(choice==2)
-    group_manager_set();
+    if (!group_manager_set())
+    return ;
     else if(choice==3)
-    group_manager_unset();
+    if(!group_manager_unset())
+    return ;
     else if(choice==4)
     Group_apply();
     else if(choice==5)
-    group_delmember();
+    if(!group_delmember())
+    return ;
     else if(choice==6)
-    group_chat();
+    if(!group_chat())
+    return;
     else if(choice==7){
     if(group_exit())
     return;
@@ -224,11 +229,14 @@ void Group_apply(){
     try{
     int choice=stoi(a);
     if(choice==1)
-    group_apply_list();
+    if(!group_apply_list())
+    return;
     else if(choice==2)
-    group_apply_agree();
+    if(!group_apply_agree())
+    return ;
     else if(choice==3)
-    group_apply_refuse();
+    if(!group_apply_refuse())
+    return ;
     else if(choice==4)
     return;
     }catch(const std::invalid_argument& e){
