@@ -25,6 +25,9 @@ void friend_add(TaskSocket asocket,Message msg){
     if (!redis.Sismember("uid集合",msg.recuid)){
         asocket.Send("none"); // 该用户不存在
         return;
+    }else if(msg.recuid==msg.uid){
+        asocket.Send("none");
+        return ;
     }
     int num = redis.Sgetcount(msg.uid,"的好友列表"); // 好友数量
     if (num != 0){
