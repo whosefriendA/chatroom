@@ -117,7 +117,7 @@ void friend_apply_refuse(){
     if(recv=="notfind"){
         cout<<"不存在ta的好友申请"<<endl;
         return;
-    }else if(recv=="ok"){
+    }else if(recv=="success"){
         system("clear");
         cout<<"已拒绝"<<refuseuid<<"的申请"<<endl;
         return;
