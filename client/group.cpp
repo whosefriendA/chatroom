@@ -157,6 +157,7 @@ int group_apply_agree(){
         cout<<"错误"<<endl;
         return 1;
     }
+    return 1;
 }
 int group_apply_refuse(){
     string refuseuid;
@@ -360,10 +361,10 @@ int group_chat(){
                 err.server_close(recv);
                 if(recv=="success"){
                     cout<<"成功退出聊天"<<endl;
-                    return;
+                    return 1;
                 }else{
                     cout<<"出现错误"<<endl;
-                    return;
+                    return 1;
                 }
                 break;
         }
@@ -374,10 +375,10 @@ int group_chat(){
         string recv=asocket.Receive_client();
         err.server_close(recv);
         if(recv=="failure"){
-            return;
+            return 1;
         }else if(recv=="success"){
             continue;
         }
     }
-    return;
+    return 1;
 }

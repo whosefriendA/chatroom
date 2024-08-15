@@ -185,24 +185,25 @@ void Agroup_menu(){
     getline(cin,a);
     try{
     int choice=stoi(a);
-    if(choice==1)
+    if(choice==1){
     if(!group_memberlist_get())
     return ;
-    else if(choice==2)
+    }
+    else if(choice==2){
     if (!group_manager_set())
     return ;
-    else if(choice==3)
+    }else if(choice==3){
     if(!group_manager_unset())
     return ;
-    else if(choice==4)
+    }else if(choice==4)
     Group_apply();
-    else if(choice==5)
+    else if(choice==5){
     if(!group_delmember())
     return ;
-    else if(choice==6)
+    }else if(choice==6){
     if(!group_chat())
     return;
-    else if(choice==7){
+    }else if(choice==7){
     if(group_exit())
     return;
     }
@@ -228,16 +229,16 @@ void Group_apply(){
     getline(cin,a);
     try{
     int choice=stoi(a);
-    if(choice==1)
+    if(choice==1){
     if(!group_apply_list())
     return;
-    else if(choice==2)
+    }else if(choice==2){
     if(!group_apply_agree())
     return ;
-    else if(choice==3)
+    }else if(choice==3){
     if(!group_apply_refuse())
     return ;
-    else if(choice==4)
+    }else if(choice==4)
     return;
     }catch(const std::invalid_argument& e){
       cout << "请输入正确的选项" << endl;

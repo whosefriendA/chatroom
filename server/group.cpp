@@ -192,7 +192,7 @@ void group_manager_set(TaskSocket asocket,Message msg){
         asocket.Send("notingroup");
         return;
     }
-    if (redis.Hget(msg.recuid+"群成员列表",msg.uid) != "群主"&&msg.recuid==msg.uid){
+    if (redis.Hget(msg.recuid+"群成员列表",msg.uid) != "群主"&&msg.para[0]==msg.uid){
         asocket.Send("failure");
         return;
     }else if (redis.Hget(msg.recuid+"群成员列表",msg.para[0]) == "群管理员"){
