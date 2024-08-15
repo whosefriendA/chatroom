@@ -24,7 +24,7 @@ void Sendflie_client(TaskSocket asocket,string curuid,string recvuid,int SENDFIL
                 cout<<filesize<<endl;
             while (offset < filesize) {
                 ssize_t sent_bytes = sendfile(asocket.getfd(),filefd,&offset,filesize - offset);
-                cout<<sent_bytes<<endl;
+                // cout<<sent_bytes<<endl;
                 if (sent_bytes == -1){
                     if (errno == EAGAIN || errno == EWOULDBLOCK) {
                     continue;//如果是阻塞错误码重试
@@ -73,7 +73,7 @@ void Sendflie_client(TaskSocket asocket,string curuid,string recvuid,int SENDFIL
             cout<<recv_file.c_str()<<endl;
             ssize_t size=stoll(recv_file.c_str());//文件大小
             cout<<size<<endl;
-            char buf[BUFSIZ];
+            char buf[BUFSIZE];
             ssize_t Recv_bytes=0;
             lseek(filefd,0,SEEK_SET);
             while(size>Recv_bytes){

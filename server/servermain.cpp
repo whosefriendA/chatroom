@@ -26,10 +26,12 @@ int main(int argc,char*argv[]){
         server_addr.sin_addr.s_addr=inet_addr(optarg);
         break;
         case 'p':
-        server_addr.sin_port=std::stoi(optarg);
+        server_addr.sin_port=stoi(optarg);
         break;
         }
     }
+    // cout<<server_addr.sin_addr.s_addr<<endl;
+    // cout<<server_addr.sin_port<<endl;
     //创建服务器套接字
     if((lfd=socket(AF_INET,SOCK_STREAM,0))==-1){
         perror("sever_socket error");
@@ -76,8 +78,8 @@ int main(int argc,char*argv[]){
     // for(const string&member :members){
     //     cout<<member<<endl;
     // }
-    thread heartbeatThread(checkHeartbeat, epfd);
-    heartbeatThread.detach();
+    // thread heartbeatThread(checkHeartbeat, epfd);
+    // heartbeatThread.detach();
 
     while(true){
         int count =epoll_wait(epfd,recvevent,size,-1);
@@ -109,7 +111,7 @@ int main(int argc,char*argv[]){
                 client_lastactive_now(nfd);
                 // cout<<buf<<endl;//
                 string comad_string=buf;
-                // cout << "New request:" << comad_string << endl<<endl;
+                cout << "New request:" << comad_string << endl<<endl;
                 Message msg;
                 msg.Json_to_s(comad_string);
                 if (msg.flag == HEARTBEAT) {
@@ -151,23 +153,23 @@ int main(int argc,char*argv[]){
     }
 }
 
-void checkHeartbeat(int epfd) {
-    while (true) {
-        auto now = chrono::steady_clock::now();
-        for (auto it = client_last_active.begin(); it != client_last_active.end(); ) {
+// void checkHeartbeat(int epfd) {
+//     while (true) {
+//         auto now = chrono::steady_clock::now();
+//         for (auto it = client_last_active.begin(); it != client_last_active.end(); ) {
 
-            if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 30) { // 30秒超时
-                cout << "Client " << it->first << " 超时" << endl;
-                close(it->first);
-                client_dead(it->first);
-                it = client_last_active.erase(it);
-            } else {
-                ++it;
-            }
-        }
-        this_thread::sleep_for(chrono::seconds(5)); // 每5秒检查一次
-    }
-}
+//             if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 30) { // 30秒超时
+//                 cout << "Client " << it->first << " 超时" << endl;
+//                 close(it->first);
+//                 client_dead(it->first);
+//                 it = client_last_active.erase(it);
+//             } else {
+//                 ++it;
+//             }
+//         }
+//         this_thread::sleep_for(chrono::seconds(5)); // 每5秒检查一次
+//     }
+// }
 void client_dead(int nfd){
     string uid =redis.Hget("fd-uid表",to_string(nfd));
     online_users.erase(uid);//删除在线用户

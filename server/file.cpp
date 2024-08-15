@@ -102,7 +102,7 @@ void G_sendfile_toserver(TaskSocket asocket,Message msg){
 void G_receivefile_fromserver(TaskSocket asocket,Message msg){
     Receivefile_fromserver(asocket,msg);
 }
-int Sendfile_toserver(TaskSocket asocket,Message msg){
+void Sendfile_toserver(TaskSocket asocket,Message msg){
     string filename = msg.para[0];
     size_t filesize = stoul(msg.para[1]); 
     string savepath = "/home/wanggang/chatroom/file/"+msg.recuid+"/"; 
@@ -123,11 +123,12 @@ int Sendfile_toserver(TaskSocket asocket,Message msg){
     // cout<<mysocket.getfd()<<endl;
     off_t offset = 0;
     ssize_t totalRecvByte = 0;
-    char buf[BUFSIZ];
+    char buf[BUFSIZE];
     lseek(filefd,0,SEEK_SET);
 
     while (filesize > totalRecvByte){
-        ssize_t byteRead = read(asocket.getfd(),buf,BUFSIZ);
+        ssize_t byteRead = read(asocket.getfd(),buf,BUFSIZE);
+        if(byteRead!=-1)
         cout << byteRead << endl;
         if (byteRead == -1){
             if (errno == EAGAIN || errno == EWOULDBLOCK){
