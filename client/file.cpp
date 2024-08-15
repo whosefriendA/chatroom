@@ -17,9 +17,9 @@ void Sendflie_client(TaskSocket asocket,string curuid,string recvuid,int SENDFIL
         int ret=asocket.Send(msg_file.S_to_json());
         err.server_close(ret);
 
-        string recv_file=asocket.Receive_client();
-        err.server_close(recv_file);
-        if(recv_file=="success"){
+        string recv=asocket.Receive_client();
+        err.server_close(recv);
+        if(recv=="success"){
             ssize_t offset = 0;
                 cout<<filesize<<endl;
             while (offset < filesize) {
