@@ -2,6 +2,7 @@
 #include"../Redis.hpp"
 #include"../Error.hpp"
 #include"../Message.hpp"
+#include<openssl/sha.h>
 #include<signal.h>
 #include<iostream>
 #include<chrono>

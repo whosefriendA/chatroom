@@ -102,7 +102,7 @@ void G_sendfile_toserver(TaskSocket asocket,Message msg){
 void G_receivefile_fromserver(TaskSocket asocket,Message msg){
     Receivefile_fromserver(asocket,msg);
 }
-void Sendfile_toserver(TaskSocket asocket,Message msg){
+int Sendfile_toserver(TaskSocket asocket,Message msg){
     string filename = msg.para[0];
     size_t filesize = stoul(msg.para[1]); 
     string savepath = "/home/wanggang/chatroom/file/"+msg.recuid+"/"; 

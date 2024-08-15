@@ -45,3 +45,4 @@ void sendHeartbeat(TaskSocket asocket) {
         this_thread::sleep_for(chrono::seconds(10)); // 每10秒发送一次心跳
     }
 }
+

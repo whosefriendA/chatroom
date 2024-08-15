@@ -4,6 +4,7 @@
 #include"../Redis.hpp"
 #include"../Threadmanage.hpp"
 #include"../Message.hpp"
+#include<openssl/sha.h>
 #include<hiredis/hiredis.h>
 #include<nlohmann/json.hpp>
 #include<arpa/inet.h>
@@ -111,7 +112,7 @@ void friend_restore(TaskSocket,Message);
 void friend_chat(TaskSocket,Message);
 void Unreadnotice(TaskSocket,Message);
 void friend_sendmsg(TaskSocket,Message);
-void Sendfile_toserver(TaskSocket,Message);
+int Sendfile_toserver(TaskSocket,Message);
 void Receivefile_fromserver(TaskSocket,Message);
 void Exitchat(TaskSocket,Message);
 void group_create(TaskSocket,Message);
