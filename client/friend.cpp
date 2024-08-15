@@ -231,12 +231,12 @@ void friend_chat()
             }
             //发送文件
             if(curmsg==":S"){
-                 Sendflie_client(asocket,curuid,recvuid,F_SENDFILE);
+                Sendflie_client(asocket,curuid,recvuid,F_SENDFILE);
                 continue;
             }
             //接收文件
             if(curmsg==":R"){
-                 Receiveflie_client(asocket,curuid,recvuid,F_RECVFILE);
+                Receiveflie_client(asocket,curuid,recvuid,F_RECVFILE);
                 continue;
             }
             //发消息

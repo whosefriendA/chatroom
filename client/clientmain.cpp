@@ -19,12 +19,14 @@ int main(int argc,char*argv[]){
         break;
         }
     }
+    // cout<<server_addr2.sin_addr.s_addr<<endl;
+    // cout<<server_addr2.sin_port<<endl;
     if(connect(asocket.getfd(),(struct sockaddr *)&server_addr2,sizeof(server_addr2))==-1){
         perror("connect error");
         exit(0);
     }
-    thread heartbeatThread(sendHeartbeat, asocket.getfd());
-    heartbeatThread.detach();
+    // thread heartbeatThread(sendHeartbeat, asocket.getfd());
+    // heartbeatThread.detach();
     struct termios term;
     tcgetattr(0,&term); // 获取终端属性
     term.c_cc[VEOF] = 0; // 禁用 EOF 键
@@ -37,12 +39,11 @@ int main(int argc,char*argv[]){
         User_menu();
     }
 }
-void sendHeartbeat(TaskSocket asocket) {
-    while (true) {
-        // cout<<"发心跳包"<<endl;
-        Message msg(HEARTBEAT);
-        asocket.Send(msg.S_to_json());
-        this_thread::sleep_for(chrono::seconds(10)); // 每10秒发送一次心跳
-    }
-}
-
+// void sendHeartbeat(TaskSocket asocket) {
+//     while (true) {
+//         // cout<<"发心跳包"<<endl;
+//         Message msg(HEARTBEAT);
+//         asocket.Send(msg.S_to_json());
+//         this_thread::sleep_for(chrono::seconds(10)); // 每10秒发送一次心跳
+//     }
+// }
