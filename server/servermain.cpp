@@ -110,7 +110,6 @@ int main(int argc,char*argv[]){
                 // cout<<buf<<endl;//
                 string comad_string=buf;
                 // cout << "New request:" << comad_string << endl<<endl;
-                
                 Message msg;
                 msg.Json_to_s(comad_string);
                 if (msg.flag == HEARTBEAT) {
@@ -121,7 +120,6 @@ int main(int argc,char*argv[]){
                 if(msg.flag==RECV){
                 redis.Hset(msg.uid,"实时socket",to_string(nfd));
                 }else if(msg.flag==F_SENDFILE||msg.flag==F_RECVFILE||msg.flag==SENDFILE_GROUP||msg.flag==RECVFILE_GROUP){
-                   client_lastactive_now(nfd);
                     event.events = EPOLLIN|EPOLLET;
                     event.data.fd = nfd;
                     //摘树
@@ -141,7 +139,6 @@ int main(int argc,char*argv[]){
                     //分离
                     fileThread.detach();
                 }else{
-                    client_lastactive_now(nfd);
                     // cout<<"will create task to thread"<<endl;
                     TaskSocket socket(nfd);
                     // 使用 lambda 表达式创建带参数的 taskhandler并添加到调度器
