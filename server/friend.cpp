@@ -208,3 +208,14 @@ void Exitchat(TaskSocket mysocket,Message msg){
     mysocket.Send("success");
     return;
 }
+void shield_list(TaskSocket asocket,Message msg){
+    if (!redis.exists(msg.uid+"的屏蔽列表")){
+        asocket.Send("none");
+        return;
+    }
+    vector<string> shieldList = redis.Sgetall(msg.uid+"的屏蔽列表");
+    for (const string &friendID : shieldList){
+        asocket.Send(friendID);
+    }
+    asocket.Send("end");
+}

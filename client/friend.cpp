@@ -255,3 +255,21 @@ void friend_chat()
     }
     return ;
 }
+void shield_list(){
+    Message msg(curuid,SHIELD_LIST);
+    int ret=asocket.Send(msg.S_to_json());
+    err.server_close(ret);
+    string Shield;
+    while ((Shield = asocket.Receive_client()) != "end"){
+        if (Shield == "none"){
+            cout << "你还没有屏蔽好友" << endl;
+            return ;
+        }else if (Shield == "close"){
+            cout << "服务器端已关闭" << endl;
+            exit(0);
+        }else{
+            cout << Shield << endl;
+        }
+    }
+    return ;
+}
