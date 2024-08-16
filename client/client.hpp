@@ -1,23 +1,23 @@
-#include"../TaskSocket.hpp"
-#include"../Redis.hpp"
-#include"../Error.hpp"
-#include"../Message.hpp"
-#include<openssl/sha.h>
-#include<signal.h>
-#include<iostream>
-#include<chrono>
-#include<fcntl.h>
-#include<sys/sendfile.h>
-#include<sys/stat.h>
-#include<unistd.h>
-#include<termios.h>
-#include<arpa/inet.h>
-#include<netinet/in.h>
-#include<unistd.h>
-#include<nlohmann/json.hpp>
-#include<hiredis/hiredis.h>
-#include<thread>
-#define SERVERPORT 8080//默认端口号
+#include "../TaskSocket.hpp"
+#include "../Redis.hpp"
+#include "../Error.hpp"
+#include "../Message.hpp"
+#include <openssl/sha.h>
+#include <signal.h>
+#include <iostream>
+#include <chrono>
+#include <fcntl.h>
+#include <sys/sendfile.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <termios.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <nlohmann/json.hpp>
+#include <hiredis/hiredis.h>
+#include <thread>
+#define SERVERPORT 8080 // 默认端口号
 #define RECV -1
 #define SIGNUP 1
 #define LOGIN 2
@@ -65,7 +65,7 @@
 #define BLUE "\033[34m"
 #define WIDEWHITE "\033[1;37m"
 using namespace std;
-using json=nlohmann::json;
+using json = nlohmann::json;
 extern TaskSocket asocket;
 extern sockaddr_in server_addr2;
 extern Error err;
@@ -82,10 +82,10 @@ void pass_find();
 void sign_up();
 int log_in();
 int user_remove();
-void* notify_receive(void* arg);
+void *notify_receive(void *arg);
 string get_uid();
-void Sendflie_client(TaskSocket,string,string,int);
-void Receiveflie_client(TaskSocket,string,string,int);
+void Sendflie_client(TaskSocket, string, string, int);
+void Receiveflie_client(TaskSocket, string, string, int);
 int friend_list_get();
 void freind_add();
 void friend_del();
