@@ -12,6 +12,7 @@ void group_create(TaskSocket asocket,Message msg){
     {unique_lock<mutex> lock(mtx);
     Group_uid+=redis.Scard("群聊集合");
     }
+    Group_uid=101;
     string groupuid=to_string(Group_uid);
 
     redis.Sadd("群聊集合",groupuid);
