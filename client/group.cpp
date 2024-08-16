@@ -96,7 +96,7 @@ int group_memberlist_get(){
     err.server_close(ret);
     string member=asocket.Receive_client();
     if(member=="failure"){
-        cout<<"你被踢了，孩子"<<endl;
+        cout<<"你被踢了"<<endl;
         return 0;
     };
     while(member!="end"){
@@ -116,7 +116,7 @@ int group_apply_list(){
     while(recv!="end"){
         err.server_close(recv);
         if(recv=="notingroup"){
-        cout<<"你被踢了，孩子"<<endl;
+        cout<<"你被踢了"<<endl;
         return 0;
     }
         if(recv=="failure"){
@@ -142,7 +142,7 @@ int group_apply_agree(){
     string agree_recv=asocket.Receive_client();
     err.server_close(agree_recv);
     if(agree_recv=="notingroup"){
-        cout<<"你被踢了，孩子"<<endl;
+        cout<<"你被踢了"<<endl;
         return 0;
     }else if(agree_recv=="failure"){
     cout<<"你没有权限"<<endl;
@@ -170,7 +170,7 @@ int group_apply_refuse(){
     string refuse_recv=asocket.Receive_client();
     err.server_close(refuse_recv);
     if(refuse_recv=="notingroup"){
-        cout<<"你被踢了，孩子"<<endl;
+        cout<<"你被踢了"<<endl;
         return 0;
     }
     if(refuse_recv=="failure"){
@@ -200,7 +200,7 @@ int group_manager_set(){
     string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="notingroup"){
-        cout<<"你被踢了，孩子"<<endl;
+        cout<<"你被踢了"<<endl;
         return 0;
     }
     if(recv=="none"){
@@ -238,7 +238,7 @@ int group_manager_unset(){
     string recv=asocket.Receive_client();
     err.server_close(recv);
      if(recv=="notingroup"){
-        cout<<"你被踢了，孩子"<<endl;
+        cout<<"你被踢了"<<endl;
         return 0;
     }
     if(recv=="none"){
@@ -272,11 +272,11 @@ int group_delmember(){
     string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="notingroup"){
-        cout<<"你被踢了，孩子"<<endl;
+        cout<<"你被踢了"<<endl;
         return 0;
     }
     if(recv=="none"){
-        cout<<"没这个人，踢不了空气"<<endl;
+        cout<<"没这个人，不能乱踢"<<endl;
     }
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
@@ -299,7 +299,7 @@ int group_disband(){
     string recv=asocket.Receive_client();
     err.server_close(recv);
      if(recv=="notingroup"){
-        cout<<"你被踢了，孩子"<<endl;
+        cout<<"你被踢了"<<endl;
         return 1;
     }
     if(recv=="failure"){
@@ -341,7 +341,7 @@ int group_chat(){
     string recv=asocket.Receive_client();
     err.server_close(recv);
     if(recv=="notingroup"){
-        cout<<"你被踢了，孩子"<<endl;
+        cout<<"你被踢了"<<endl;
         return 0;
     }
     if(recv=="success"){
