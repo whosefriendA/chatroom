@@ -10,7 +10,9 @@ void group_create(TaskSocket asocket,Message msg){
     }
     mutex mtx;
     {unique_lock<mutex> lock(mtx);
-    Group_uid+=redis.Scard("群聊集合");
+    int num=redis.Scard("群聊集合");
+    // cout<<"scard=="<<num<<endl;
+    Group_uid+=num+5;
     }
     string groupuid=to_string(Group_uid);
     Group_uid=101;
