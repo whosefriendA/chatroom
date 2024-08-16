@@ -152,7 +152,7 @@ void checkHeartbeat(int epfd) {
         auto now = chrono::steady_clock::now();
         for (auto it = client_last_active.begin(); it != client_last_active.end(); ) {
 
-            if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 400) { // 180秒超时
+            if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 600) { // 180秒超时
                 cout << "Client " << it->first << " 超时" << endl;
                 close(it->first);
                 client_dead(it->first);
