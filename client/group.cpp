@@ -368,20 +368,20 @@ int group_chat(){
             Receiveflie_client(asocket,cur_groupuid,curuid,RECVFILE_GROUP);
             continue;
         }else if(newmsg==":Q"){
-                Message msg_exit(curuid,cur_groupuid,GRUOP_CHATEXIT);
-                int ret=asocket.Send(msg_exit.S_to_json());
-                err.server_close(ret);
+            Message msg_exit(curuid,cur_groupuid,GRUOP_CHATEXIT);
+            int ret=asocket.Send(msg_exit.S_to_json());
+            err.server_close(ret);
 
-                string recv=asocket.Receive_client();
-                err.server_close(recv);
-                if(recv=="success"){
-                    cout<<"成功退出聊天"<<endl;
-                    return 1;
-                }else{
-                    cout<<"出现错误"<<endl;
-                    return 1;
-                }
-                break;
+            string recv=asocket.Receive_client();
+            err.server_close(recv);
+            if(recv=="success"){
+                cout<<"成功退出聊天"<<endl;
+                return 1;
+            }else{
+                cout<<"出现错误"<<endl;
+                return 1;
+            }
+            break;
         }
         Message msg(curuid,cur_groupuid,GROUP_SENDMSG,{newmsg});
         int ret = asocket.Send(msg.S_to_json());
