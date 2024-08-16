@@ -2,7 +2,8 @@
 void sign_up(){
     string name,pass,pass2;
     string question,answer;
-
+    cout<<"请输入昵称:"<<endl;
+    getline(cin,name);
     while(1){
         cout<<"请输入密码:"<<endl;
         getline(cin,pass);
@@ -17,8 +18,6 @@ void sign_up(){
             cout<<"密码不一致"<<endl;
         }else break;
     }
-    cout<<"请输入昵称:"<<endl;
-    getline(cin,name);
     cout<<"设置密保问题"<<endl;
     getline(cin,question);
     cout<<"设置答案"<<endl;

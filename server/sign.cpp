@@ -6,6 +6,7 @@ void Sign_up(TaskSocket asocket,Message msg){
     }
     string uid=to_string(User_uid);
     User u(msg.name,msg.pass,msg.question,msg.para[0],uid);
+    User_uid=1001;
     // cout<<u.UID<<u.Name<<u.Pass<<u.Question<<u.Answer<<endl;
     // cout<<User_uid<<endl;
     redis.Hset(uid,"name",msg.name);
