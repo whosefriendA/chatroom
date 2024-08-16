@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     term.c_cc[VEOF] = 0;          // 禁用 EOF 键
     tcsetattr(0, TCSANOW, &term); // 设置新的终端属性
     signal(SIGINT, SIG_IGN);      // ctrl+c
-    signal(SIGQUIT, SIG_IGN);     // ctrl+"\"
+    // signal(SIGQUIT, SIG_IGN);     // ctrl+"\"
     signal(SIGTSTP, SIG_IGN);     // ctrl+z
     int ret = Main_menu();
     if (ret == 1)
