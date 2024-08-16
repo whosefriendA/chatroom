@@ -78,8 +78,8 @@ int main(int argc,char*argv[]){
     // for(const string&member :members){
     //     cout<<member<<endl;
     // }
-    thread heartbeatThread(checkHeartbeat, epfd);
-    heartbeatThread.detach();
+    // thread heartbeatThread(checkHeartbeat, epfd);
+    // heartbeatThread.detach();
 
     while(true){
         int count =epoll_wait(epfd,recvevent,size,-1);
@@ -134,7 +134,7 @@ int main(int argc,char*argv[]){
                     //分离
                     fileThread.detach();
                 }else{
-                    client_lastactive_now(nfd);
+                    // client_lastactive_now(nfd);
                     // cout<<"will create task to thread"<<endl;
                     TaskSocket socket(nfd);
                     // 使用 lambda 表达式创建带参数的 taskhandler并添加到调度器
@@ -147,23 +147,23 @@ int main(int argc,char*argv[]){
     }
 }
 
-void checkHeartbeat(int epfd) {
-    while (true) {
-        auto now = chrono::steady_clock::now();
-        for (auto it = client_last_active.begin(); it != client_last_active.end(); ) {
+// void checkHeartbeat(int epfd) {
+//     while (true) {
+//         auto now = chrono::steady_clock::now();
+//         for (auto it = client_last_active.begin(); it != client_last_active.end(); ) {
 
-            if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 600) { // 180秒超时
-                cout << "Client " << it->first << " 超时" << endl;
-                close(it->first);
-                client_dead(it->first);
-                it = client_last_active.erase(it);
-            } else {
-                ++it;
-            }
-        }
-        this_thread::sleep_for(chrono::seconds(300)); // 每5秒检查一次
-    }
-}
+//             if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 600) { // 180秒超时
+//                 cout << "Client " << it->first << " 超时" << endl;
+//                 close(it->first);
+//                 client_dead(it->first);
+//                 it = client_last_active.erase(it);
+//             } else {
+//                 ++it;
+//             }
+//         }
+//         this_thread::sleep_for(chrono::seconds(300)); // 每5秒检查一次
+//     }
+// }
 void client_dead(int nfd){
     string uid =redis.Hget("fd-uid表",to_string(nfd));
     online_users.erase(uid);//删除在线用户
@@ -171,9 +171,11 @@ void client_dead(int nfd){
     redis.Hset("fd-uid表",to_string(nfd),"-1");
     close(nfd);
 }
-void client_lastactive_now(int nfd){
-    string uid =redis.Hget("fd-uid表",to_string(nfd));
-    if(stoi(uid)!=-1){
-    client_last_active[nfd] = chrono::steady_clock::now();
-    }
-}
+// void client_lastactive_now(int nfd){
+//     if(redis.hexists("fd-uid表",to_string(nfd))){
+//     string uid =redis.Hget("fd-uid表",to_string(nfd));
+//     if(stoi(uid)!=-1){
+//      client_last_active[nfd] = chrono::steady_clock::now();
+//      }
+//         }
+// }

@@ -102,9 +102,9 @@ void Sendflie_client(TaskSocket file_socket,string curuid,string recvuid,int SEN
                     break;
                 }
                 Recv_bytes+=read_byte;
-                cout<<"total_receive:"<<Recv_bytes<<endl;
-                cout << "byteRead:" << read_byte << endl;
-                cout << "bytewrite" << Writeb << endl;
+                // cout<<"total_receive:"<<Recv_bytes<<endl;
+                // cout << "byteRead:" << read_byte << endl;
+                // cout << "bytewrite" << Writeb << endl;
             }
             if (Recv_bytes < size) {
                 cerr << "File transmission incomplete" << endl;
