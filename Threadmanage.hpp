@@ -1,67 +1,80 @@
-#include<thread>
-#include<condition_variable>
-#include<functional>
-#include<queue>
-#include<mutex>
-#include<atomic>
+#include <thread>
+#include <condition_variable>
+#include <functional>
+#include <queue>
+#include <mutex>
+#include <atomic>
 using namespace std;
-struct Task {
+struct Task
+{
     using funcv = std::function<void()>;
 
     Task() = default;
     Task(funcv f) : function(std::move(f)) {}
 
-    void execute() {
-        if (function) {
+    void execute()
+    {
+        if (function)
+        {
             function();
         }
     }
     funcv function;
 };
 
-class ThreadPool {
+class ThreadPool
+{
 public:
-ThreadPool(size_t numThreads) : stop(false) {
-    for (size_t i = 0; i < numThreads; ++i) {
-        workers.emplace_back(&ThreadPool::worker,this);
-    }
-}
-
-~ThreadPool() {
-    stop = true;
-    condition.notify_all();
-    for (thread& worker : workers) {
-        if (worker.joinable()) {
-            worker.join();
+    ThreadPool(size_t numThreads) : stop(false)
+    {
+        for (size_t i = 0; i < numThreads; ++i)
+        {
+            workers.emplace_back(&ThreadPool::worker, this);
         }
     }
-}
 
-void addTask(const Task& task) {
+    ~ThreadPool()
     {
-        unique_lock<mutex> lock(tasksMutex);
-        tasks.push(task);
+        stop = true;
+        condition.notify_all();
+        for (thread &worker : workers)
+        {
+            if (worker.joinable())
+            {
+                worker.join();
+            }
+        }
     }
-    condition.notify_one();
-}
 
-void worker() {
-    while (true) {
-        Task task;
+    void addTask(const Task &task)
+    {
         {
             unique_lock<mutex> lock(tasksMutex);
-            condition.wait(lock,[this] {
-                return stop || !tasks.empty();
-            });
-            if (stop && tasks.empty()) {
-                return;
-            }
-            task = tasks.front();
-            tasks.pop();
+            tasks.push(task);
         }
-        task.execute();
+        condition.notify_one();
     }
-}
+
+    void worker()
+    {
+        while (true)
+        {
+            Task task;
+            {
+                unique_lock<mutex> lock(tasksMutex);
+                condition.wait(lock, [this]
+                               { return stop || !tasks.empty(); });
+                if (stop && tasks.empty())
+                {
+                    return;
+                }
+                task = tasks.front();
+                tasks.pop();
+            }
+            task.execute();
+        }
+    }
+
 private:
     vector<thread> workers;
     queue<Task> tasks;
