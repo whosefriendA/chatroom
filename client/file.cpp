@@ -118,6 +118,7 @@ void Receiveflie_client(TaskSocket asocket, string curuid, string recvuid, int R
             {
                 cout << "size:" << size << endl;
                 cout << "totalRecvByte:" << Recv_bytes << endl;
+                cout << "文件接收中，请稍侯"<<endl;
                 // cerr << "Connection closed by client" << endl;
                 break;
             }
