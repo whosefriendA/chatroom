@@ -114,6 +114,9 @@ void transferfunc(TaskSocket asocket,const string& comad_string)
         case RECVFILE_GROUP:
             G_receivefile_fromserver(asocket,msg);
             break;
+        case SHIELD_LIST:
+            shield_list(asocket,msg);
+            break;
     }
     return;
 }

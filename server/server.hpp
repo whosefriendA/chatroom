@@ -71,6 +71,7 @@
 #define GROUP_SENDMSG 36
 #define GRUOP_CHATEXIT 37
 #define HEARTBEAT 38
+#define SHIELD_LIST 39
 #define RED "\033[31m"
 #define BLUE "\033[34m"
 #define YELLOW "\033[33m"
@@ -112,6 +113,7 @@ void friend_restore(TaskSocket,Message);
 void friend_chat(TaskSocket,Message);
 void Unreadnotice(TaskSocket,Message);
 void friend_sendmsg(TaskSocket,Message);
+void shield_list(TaskSocket,Message);
 void Sendfile_toserver(TaskSocket,Message);
 void Receivefile_fromserver(TaskSocket,Message);
 void Exitchat(TaskSocket,Message);

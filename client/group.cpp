@@ -205,7 +205,7 @@ int group_manager_set(){
     }
     if(recv=="none"){
         cout<<"这个人不在群里"<<endl;
-        return;
+        return 1 ;
     }
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;
@@ -243,7 +243,7 @@ int group_manager_unset(){
     }
     if(recv=="none"){
         cout<<"这个人不在群里"<<endl;
-        return;
+        return 1;
     }
     if(recv=="failure"){
         cout<<"你没有权限"<<endl;

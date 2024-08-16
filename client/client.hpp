@@ -57,6 +57,7 @@
 #define GROUP_SENDMSG 36
 #define GRUOP_CHATEXIT 37
 #define HEARTBEAT 38
+#define SHIELD_LIST 39
 #define RED "\033[31m"
 #define YELLOW "\033[33m"
 #define RESET "\033[0m"
@@ -111,3 +112,4 @@ void Group_apply();
 int group_delmember();
 int group_chat();
 int group_exit();
+void shield_list();

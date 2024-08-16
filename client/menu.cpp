@@ -121,17 +121,20 @@ void Friend_apply(){
 void Friend_shield(){
     string a;
     while(1){
-    cout<<"--------[1]屏蔽好友消息--------"<<endl;
-    cout<<"--------[2]恢复好友消息--------"<<endl;
-    cout<<"-----------[3]返回-----------"<<endl;
+    cout<<"--------[1]屏蔽好友--------"<<endl;
+    cout<<"--------[2]屏蔽列表--------"<<endl;
+    cout<<"--------[3]恢复好友--------"<<endl;
+    cout<<"---------[4]返回----------"<<endl;
     getline(cin,a);
     try{
     int choice=stoi(a);
     if(choice==1)
     friend_shield();
     else if(choice==2)
-    friend_restore();
+    shield_list();
     else if(choice==3)
+    friend_restore();
+    else if(choice==4)
     return;
     }catch(const std::invalid_argument& e){
       cout << "请输入正确的选项" << endl;
