@@ -156,6 +156,13 @@ public:
 private:
     mutex user_mutex;
 };
+class MessageHandler
+{
+public:
+    void transferfunc(TaskSocket asocket, const std::string &comad_string);
+         void handle(TaskSocket asocket, const std::string &comad_string);
+};
 void transferfunc(TaskSocket asocket, const std::string &comad_string);
+void handle(TaskSocket asocket, const std::string &comad_string);
 void checkHeartbeat(int epfd);
 #endif
