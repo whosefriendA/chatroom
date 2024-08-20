@@ -50,7 +50,7 @@ public:
     {
         {
             unique_lock<mutex> lock(tasksMutex);
-            tasks.push(task);
+            taskqueue.push(task);
         }
         condition.notify_one();
     }
@@ -63,13 +63,13 @@ public:
             {
                 unique_lock<mutex> lock(tasksMutex);
                 condition.wait(lock, [this]
-                { return stop || !tasks.empty(); });
-                if (stop && tasks.empty())
+                { return stop || !taskqueue.empty(); });
+                if (stop && taskqueue.empty())
                 {
                     return;
                 }
-                task = tasks.front();
-                tasks.pop();
+                task = taskqueue.front();
+                taskqueue.pop();
             }
             task.execute();
         }
@@ -77,7 +77,7 @@ public:
 
 private:
     vector<thread> workers;
-    queue<Task> tasks;
+    queue<Task> taskqueue;
     mutex tasksMutex;
     condition_variable condition;
     atomic<bool> stop;

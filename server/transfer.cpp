@@ -1,15 +1,6 @@
 #include "./server.hpp"
 
-class MessageHandler
-{
-public:
-    void transferfunc(TaskSocket asocket, const std::string &comad_string)
-    {
-        MessageHandler handler;
-        handler.handle(asocket, comad_string);
-    }
-    void handle(TaskSocket asocket, const std::string &comad_string)
-    {
+    void MessageHandler::transferfunc(TaskSocket asocket, const std::string &comad_string){
         Message msg;
         msg.Json_to_s(comad_string);
         switch (static_cast<int>(msg.flag))
@@ -130,4 +121,4 @@ public:
             break;
         }
     }
-};
+
