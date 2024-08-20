@@ -15,7 +15,7 @@ Epoll 边缘触发 (ET) 模式：服务器使用 epoll 的边缘触发模式（E
 多用户支持与群聊功能：系统支持用户之间的好友添加、私聊以及群组聊天，能够处理多人同时在线，保证了高并发条件下的稳定性和响应速度
 
 ## 客户端流程图
-![](客户端.drawio(1).png)
+![](客户端.drawio.png)
 ## 服务器流程图
 ![](服务器架构.drawio.png)
 ## 前置条件
@@ -70,6 +70,15 @@ Epoll 边缘触发 (ET) 模式：服务器使用 epoll 的边缘触发模式（E
 ```
 chatroom/
 ├── server/                 # 服务器端代码
+│   ├── CMakeLists.txt
+│   ├── file.cpp
+│   ├── friend.cpp
+│   ├── group.cpp
+│   ├── server.hpp
+│   ├── servermain.cpp
+│   ├── sign.cpp
+│   ├── transfer.cpp
+│   └── user.cpp
 ├── client/                 # 客户端代码
 │   ├── CMakeLists.txt      # 客户端的 CMake 配置
 │   ├── clientmain.cpp      # 客户端应用程序的主入口
