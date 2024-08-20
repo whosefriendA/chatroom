@@ -63,7 +63,7 @@ public:
             {
                 unique_lock<mutex> lock(tasksMutex);
                 condition.wait(lock, [this]
-                               { return stop || !tasks.empty(); });
+                { return stop || !tasks.empty(); });
                 if (stop && tasks.empty())
                 {
                     return;

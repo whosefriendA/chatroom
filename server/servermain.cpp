@@ -167,23 +167,23 @@ int main(int argc, char *argv[])
     }
 }
 
-// void checkHeartbeat(int epfd) {
-//     while (true) {
-//         auto now = chrono::steady_clock::now();
-//         for (auto it = client_last_active.begin(); it != client_last_active.end(); ) {
+void checkHeartbeat(int epfd) {
+    while (true) {
+        auto now = chrono::steady_clock::now();
+        for (auto it = client_last_active.begin(); it != client_last_active.end(); ) {
 
-//             if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 600) { // 180秒超时
-//                 cout << "Client " << it->first << " 超时" << endl;
-//                 close(it->first);
-//                 client_dead(it->first);
-//                 it = client_last_active.erase(it);
-//             } else {
-//                 ++it;
-//             }
-//         }
-//         this_thread::sleep_for(chrono::seconds(300)); // 每5秒检查一次
-//     }
-// }
+            if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 180) { // 180秒超时
+                cout << "Client " << it->first << " 超时" << endl;
+                close(it->first);
+                client_dead(it->first);
+                it = client_last_active.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        this_thread::sleep_for(chrono::seconds(30)); // 每30秒检查一次
+    }
+}
 void client_dead(int nfd)
 {
     string uid = redis.Hget("fd-uid表", to_string(nfd));
@@ -192,11 +192,11 @@ void client_dead(int nfd)
     redis.Hset("fd-uid表", to_string(nfd), "-1");
     close(nfd);
 }
-// void client_lastactive_now(int nfd){
-//     if(redis.hexists("fd-uid表",to_string(nfd))){
-//     string uid =redis.Hget("fd-uid表",to_string(nfd));
-//     if(stoi(uid)!=-1){
-//      client_last_active[nfd] = chrono::steady_clock::now();
-//      }
-//         }
-// }
+void client_lastactive_now(int nfd){
+    if(redis.hexists("fd-uid表",to_string(nfd))){
+    string uid =redis.Hget("fd-uid表",to_string(nfd));
+    if(stoi(uid)!=-1){
+     client_last_active[nfd] = chrono::steady_clock::now();
+     }
+        }
+}
