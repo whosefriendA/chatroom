@@ -70,6 +70,15 @@ Epoll 边缘触发 (ET) 模式：服务器使用 epoll 的边缘触发模式（E
 ```
 chatroom/
 ├── server/                 # 服务器端代码
+│   ├── CMakeLists.txt
+│   ├── file.cpp
+│   ├── friend.cpp
+│   ├── group.cpp
+│   ├── server.hpp
+│   ├── servermain.cpp
+│   ├── sign.cpp
+│   ├── transfer.cpp
+│   └── user.cpp
 ├── client/                 # 客户端代码
 │   ├── CMakeLists.txt      # 客户端的 CMake 配置
 │   ├── clientmain.cpp      # 客户端应用程序的主入口
